@@ -1,3 +1,4 @@
+import 'package:code/utils/themes/theme.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const DocAid());
@@ -7,6 +8,10 @@ class DocAid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(
+      themeMode: ThemeMode.system,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+    );
   }
 }
