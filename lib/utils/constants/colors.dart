@@ -13,5 +13,6 @@ class AppColors{
    static const Color mistyRose = Color(0xFFFADCDC);
    static const Color magnolia = Color(0xFFEDE7F2);
    static const Color ultraViolet = Color(0xFF484D6D);
+   static const Color loginGrey = Color(0xFFEDE7F2);
 
 }
