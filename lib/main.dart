@@ -11,9 +11,9 @@ class DocAid extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // themeMode: ThemeMode.system,
-      // theme: AppTheme.lightTheme,
-      // darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       home: const LoginScreen(),
     );
   }
