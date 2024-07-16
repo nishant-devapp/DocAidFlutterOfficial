@@ -15,7 +15,7 @@ class DocAid extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: const DashboardScreen(),
+      home: const LoginScreen(),
     );
   }
 }
