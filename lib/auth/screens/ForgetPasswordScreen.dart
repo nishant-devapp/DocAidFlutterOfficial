@@ -1,6 +1,7 @@
 import 'package:code/auth/controllers/forget_password_controller.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
+import '../../utils/constants/images.dart';
 import '../../utils/widgets/AppButton.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
@@ -78,11 +79,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       vertical: deviceHeight * 0.05,
                       horizontal: deviceWidth * 0.05,
                     ),
-                    child: Image(
-                      image: const AssetImage('assets/icons/doc_aid.png'),
-                      height: deviceHeight * 0.25,
-                      width: double.infinity,
-                    ),
+                    child: Image.network(HttpImages.docAidTrademark, height: deviceHeight * 0.25, width: double.infinity,),
                   ),
                   Expanded(
                     child: Container(

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../home/response/common_response.dart';
+import '../../dashboard/response/common_response.dart';
 import '../../utils/constants/app_urls.dart';
 
 class ForgetPasswordController {
   Future<CommonResponse?> forgetPassword(
       String email, String newPassword, String confirmPassword) async {
 
-    final Uri url = Uri.parse("${AppUrls.baseUrl}/home/forgotPassword").replace(
+    final Uri url = Uri.parse("${AppUrls.baseUrl}/dashboard/forgotPassword").replace(
       queryParameters: {
         'email': email,
         'newPassword': newPassword,

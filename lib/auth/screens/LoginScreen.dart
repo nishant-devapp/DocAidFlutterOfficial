@@ -5,6 +5,7 @@ import 'package:code/auth/controllers/login_controller.dart';
 import 'package:code/auth/screens/ForgetPasswordScreen.dart';
 import 'package:code/utils/TokenManager.dart';
 import 'package:code/utils/constants/colors.dart';
+import 'package:code/utils/constants/images.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -86,7 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       vertical: deviceHeight * 0.05,
                       horizontal: deviceWidth * 0.05,
                     ),
-                    child: Image(
+                    child:
+                    // Image.network(HttpImages.docAidTrademark, height: deviceHeight * 0.25, width: double.infinity,),
+                    Image(
                       image: const AssetImage('assets/icons/doc_aid.png'),
                       height: deviceHeight * 0.25,
                       width: double.infinity,

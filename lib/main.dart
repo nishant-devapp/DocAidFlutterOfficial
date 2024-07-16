@@ -1,4 +1,5 @@
 import 'package:code/auth/screens/LoginScreen.dart';
+import 'package:code/dashboard/screens/dashboard_screen.dart';
 import 'package:code/utils/themes/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class DocAid extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: const LoginScreen(),
+      home: const DashboardScreen(),
     );
   }
 }
