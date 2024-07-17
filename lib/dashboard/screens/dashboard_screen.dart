@@ -1,4 +1,3 @@
-import 'package:code/dashboard/drawer/main_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -11,12 +10,10 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
+    return const Scaffold(
+      body: Center(
+        child: Text('Dashboard Screen'),
       ),
-      drawer: MainNavigationDrawer(),
-      body: SafeArea(child: Text('Dashboard')),
     );
   }
 }

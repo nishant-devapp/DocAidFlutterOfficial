@@ -79,7 +79,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       vertical: deviceHeight * 0.05,
                       horizontal: deviceWidth * 0.05,
                     ),
-                    child: Image.network(HttpImages.docAidTrademark, height: deviceHeight * 0.25, width: double.infinity,),
+                    child:
+                    // Image.network(HttpImages.docAidTrademark, height: deviceHeight * 0.25, width: double.infinity,),
+                    Image(
+                      image: const AssetImage('assets/icons/doc_aid.png'),
+                      height: deviceHeight * 0.25,
+                      width: double.infinity,
+                    ),
                   ),
                   Expanded(
                     child: Container(
