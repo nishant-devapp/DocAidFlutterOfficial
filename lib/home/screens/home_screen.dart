@@ -8,15 +8,15 @@ import '../../dashboard/screens/dashboard_screen.dart';
 import '../../help/screens/help_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
+  final List<int> _navigationStack = [0];
 
   final List<Widget> _screens = [
     const DashboardScreen(),
@@ -34,33 +34,35 @@ class _HomeScreenState extends State<HomeScreen> {
     'Help',
   ];
 
-  void _onWillPop(bool shouldPop) {
-    if (shouldPop) {
-      if (_selectedIndex == 0) {
-        Navigator.of(context).maybePop(); // Exit the app
-      } else {
-        setState(() {
-          _selectedIndex = 0; // Go to dashboard
-        });
-      }
+  Future<bool> _onWillPop() async {
+    if (_navigationStack.length > 1) {
+      setState(() {
+        _navigationStack.removeLast();
+        _selectedIndex = _navigationStack.last;
+      });
+      return false;
+    } else {
+      return true; // Allow the app to exit if on the dashboard screen
     }
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _navigationStack.add(index);
     });
     Navigator.pop(context); // Close the drawer
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: _onWillPop,
+    return WillPopScope(
+      onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(title: Text(_titles[_selectedIndex])),
         drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
         body: _screens[_selectedIndex],
-      ), );
+      ),
+    );
   }
 }

@@ -1,5 +1,4 @@
-import 'package:code/auth/screens/LoginScreen.dart';
-import 'package:code/dashboard/screens/dashboard_screen.dart';
+import 'package:code/accounts/screens/account_main_screen.dart';
 import 'package:code/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +12,7 @@ class DocAid extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Doc-Aid',
+      themeMode: ThemeMode.light,
       home: HomeScreen(),
     );
   }

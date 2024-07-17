@@ -8,12 +8,30 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+
+  // Initial Selected Value
+  String dropDownValue = 'All Clinics';
+
+  // List of items in our dropdown menu
+  var items = [
+    'All Clinics',
+    'Boring Road',
+    'Kankarbagh',
+    'Patliputra Colony',
+    'Rajabazar',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text(
-            'Appointment Screen'
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+
+            ],
+          ),
         ),
       ),
     );
