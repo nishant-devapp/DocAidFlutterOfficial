@@ -44,14 +44,12 @@ class _AppButtonState extends State<AppButton> {
           color: _isPressed ? widget.buttonPressedColor : widget.buttonColor,
           borderRadius: BorderRadius.circular(15.0),
         ),
-        child: Center(
-          child: Text(
-            widget.buttonText,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
+        child: Text(
+          widget.buttonText,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

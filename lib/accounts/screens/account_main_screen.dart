@@ -27,12 +27,15 @@ class _AccountMainScreenState extends State<AccountMainScreen>
               const SizedBox(
                 height: 20.0,
               ),
-              const Text(
-                'Welcome to your account',
-                style: TextStyle(
-                    color: AppColors.textColor,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w500),
+              const Align(
+                alignment: AlignmentDirectional.topStart,
+                child: Text(
+                  'Welcome to your account',
+                  style: TextStyle(
+                      color: AppColors.textColor,
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w500),
+                ),
               ),
               const SizedBox(
                 height: 30.0,
