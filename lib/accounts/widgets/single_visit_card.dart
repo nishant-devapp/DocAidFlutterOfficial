@@ -13,40 +13,56 @@ class SingleVisitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Card(
-          elevation: 5,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 10.0,
-                decoration: BoxDecoration(
-                  color: AppColors.princetonOrange,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
+    return Card(
+      color: Colors.white,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 12,
+              decoration: const BoxDecoration(
+                color: AppColors.princetonOrange,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 14.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(count, style: const TextStyle(color: AppColors.princetonOrange, fontSize: 20.0, fontWeight: FontWeight.w600),),
-                    const SizedBox(height: 8.0,),
-                    Text(description, style: const TextStyle(color: AppColors.textColor, fontSize: 16.0, fontWeight: FontWeight.w400),),
+                    Text(
+                      count,
+                      style: TextStyle(
+                        color: AppColors.princetonOrange,
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: AppColors.jet,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
