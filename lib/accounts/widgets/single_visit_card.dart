@@ -16,6 +16,7 @@ class SingleVisitCard extends StatelessWidget {
     return Card(
       color: Colors.white,
       elevation: 5,
+      shadowColor: AppColors.princetonOrange.withOpacity(0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
@@ -24,7 +25,7 @@ class SingleVisitCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              width: 12,
+              width: 15,
               decoration: const BoxDecoration(
                 color: AppColors.princetonOrange,
                 borderRadius: BorderRadius.only(
@@ -42,7 +43,7 @@ class SingleVisitCard extends StatelessWidget {
                   children: [
                     Text(
                       count,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.princetonOrange,
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -51,9 +52,10 @@ class SingleVisitCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       description,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: AppColors.jet,
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        color: AppColors.textColor,
+                        fontWeight: FontWeight.w500
                       ),
                     ),
                   ],

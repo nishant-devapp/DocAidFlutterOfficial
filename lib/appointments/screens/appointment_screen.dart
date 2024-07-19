@@ -9,6 +9,7 @@ class AppointmentScreen extends StatefulWidget {
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
 
+
   // Initial Selected Value
   String dropDownValue = 'All Clinics';
 
@@ -29,7 +30,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           padding: EdgeInsets.all(12.0),
           child: Column(
             children: [
+              Row(
+                children: [
 
+                ],
+              ),
             ],
           ),
         ),

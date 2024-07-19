@@ -16,26 +16,77 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+             const SizedBox(height: 15.0,),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(child: SingleVisitCard(count: '1',description: "Today's Visit",)),
-                SizedBox(height: 16.0,),
-                Expanded(child: SingleVisitCard(count: '5', description: "This Month's Visit")),
-        
+                Expanded(
+                  child: SingleVisitCard(
+                    count: '1',
+                    description: "Today's Visit",
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: SingleVisitCard(
+                    count: '5',
+                    description: "This Month's Visit",
+                  ),
+                ),
               ],
             ),
+            const SizedBox(height: 24.0),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
-                  children: [
-                    Text("Today's Income"),
-                    IncomeCard(totalEarning: "Rs. 0.0", upiEarning: "Rs. 0.0", cashEarning: "Rs. 10.0"),
-                    // SizedBox(height: 8.0,),
-                    SizedBox(height: 20.0,),
-                    Text("Today's Income"),
-                    IncomeCard(totalEarning: "Rs. 1950.0", upiEarning: "Rs. 750.0", cashEarning: "Rs. 1200.0")
-
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          "Today's Income",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      IncomeCard(
+                        totalEarning: "Rs. 0.0",
+                        upiEarning: "Rs. 0.0",
+                        cashEarning: "Rs. 1000.0",
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          "This Month's Income",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      IncomeCard(
+                        totalEarning: "Rs. 1950.0",
+                        upiEarning: "Rs. 750.0",
+                        cashEarning: "Rs. 1200.0",
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
