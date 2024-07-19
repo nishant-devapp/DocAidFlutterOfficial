@@ -24,16 +24,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(12.0),
           child: Column(
             children: [
-              Row(
-                children: [
-
-                ],
+              Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("All Clinics"),
+                    Text("Date Picker"),
+                    Text("Search Box"),
+                  ],
+                ),
               ),
             ],
           ),
