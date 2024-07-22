@@ -6,8 +6,8 @@ class AppButton extends StatefulWidget {
   final String buttonText;
   final VoidCallback onPressed;
 
-  AppButton(
-      {required this.buttonColor,
+  const AppButton(
+      {super.key, required this.buttonColor,
       required this.buttonPressedColor,
       required this.buttonText,
       required this.onPressed});

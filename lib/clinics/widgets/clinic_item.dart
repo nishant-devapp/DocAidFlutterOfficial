@@ -206,7 +206,7 @@ class _ClinicItemState extends State<ClinicItem> {
                             // Add onPressed logic for the second button
                           },
                           style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
                             backgroundColor: AppColors.verdigris,
                             // Color of the second button
                             shape: RoundedRectangleBorder(

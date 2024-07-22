@@ -8,7 +8,7 @@ import '../../dashboard/screens/dashboard_screen.dart';
 import '../../help/screens/help_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -59,7 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: AppBar(title: Text(_titles[_selectedIndex])),
+        appBar: AppBar(title: Text(_titles[_selectedIndex]),
+          actions: [
+          Padding(
+            padding: const EdgeInsets.only(right:15.0),
+            child: Icon(Icons.search, size: 25.0,),
+          ),
+        ],),
         drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
         body: _screens[_selectedIndex],
       ),

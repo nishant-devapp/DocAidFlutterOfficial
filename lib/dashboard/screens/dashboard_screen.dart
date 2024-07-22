@@ -1,4 +1,6 @@
+import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -13,12 +15,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SfCalendar(
-      view: CalendarView.day,
-      dataSource: MeetingDataSource(_getDataSource()),
-            monthViewSettings: const MonthViewSettings(
-          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-    ));
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          // mainAxisSize: MainAxisSize.min,
+          children: [
+           const  Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 3.0),
+              child: Align(alignment: AlignmentDirectional.topStart,child:  Text('Welcome', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor, fontSize: 20.0),)),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 3.0),
+              child: Align(alignment: AlignmentDirectional.topStart,child: Text('Dr. Name', style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
+            ),
+            Expanded(
+              child: SfCalendar(
+                onTap: _onCalendarTap,
+                view: CalendarView.day,
+                dataSource: MeetingDataSource(_getDataSource()),
+                monthViewSettings: const MonthViewSettings(
+                    appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
+              ),
+            ),
+          ],
+        ),
+    );
   }
 
   List<Meeting> _getDataSource() {
@@ -29,8 +49,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     meetings.add(Meeting(
         'Meeting with CM \n\n(CM House)', startTime, endTime, const Color(0xFF0F8644), false));
     meetings.add(Meeting(
-        'Reshita Office', startTime, endTime, const Color(0xFFC4C433), false));
+        'Reshita Office', startTime, endTime, const Color(0xFFE339EF), false));
     return meetings;
+  }
+
+  void _onCalendarTap(CalendarTapDetails details) {
+    Fluttertoast.showToast(
+        msg: "Schedule",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: AppColors.celeste,
+        textColor: AppColors.textColor,
+        fontSize: 16.0
+    );
   }
 
 

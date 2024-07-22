@@ -40,7 +40,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
               ),
             ),
             const SizedBox(height: 8.0),
-            ClinicItem(),
+            const ClinicItem(),
           ],
         ),
       ),
@@ -80,7 +80,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child: AddClinicForm(),
+            child: const AddClinicForm(),
           ),
         ),
       ),

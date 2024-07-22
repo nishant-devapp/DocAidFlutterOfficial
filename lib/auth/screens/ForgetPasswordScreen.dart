@@ -1,8 +1,6 @@
 import 'package:code/auth/controllers/forget_password_controller.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import '../../utils/constants/images.dart';
-import '../../utils/widgets/AppButton.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});

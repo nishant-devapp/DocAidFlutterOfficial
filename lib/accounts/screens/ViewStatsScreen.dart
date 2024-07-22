@@ -16,7 +16,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-             const SizedBox(height: 15.0,),
+             SizedBox(height: 15.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -26,7 +26,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                     description: "Today's Visit",
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                SizedBox(width: 16.0),
                 Expanded(
                   child: SingleVisitCard(
                     count: '5',
@@ -35,7 +35,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 24.0),
+            SizedBox(height: 24.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -54,7 +54,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8.0),
+                      SizedBox(height: 8.0),
                       IncomeCard(
                         totalEarning: "Rs. 0.0",
                         upiEarning: "Rs. 0.0",
@@ -63,7 +63,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 16.0),
+                SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

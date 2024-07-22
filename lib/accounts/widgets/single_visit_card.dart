@@ -3,10 +3,10 @@ import 'package:code/utils/constants/colors.dart';
 
 class SingleVisitCard extends StatelessWidget {
   const SingleVisitCard({
-    Key? key,
+    super.key,
     required this.count,
     required this.description,
-  }) : super(key: key);
+  });
 
   final String count;
   final String description;

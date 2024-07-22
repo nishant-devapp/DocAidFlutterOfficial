@@ -127,7 +127,7 @@ class _HelpScreenState extends State<HelpScreen> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: const InputDecoration(
-                              prefixIcon: const Icon(Icons.phone),
+                              prefixIcon: Icon(Icons.phone),
                               labelText: 'Phone',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
