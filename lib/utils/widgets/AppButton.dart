@@ -45,6 +45,7 @@ class _AppButtonState extends State<AppButton> {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Text(
+          textAlign: TextAlign.center,
           widget.buttonText,
           style: const TextStyle(
             color: Colors.white,

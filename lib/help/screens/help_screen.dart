@@ -70,7 +70,9 @@ class _HelpScreenState extends State<HelpScreen> {
                           TextFormField(
                             controller: _firstNameController,
                             keyboardType: TextInputType.name,
+                            textCapitalization: TextCapitalization.words,
                             decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person),
                               labelText: 'First Name',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -87,7 +89,9 @@ class _HelpScreenState extends State<HelpScreen> {
                           TextFormField(
                             controller: _lastNameController,
                             keyboardType: TextInputType.name,
+                            textCapitalization: TextCapitalization.words,
                             decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person),
                               labelText: 'Last Name',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -105,6 +109,7 @@ class _HelpScreenState extends State<HelpScreen> {
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.email_rounded),
                               labelText: 'Email',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -122,6 +127,7 @@ class _HelpScreenState extends State<HelpScreen> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: const InputDecoration(
+                              prefixIcon: const Icon(Icons.phone),
                               labelText: 'Phone',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(12)),

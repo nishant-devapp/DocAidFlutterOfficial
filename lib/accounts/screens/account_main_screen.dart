@@ -66,7 +66,7 @@ class _AccountMainScreenState extends State<AccountMainScreen>
                               padding: const EdgeInsets.symmetric(vertical: 10.0),
                               child: const Center(
                                 child: Text(
-                                  'Patient Tally',
+                                  'View Stats',
                                   style: TextStyle(
                                     color: AppColors.textColor,
                                     fontSize: 16.0,

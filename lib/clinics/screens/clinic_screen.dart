@@ -1,4 +1,5 @@
 import 'package:code/clinics/widgets/add_clinic_form.dart';
+import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,6 @@ class ClinicScreen extends StatefulWidget {
 }
 
 class _ClinicScreenState extends State<ClinicScreen> {
-
-  void _openAddClinicBottomSheet(){
-    showModalBottomSheet(context: context, builder: (ctx) => AddClinicForm());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
                         fontWeight: FontWeight.w400),
                   ),
                   IconButton(
-                    onPressed: _openAddClinicBottomSheet,
+                    onPressed: () => _openClinicChargeDialog(context),
                     icon: const Icon(Icons.add,
                         size: 35.0, color: AppColors.textColor),
                   ),
@@ -49,4 +46,47 @@ class _ClinicScreenState extends State<ClinicScreen> {
       ),
     );
   }
+
+
+  void _openClinicChargeDialog(BuildContext ctx){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ClinicChargeDialog(
+          title: "Additional Clinic Charges",
+          description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
+          onAccept: () {
+            Navigator.of(context).pop();
+            _openAddClinicBottomSheet();
+          },
+          onCancel: () {
+            Navigator.of(context).pop();
+            // Handle cancel action
+          },
+        );
+      },
+    );
+  }
+
+  void _openAddClinicBottomSheet(){
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // This makes the bottom sheet full screen
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: AddClinicForm(),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
 }
