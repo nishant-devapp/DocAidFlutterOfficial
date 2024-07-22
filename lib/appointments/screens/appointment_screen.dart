@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:easy_search_bar/easy_search_bar.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -45,7 +44,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -67,14 +66,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           DropdownMenuEntry(value: 'Kankarbagh', label: 'Kankarbagh'),
                         ]),
                     const Text("Date Picker"),
-                    EasySearchBar(
-                        title: const Text('Example'),
-                        onSearch: (value) => setState(() => searchValue = value),
-                        actions: [
-                          IconButton(icon: const Icon(Icons.search), onPressed: () {})
-                        ],
-                        asyncSuggestions: (value) async =>
-                        await _fetchSuggestions(value)),
+                    const Text("Search Patient"),
                   ],
                 ),
               ),
