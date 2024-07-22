@@ -60,9 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(title: Text(_titles[_selectedIndex]),
-          actions: [
+          actions: const [
           Padding(
-            padding: const EdgeInsets.only(right:15.0),
+            padding: EdgeInsets.only(right:15.0),
             child: Icon(Icons.search, size: 25.0,),
           ),
         ],),

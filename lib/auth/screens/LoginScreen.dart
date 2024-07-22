@@ -2,6 +2,7 @@
 
 import 'package:code/auth/controllers/login_controller.dart';
 import 'package:code/auth/screens/ForgetPasswordScreen.dart';
+import 'package:code/home/screens/home_screen.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -49,12 +50,10 @@ class _LoginScreenState extends State<LoginScreen> {
       token = loginResponse.jwt;
       await _loginController.storeToken(token);
 
-      // var TOKEN = await TokenManager().getToken();
-      // print(TOKEN);
 
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (context) => const DashboardScreen()),
-      // );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login failed. Please try again.')),
