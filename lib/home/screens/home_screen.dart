@@ -55,20 +55,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchHomeGet();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: AppBar(title: Text(_titles[_selectedIndex]),
-          actions: const [
-          Padding(
-            padding: EdgeInsets.only(right:15.0),
-            child: Icon(Icons.search, size: 25.0,),
-          ),
-        ],),
+        appBar: AppBar(title: Text(_titles[_selectedIndex]),),
         drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
         body: _screens[_selectedIndex],
       ),
     );
   }
+
+  // method  void fetchHomeGet() {}
+
+
+
 }
+
+void _fetchHomeGet() {}
+

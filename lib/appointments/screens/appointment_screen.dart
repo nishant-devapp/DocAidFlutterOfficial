@@ -1,4 +1,5 @@
 import 'package:code/utils/constants/colors.dart';
+import 'package:code/utils/helpers/Toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -146,26 +147,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          toastification.showCustom(
-          context: context, // optional if you use ToastificationWrapper
-            autoCloseDuration: const Duration(seconds:3),
-          alignment: Alignment.bottomCenter,
-          builder: (BuildContext context, ToastificationItem holder) {
-            return Align(
-              alignment: Alignment.center,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.celeste,
-                ),
-                padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.all(8),
-                child: const Text('This is a toast message!',
-                    style: TextStyle(color: AppColors.textColor)),
-              ),
-            );
-          },
-        );
+          showToast(context, "Add Appointment Pressed!!");
         },
         backgroundColor: AppColors.verdigris,
         foregroundColor: Colors.white,
