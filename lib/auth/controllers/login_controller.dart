@@ -27,11 +27,6 @@ class LoginController {
     }
   }
 
-  // Future<void> saveToken(String token) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('jwt_token', token);
-  // }
-
   Future<void> storeToken(String token) async {
     await TokenManager().saveToken(token);
   }

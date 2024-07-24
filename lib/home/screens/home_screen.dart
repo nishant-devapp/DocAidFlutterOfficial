@@ -1,4 +1,6 @@
+import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../accounts/screens/account_main_screen.dart';
 import '../../appointments/screens/appointment_screen.dart';
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final List<int> _navigationStack = [0];
+  late Future<void> _initFuture;
 
   final List<Widget> _screens = [
     const DashboardScreen(),
@@ -25,6 +28,15 @@ class _HomeScreenState extends State<HomeScreen> {
     const AccountMainScreen(),
     const HelpScreen(),
   ];
+
+  Future<void> _fetchData() async {
+    try {
+      final doctorProvider = Provider.of<HomeProvider>(context, listen: false);
+      await doctorProvider.fetchDoctorDetail();
+    } catch (e) {
+      throw Exception('Failed to retrieve token or fetch data: $e');
+    }
+  }
 
   final List<String> _titles = [
     'Dashboard',
@@ -57,26 +69,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchHomeGet();
+    _initFuture = _fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(title: Text(_titles[_selectedIndex]),),
-        drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
-        body: _screens[_selectedIndex],
-      ),
+    final doctorProvider = Provider.of<HomeProvider>(context);
+
+    return FutureBuilder<void>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error retrieving data'));
+        }
+        return WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(_titles[_selectedIndex]),
+            ),
+            drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
+            body: doctorProvider.loading
+                ? const Center(child: CircularProgressIndicator())
+                : doctorProvider.errorMessage.isNotEmpty
+                    ? Center(child: Text(doctorProvider.errorMessage))
+                    : _screens[_selectedIndex],
+          ),
+        );
+      },
     );
   }
-
-  // method  void fetchHomeGet() {}
-
-
-
 }
-
-void _fetchHomeGet() {}
-

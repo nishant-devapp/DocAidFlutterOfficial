@@ -1,8 +1,10 @@
 import 'package:code/auth/screens/LoginScreen.dart';
-import 'package:code/home/screens/home_screen.dart';
+import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const DocAid());
+void main() => runApp(ChangeNotifierProvider(
+    create: (context) => HomeProvider(), child: const DocAid()));
 
 class DocAid extends StatelessWidget {
   const DocAid({super.key});
@@ -13,7 +15,7 @@ class DocAid extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Doc-Aid',
       themeMode: ThemeMode.light,
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }

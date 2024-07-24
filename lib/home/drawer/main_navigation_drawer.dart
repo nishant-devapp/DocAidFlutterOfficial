@@ -1,3 +1,4 @@
+import 'package:code/profile/screens/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../utils/helpers/TokenManager.dart';
@@ -13,8 +14,8 @@ class MainNavigationDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          const UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [AppColors.mistyRose, AppColors.almond],
                 begin: Alignment.topRight,
@@ -25,12 +26,17 @@ class MainNavigationDrawer extends StatelessWidget {
                 style: TextStyle(fontSize: 16.0, color: AppColors.textColor)),
             accountEmail: Text('example@gmail.com',
                 style: TextStyle(fontSize: 18.0, color: AppColors.textColor)),
-            currentAccountPicture: CircleAvatar(
-              radius: 30.0,
-              backgroundColor: Colors.white,
-              child: Text(
-                'D',
-                style: TextStyle(fontSize: 20.0, color: Colors.blue),
+            currentAccountPicture: InkWell(
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DoctorProfileScreen()));},
+              child: const CircleAvatar(
+                radius: 30.0,
+                backgroundColor: Colors.white,
+                child: Text(
+                  'D',
+                  style: TextStyle(fontSize: 20.0, color: Colors.blue),
+                ),
               ),
             ),
           ),
