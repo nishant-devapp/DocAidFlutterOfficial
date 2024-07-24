@@ -38,7 +38,7 @@ class HomeProvider with ChangeNotifier {
       final response = await http.get(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body)['data'];
+        final data = json.decode(response.body);
         _homeGetModel = HomeGetModel.fromJson(data);
         print(response);
       } else {
