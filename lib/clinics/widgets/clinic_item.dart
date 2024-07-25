@@ -47,8 +47,7 @@ class _ClinicItemState extends State<ClinicItem> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
                   ),
-                  margin:
-                  const EdgeInsets.only(bottom: 30.0, left: 10.0, right: 10.0),
+                  margin: const EdgeInsets.only(bottom: 30.0, left: 10.0, right: 10.0),
                   elevation: 10,
                   shadowColor: AppColors.verdigris.withOpacity(0.4),
                   child: Container(

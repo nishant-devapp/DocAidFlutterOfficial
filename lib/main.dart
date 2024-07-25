@@ -1,5 +1,4 @@
 import 'package:code/auth/screens/LoginScreen.dart';
-import 'package:code/profile/screens/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +9,6 @@ void main() => runApp(
     providers: [ChangeNotifierProvider(create: (_) => HomeGetProvider())],
     child: const DocAid()));
 
-// void main() => runApp(const DocAid());
 
 class DocAid extends StatelessWidget {
   const DocAid({super.key});
