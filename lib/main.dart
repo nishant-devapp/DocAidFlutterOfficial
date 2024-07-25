@@ -3,8 +3,7 @@ import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(ChangeNotifierProvider(
-    create: (context) => HomeProvider(), child: const DocAid()));
+void main() => runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => HomeProvider())], child: const DocAid()));
 
 class DocAid extends StatelessWidget {
   const DocAid({super.key});

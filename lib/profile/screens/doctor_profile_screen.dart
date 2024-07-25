@@ -10,17 +10,21 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    final doctorProvider = Provider.of<HomeProvider>(context);
-    final doctorInfo = doctorProvider.homeGet;
-
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            Center(child: Text(doctorInfo!.firstName, style: const TextStyle(fontSize: 22),)),
+
           ],
         ),
       ),
