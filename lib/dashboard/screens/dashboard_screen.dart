@@ -1,7 +1,10 @@
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../../home/provider/home_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -13,31 +16,56 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<HomeGetProvider>(context, listen: false);
+      if (provider.doctorProfile == null) {
+        provider.fetchDoctorProfile();
+      }
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.min,
-          children: [
-           const  Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 3.0),
-              child: Align(alignment: AlignmentDirectional.topStart,child:  Text('Welcome', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor, fontSize: 20.0),)),
+      body: Consumer<HomeGetProvider>(builder: (context, homeProvider, child) {
+        if (homeProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (homeProvider.errorMessage != null) {
+          return Center(child: Text('Error: ${homeProvider.errorMessage}'));
+        } else if (homeProvider.doctorProfile != null) {
+          final doctorProfile = homeProvider.doctorProfile!;
+          return  SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                const  Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 3.0),
+                  child: Align(alignment: AlignmentDirectional.topStart,child:  Text('Welcome', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor, fontSize: 20.0),)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 3.0),
+                  child: Align(alignment: AlignmentDirectional.topStart,child: Text(doctorProfile.data!.firstName!, style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
+                ),
+                Expanded(
+                  child: SfCalendar(
+                    onTap: _onCalendarTap,
+                    view: CalendarView.day,
+                    dataSource: MeetingDataSource(_getDataSource()),
+                    monthViewSettings: const MonthViewSettings(
+                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
+                  ),
+                ),
+              ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 3.0),
-              child: Align(alignment: AlignmentDirectional.topStart,child: Text('Dr. Name', style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
-            ),
-            Expanded(
-              child: SfCalendar(
-                onTap: _onCalendarTap,
-                view: CalendarView.day,
-                dataSource: MeetingDataSource(_getDataSource()),
-                monthViewSettings: const MonthViewSettings(
-                    appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-              ),
-            ),
-          ],
-        ),
+          );
+        } else {
+          return const Center(child: Text('No data available'));
+        }
+      }),
     );
   }
 

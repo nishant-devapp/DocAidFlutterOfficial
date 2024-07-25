@@ -1,13 +1,13 @@
-import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../accounts/screens/account_main_screen.dart';
 import '../../appointments/screens/appointment_screen.dart';
 import '../../clinics/screens/clinic_screen.dart';
-import '../../home/drawer/main_navigation_drawer.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../help/screens/help_screen.dart';
+import '../../home/drawer/main_navigation_drawer.dart';
+import '../provider/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,16 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-
-  }
-
   int _selectedIndex = 0;
   final List<int> _navigationStack = [0];
-  late Future<void> _initFuture;
 
   final List<Widget> _screens = [
     const DashboardScreen(),
@@ -43,6 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
     'Accounts',
     'Help',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorProfile();
+    });
+  }
+
+
 
   Future<bool> _onWillPop() async {
     if (_navigationStack.length > 1) {
@@ -64,20 +66,28 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.pop(context); // Close the drawer
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(_titles[_selectedIndex]),
-        ),
-        drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
-        body:  _screens[_selectedIndex],
-      ),
-    );
+    return Consumer<HomeGetProvider>(builder: (context, homeProvider, child) {
+      if (homeProvider.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (homeProvider.errorMessage != null) {
+        return Center(child: Text('Error: ${homeProvider.errorMessage}'));
+      } else if (homeProvider.doctorProfile != null) {
+        final doctorProfile = homeProvider.doctorProfile!;
+        return  WillPopScope(
+          onWillPop: _onWillPop,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(_titles[_selectedIndex]),
+            ),
+            drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
+            body: _screens[_selectedIndex],
+          ),
+        );
+      } else {
+        return const Center(child: Text('No data available'));
+      }
+    });
   }
 }
