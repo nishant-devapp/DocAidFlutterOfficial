@@ -34,4 +34,9 @@ class HomeGetProvider extends ChangeNotifier{
 
   }
 
+  // Get a list of clinics
+  List<Clinics> getClinics() {
+    return doctorProfile?.data?.clinics ?? [];
+  }
+
 }

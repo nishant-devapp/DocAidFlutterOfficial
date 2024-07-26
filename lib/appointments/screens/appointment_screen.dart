@@ -1,10 +1,10 @@
+import 'package:code/home/models/home_get_model.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/helpers/Toaster.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:toastification/toastification.dart';
-
+import '../../home/provider/home_provider.dart';
+import '../../home/widgets/doctor_profile_base.dart';
 import '../widgets/appointment_item.dart';
 
 class AppointmentScreen extends StatefulWidget {
@@ -19,12 +19,119 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String dropDownValue = 'All Clinics';
   String searchValue = '';
 
-  String _dateCount = '';
-  String _range = '';
-  String _rangeCount = '';
+  String? _selectedClinicName;
+  int? _selectedClinicId;
+  Clinics? selectedClinic;
+  bool allClinicsSelected = true;
+  DateTime? _selectedDate;
 
   final TextEditingController _dateController = TextEditingController();
-  DateTime? _selectedDate;
+  final List<String> _suggestions = [
+    'Rahul',
+    'Nishant',
+    'Akansha',
+    'Fatima',
+    'Anish',
+    'Subham',
+    'Sameer',
+    'Niraj',
+    'Raju',
+    'Manish'
+  ];
+
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final deviceHeight = mediaQuery.size.height;
+    final deviceWidth = mediaQuery.size.width;
+
+    return Scaffold(
+      body: DoctorProfileBase(
+        builder: (HomeGetProvider homeProvider) {
+          final doctorProfile = homeProvider.doctorProfile!;
+          final clinics = homeProvider.getClinics();
+          final clinicsWithAll = [null, ...clinics]; // To Add "All Clinics" option here
+          // Check if "All Clinics" is selected when screen starts
+          if (allClinicsSelected && selectedClinic == null) {
+            selectedClinic = null;
+          }
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child:  Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black54, width: 1),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<Clinics?>(
+                                hint: const Text('Select Clinic'),
+                                value: selectedClinic,
+                                onChanged: (Clinics? newValue) {
+                                  setState(() {
+                                    selectedClinic = newValue;
+                                    _selectedClinicId = newValue?.id;
+                                    _selectedClinicName = newValue?.clinicName;
+                                    allClinicsSelected = newValue == null;
+                                  });
+                                },
+                                items: clinicsWithAll.map<DropdownMenuItem<Clinics?>>((Clinics? clinic) {
+                                  return DropdownMenuItem<Clinics?>(
+                                    value: clinic,
+                                    child: Text(clinic?.clinicName ?? 'All Clinics'),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _dateController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              labelText: 'Select Date',
+                              prefixIcon: IconButton(
+                                icon: const Icon(Icons.calendar_today_outlined),
+                                onPressed: () => _selectDate(context),
+                              ),
+                            ),
+                            readOnly: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                   AppointmentItem(clinicId: _selectedClinicId, date: _selectedDate,),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showToast(context, "Add Appointment Pressed!!");
+        },
+        backgroundColor: AppColors.verdigris,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime now = DateTime.now();
@@ -46,28 +153,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  final List<String> _suggestions = [
-    'Rahul',
-    'Nishant',
-    'Akansha',
-    'Fatima',
-    'Anish',
-    'Subham',
-    'Sameer',
-    'Niraj',
-    'Raju',
-    'Manish'
-  ];
-
-  // List of items in our dropdown menu
-  var items = [
-    'All Clinics',
-    'Boring Road',
-    'Kankarbagh',
-    'Patliputra Colony',
-    'Rajabazar',
-  ];
-
   Future<List<String>> _fetchSuggestions(String searchValue) async {
     await Future.delayed(const Duration(milliseconds: 750));
 
@@ -76,83 +161,4 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }).toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final deviceHeight = mediaQuery.size.height;
-    final deviceWidth = mediaQuery.size.width;
-
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: dropDownValue,
-                        items: <String>[
-                          'All Clinics',
-                          'Boring Road',
-                          'Kankarbagh',
-                          'Patliputra Colony',
-                          'Rajabazar',
-                        ].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            dropDownValue = newValue!;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          labelText: 'Select Clinic',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _dateController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          labelText: 'Select Date',
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.calendar_today),
-                            onPressed: () => _selectDate(context),
-                          ),
-                        ),
-                        readOnly: true,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const AppointmentItem(),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showToast(context, "Add Appointment Pressed!!");
-        },
-        backgroundColor: AppColors.verdigris,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
 }

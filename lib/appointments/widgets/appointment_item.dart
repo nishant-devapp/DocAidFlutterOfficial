@@ -1,8 +1,12 @@
+import 'package:code/appointments/widgets/unpaid_text_design.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentItem extends StatefulWidget {
-  const AppointmentItem({super.key});
+  const AppointmentItem({super.key,required this.clinicId, required this.date});
+
+  final int? clinicId;
+  final DateTime? date;
 
   @override
   State<AppointmentItem> createState() => _AppointmentItemState();
@@ -41,14 +45,10 @@ class _AppointmentItemState extends State<AppointmentItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(paidStatus[index],
-                            style: const TextStyle(
-                                color: AppColors.verdigris,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400)),
+                        UnpaidTextDesign(),
                         const Icon(
                           Icons.edit,
                           color: AppColors.jet,

@@ -1,9 +1,6 @@
+import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:code/utils/constants/colors.dart';
-import 'package:code/utils/constants/images.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 import '../../home/provider/home_provider.dart';
 
@@ -15,13 +12,6 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorProfile();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +20,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     final deviceWidth = mediaQuery.size.width;
 
     return Scaffold(
-      body: Consumer<HomeGetProvider>(builder: (context, homeProvider, child) {
-        if (homeProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (homeProvider.errorMessage != null) {
-          return Center(child: Text('Error: ${homeProvider.errorMessage}'));
-        } else if (homeProvider.doctorProfile != null) {
+      appBar: AppBar(
+        backgroundColor: AppColors.magnolia,
+        title: const Text('Your Profile', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),),
+        centerTitle: true,
+       ),
+      body: DoctorProfileBase(
+        builder: (HomeGetProvider homeProvider) {
           final doctorProfile = homeProvider.doctorProfile!;
           return SafeArea(
             child: SingleChildScrollView(
@@ -85,7 +76,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         color: AppColors.textColor),
                                   ),
                                   Text(
-                                    '${homeProvider.doctorProfile!.data?.firstName ?? ''} ${homeProvider.doctorProfile!.data?.lastName ?? ''}',
+                                    '${doctorProfile.data?.firstName ?? ''} ${doctorProfile.data?.lastName ?? ''}',
                                     style: const TextStyle(
                                         fontSize: 22.0,
                                         fontWeight: FontWeight.w700,
@@ -111,7 +102,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         color: AppColors.textColor),
                                   ),
                                   Text(
-                                    '${homeProvider.doctorProfile!.data?.email ?? ''} ',
+                                    '${doctorProfile.data?.email ?? ''} ',
                                     style: const TextStyle(
                                         fontSize: 17.0,
                                         fontWeight: FontWeight.w500,
@@ -131,7 +122,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         color: AppColors.textColor),
                                   ),
                                   Text(
-                                    '${homeProvider.doctorProfile!.data?.licenceNumber ?? ''} ',
+                                    '${doctorProfile.data?.licenceNumber ?? ''} ',
                                     style: const TextStyle(
                                         fontSize: 17.0,
                                         fontWeight: FontWeight.w500,
@@ -154,7 +145,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                     color: AppColors.textColor),
                               ),
                               Text(
-                                '${homeProvider.doctorProfile!.data?.contact ?? ''} ',
+                                '${doctorProfile.data?.contact ?? ''} ',
                                 style: const TextStyle(
                                     fontSize: 17.0,
                                     fontWeight: FontWeight.w500,
@@ -196,10 +187,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               ),
             ),
           );
-        } else {
-          return const Center(child: Text('No data available'));
-        }
-      }),
+        },
+      ),
     );
   }
 }
