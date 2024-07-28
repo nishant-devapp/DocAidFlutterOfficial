@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import '../../utils/constants/colors.dart';
 
 class UnpaidTextDesign extends StatelessWidget {
-  const UnpaidTextDesign({super.key});
+  const UnpaidTextDesign({super.key, required this.appointmentId});
+
+  final int appointmentId;
+
 
   @override
   Widget build(BuildContext context) {

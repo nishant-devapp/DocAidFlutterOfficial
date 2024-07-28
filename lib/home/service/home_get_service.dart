@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:code/utils/constants/api_endpoints.dart';
 import 'package:code/utils/constants/app_urls.dart';
 import 'package:code/utils/helpers/TokenManager.dart';
 import 'package:code/home/models/home_get_model.dart';
@@ -6,7 +7,8 @@ import 'package:http/http.dart' as http;
 
 class HomeGetService {
   final TokenManager _tokenManager = TokenManager();
-  static const String baseUrl = "${AppUrls.baseUrl}/home/get";
+  // static const String baseUrl = "${AppUrls.baseUrl}/home/get";
+  static const String baseUrl = AppUrls.baseUrl + ApiEndpoints.homeGetEndPoint;
 
   Future<HomeGetModel> fetchDoctorProfile() async {
     try {

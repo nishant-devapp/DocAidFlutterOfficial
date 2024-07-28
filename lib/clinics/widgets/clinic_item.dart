@@ -1,7 +1,10 @@
 import 'package:code/utils/constants/colors.dart';
+import 'package:code/utils/helpers/clinic_day_abbreviator.dart';
+import 'package:code/utils/helpers/time_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../appointments/screens/appointment_screen.dart';
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
 
@@ -13,6 +16,7 @@ class ClinicItem extends StatefulWidget {
 }
 
 class _ClinicItemState extends State<ClinicItem> {
+
   @override
   void initState() {
     super.initState();
@@ -24,14 +28,17 @@ class _ClinicItemState extends State<ClinicItem> {
     });
   }
 
-  List days = ['M W F', 'T Th Sa', 'M F S'];
 
   @override
   Widget build(BuildContext context) {
+
+    String clinicDays;
+
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
         final doctorProfile = homeProvider.doctorProfile!;
         final clinics = homeProvider.getClinics();
+
        // print(clinics.length);
         return Expanded(
           child: ListView.builder(
@@ -41,6 +48,7 @@ class _ClinicItemState extends State<ClinicItem> {
             itemBuilder: (context, index) {
         // print('Index: $index, Clinics Length: ${clinics.length}');
               final clinic = clinics[index];
+             clinicDays = getAbbreviatedDays(clinic.days!);
               return Card(
                 surfaceTintColor: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -130,7 +138,7 @@ class _ClinicItemState extends State<ClinicItem> {
                           ),
                           Text(
                             clinic.incharge!,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
@@ -148,7 +156,7 @@ class _ClinicItemState extends State<ClinicItem> {
                           ),
                           Text(
                             clinic.clinicContact!,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
@@ -168,13 +176,14 @@ class _ClinicItemState extends State<ClinicItem> {
                                 width: 3.0,
                               ),
                               Text(
-                                clinic.startTime!,
-                                style: const TextStyle(fontSize: 14),
+                                "${formatTime(clinic.startTime!)} - ${formatTime(clinic.endTime!)}",
+                                // clinic.startTime!,
+                                style: const TextStyle(fontSize: 15),
                               ),
                             ],
                           ),
                           Text(
-                            days[index],
+                           clinicDays,
                             style:
                             const TextStyle(fontSize: 18, color: AppColors.vermilion, fontWeight: FontWeight.w600),
                           )
@@ -211,7 +220,15 @@ class _ClinicItemState extends State<ClinicItem> {
                           Expanded(
                             child: TextButton(
                               onPressed: () {
-                                // Add onPressed logic for the second button
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AppointmentScreen(
+                                      selectedClinicId: clinic.id,
+                                      selectedClinicName: clinic.clinicName,
+                                    ),
+                                  ),
+                                );
                               },
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 15.0),
