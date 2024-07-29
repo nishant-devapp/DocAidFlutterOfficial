@@ -36,18 +36,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   final TextEditingController _dateController = TextEditingController();
 
-  final List<String> _suggestions = [
-    'Rahul',
-    'Nishant',
-    'Akansha',
-    'Fatima',
-    'Anish',
-    'Subham',
-    'Sameer',
-    'Niraj',
-    'Raju',
-    'Manish'
-  ];
 
   @override
   void initState() {
@@ -249,11 +237,4 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  Future<List<String>> _fetchSuggestions(String searchValue) async {
-    await Future.delayed(const Duration(milliseconds: 750));
-
-    return _suggestions.where((element) {
-      return element.toLowerCase().contains(searchValue.toLowerCase());
-    }).toList();
-  }
 }

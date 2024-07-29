@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
+import 'days_selector.dart';
 
 class AddClinicForm extends StatefulWidget {
   const AddClinicForm({super.key});
@@ -13,23 +14,40 @@ class AddClinicForm extends StatefulWidget {
 }
 
 class _AddClinicFormState extends State<AddClinicForm> {
-
   final TextEditingController _clinicNameController = TextEditingController();
-  final TextEditingController _clinicAddressController = TextEditingController();
-  final TextEditingController _clinicInchargeNameController = TextEditingController();
-  final TextEditingController _clinicMobileNumberController = TextEditingController();
-  final TextEditingController _clinicNewPatientFeeController = TextEditingController();
-  final TextEditingController _clinicOldPatientFeeController = TextEditingController();
+  final TextEditingController _clinicAddressController =
+      TextEditingController();
+  final TextEditingController _clinicInchargeNameController =
+      TextEditingController();
+  final TextEditingController _clinicMobileNumberController =
+      TextEditingController();
+  final TextEditingController _clinicNewPatientFeeController =
+      TextEditingController();
+  final TextEditingController _clinicOldPatientFeeController =
+      TextEditingController();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
+  List<String> _selectedDays = [];
+
+
+
+  void _onDaysChanged(List<String> days) {
+    setState(() {
+      _selectedDays = days.map((day) => '"$day"').toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
         final doctorProfile = homeProvider.doctorProfile!;
         return Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -40,7 +58,8 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   ),
                   const Text(
                     'Clinic Details',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
                   ),
                   const SizedBox(
                     height: 20.0,
@@ -80,28 +99,6 @@ class _AddClinicFormState extends State<AddClinicForm> {
                       }
                       return null;
                     },
-                  ),
-                  const SizedBox(
-                    height: 15.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: const Text(
-                          'Select Start Time',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: const Text(
-                          'Select End Time',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(
                     height: 15.0,
@@ -151,6 +148,67 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          controller: _startTimeController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            labelText: 'Start Time',
+                            prefixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.access_time_outlined,
+                                color: AppColors.princetonOrange,
+                              ),
+                              // onPressed: () => _selectDate(context),
+                              onPressed: () {},
+                            ),
+                          ),
+                          readOnly: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter start time';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _endTimeController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            labelText: 'End Time',
+                            prefixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.access_time_outlined,
+                                color: AppColors.princetonOrange,
+                              ),
+                              // onPressed: () => _selectDate(context),
+                              onPressed: () {},
+                            ),
+                          ),
+                          readOnly: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter end time';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: TextFormField(
                           controller: _clinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -189,9 +247,30 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   const SizedBox(
                     height: 22.0,
                   ),
+                  const Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Align(
+                        alignment: AlignmentDirectional.topStart,
+                        child: const Text(
+                          'Select Days',
+                          style: TextStyle(
+                              fontSize: 22.0, fontWeight: FontWeight.w500),
+                        )),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  DaysSelector(onSelectionChanged: _onDaysChanged),
+                  const SizedBox(
+                    height: 25.0,
+                  ),
                   SizedBox(
                       width: double.infinity,
-                      child: AppButton(buttonColor: AppColors.verdigris, buttonPressedColor: AppColors.ultraViolet, buttonText: "Submit", onPressed: _addNewClinic)),
+                      child: AppButton(
+                          buttonColor: AppColors.verdigris,
+                          buttonPressedColor: AppColors.ultraViolet,
+                          buttonText: "Submit",
+                          onPressed: _addNewClinic)),
                 ],
               ),
             ),
@@ -202,9 +281,19 @@ class _AddClinicFormState extends State<AddClinicForm> {
   }
 
   Future<void> _addNewClinic() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-  }
+    // if (!_formKey.currentState!.validate()) {
+    //   return;
+    // }
+    if(_selectedDays.isEmpty){
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select at least one day'),
 
+        ),
+      );
+    }
+
+    print('Selected Days: $_selectedDays');
+  }
 }
