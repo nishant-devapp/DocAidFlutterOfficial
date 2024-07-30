@@ -1,4 +1,6 @@
 import 'package:code/utils/constants/colors.dart';
+import 'package:code/utils/helpers/Toaster.dart';
+import 'package:code/utils/helpers/time_picker.dart';
 import 'package:code/utils/widgets/AppButton.dart';
 import 'package:flutter/material.dart';
 
@@ -32,16 +34,12 @@ class _AddClinicFormState extends State<AddClinicForm> {
 
   List<String> _selectedDays = [];
 
-
-
-  void _onDaysChanged(List<String> days) {
-    setState(() {
-      _selectedDays = days.map((day) => '"$day"').toList();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final deviceHeight = mediaQuery.size.height;
+    final deviceWidth = mediaQuery.size.width;
+
 
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
@@ -155,13 +153,11 @@ class _AddClinicFormState extends State<AddClinicForm> {
                             ),
                             labelText: 'Start Time',
                             prefixIcon: IconButton(
-                              icon: const Icon(
-                                Icons.access_time_outlined,
-                                color: AppColors.princetonOrange,
-                              ),
-                              // onPressed: () => _selectDate(context),
-                              onPressed: () {},
-                            ),
+                                icon: const Icon(
+                                  Icons.access_time_outlined,
+                                  color: AppColors.princetonOrange,
+                                ),
+                                onPressed: _selectStartTime),
                           ),
                           readOnly: true,
                           validator: (value) {
@@ -187,7 +183,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                                 color: AppColors.princetonOrange,
                               ),
                               // onPressed: () => _selectDate(context),
-                              onPressed: () {},
+                              onPressed: _selectEndTime,
                             ),
                           ),
                           readOnly: true,
@@ -248,10 +244,10 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     height: 22.0,
                   ),
                   const Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Align(
                         alignment: AlignmentDirectional.topStart,
-                        child: const Text(
+                        child: Text(
                           'Select Days',
                           style: TextStyle(
                               fontSize: 22.0, fontWeight: FontWeight.w500),
@@ -266,11 +262,40 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   ),
                   SizedBox(
                       width: double.infinity,
-                      child: AppButton(
-                          buttonColor: AppColors.verdigris,
-                          buttonPressedColor: AppColors.ultraViolet,
-                          buttonText: "Submit",
-                          onPressed: _addNewClinic)),
+
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                          backgroundColor: AppColors.verdigris,
+                        ),
+                        onPressed: () async {
+                          print(_selectedDays);
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+                          if (_selectedDays.isEmpty) {
+                            showToast(context, 'Please select dates !',
+                                AppColors.vermilion, Colors.white);
+                            return;
+                          }
+
+                          await homeProvider.addClinic(
+                              _clinicNameController.text,
+                              _clinicAddressController.text,
+                              _clinicInchargeNameController.text,
+                              _startTimeController.text,
+                              _endTimeController.text,
+                              _clinicMobileNumberController.text,
+                              _clinicNewPatientFeeController.text,
+                              _clinicOldPatientFeeController.text,
+                              _selectedDays);
+
+                          Navigator.pop(context);
+                        },
+                        child: homeProvider.isAddingClinic
+                            ? const CircularProgressIndicator()
+                            : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18.0),),
+                      )),
                 ],
               ),
             ),
@@ -280,20 +305,29 @@ class _AddClinicFormState extends State<AddClinicForm> {
     );
   }
 
-  Future<void> _addNewClinic() async {
-    // if (!_formKey.currentState!.validate()) {
-    //   return;
-    // }
-    if(_selectedDays.isEmpty){
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select at least one day'),
 
-        ),
-      );
-    }
-
-    print('Selected Days: $_selectedDays');
+  void _onDaysChanged(List<String> days) {
+    setState(() {
+      _selectedDays = days.map((day) => day).toList();
+    });
   }
+
+  Future<void> _selectStartTime() async {
+    final String selectedStartTime = await selectTime(context);
+    if (selectedStartTime.isNotEmpty) {
+      setState(() {
+        _startTimeController.text = selectedStartTime;
+      });
+    }
+  }
+
+  Future<void> _selectEndTime() async {
+    final String selectedEndTime = await selectTime(context);
+    if (selectedEndTime.isNotEmpty) {
+      setState(() {
+        _endTimeController.text = selectedEndTime;
+      });
+    }
+  }
+
 }

@@ -182,10 +182,16 @@ class _ClinicItemState extends State<ClinicItem> {
                               ),
                             ],
                           ),
-                          Text(
-                           clinicDays,
-                            style:
-                            const TextStyle(fontSize: 18, color: AppColors.vermilion, fontWeight: FontWeight.w600),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Align(
+                              alignment: AlignmentDirectional.centerEnd,
+                              child: Text(
+                               clinicDays,
+                                style:
+                                const TextStyle(fontSize: 18, color: AppColors.vermilion, fontWeight: FontWeight.w600),
+                              ),
+                            ),
                           )
                         ],
                       ),

@@ -191,7 +191,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showToast(context, "Add Appointment Pressed!!");
+          showToast(context, "Add Appointment Pressed!!", AppColors.celeste, AppColors.textColor);
         },
         backgroundColor: AppColors.verdigris,
         foregroundColor: Colors.white,
@@ -229,7 +229,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       if (allClinicsSelected) {
         await appointmentProvider.fetchAllAppointments(
             DateFormat('yyyy-MM-dd').format(_selectedDate!));
-        // await appointmentProvider.fetchAllAppointments('2024-07-28');
       } else {
         await appointmentProvider.fetchClinicAppointments(_selectedClinicId!,
             DateFormat('yyyy-MM-dd').format(_selectedDate!));

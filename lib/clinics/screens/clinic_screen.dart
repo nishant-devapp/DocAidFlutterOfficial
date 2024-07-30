@@ -3,6 +3,7 @@ import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
@@ -15,6 +16,12 @@ class ClinicScreen extends StatefulWidget {
 }
 
 class _ClinicScreenState extends State<ClinicScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorProfile();
+  }
   
   @override
   Widget build(BuildContext context) {

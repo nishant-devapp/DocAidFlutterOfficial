@@ -59,22 +59,34 @@ class HomeGetService {
 
       final url = Uri.parse(baseUrl);
 
-      final response = await http.post(url, headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      }, body: {
-        "clinicName": clinicName,
-        "location": location,
-        "incharge": incharge,
-        "startTime": startTime,
-        "endTime": endTime,
-        "clinicContact": clinicContact,
-        "clinicNewFees": clinicNewFee,
-        "clinicOldFees": clinicOldFees,
-        "days": days,
-      });
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "clinicName": clinicName,
+          "location": location,
+          "incharge": incharge,
+          "startTime": startTime,
+          "endTime": endTime,
+          "clinicContact": clinicContact,
+          "clinicNewFees": clinicNewFee,
+          "clinicOldFees": clinicOldFees,
+          "days": days.map((day) => day.toUpperCase()).toList()
+        }),
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode != 201) {
+        throw Exception('Failed to add clinic');
+      }
     } catch (error) {
-      print('Error fetching doctor profile: $error');
+      print('Error adding clinic: $error');
       throw error;
     }
   }
