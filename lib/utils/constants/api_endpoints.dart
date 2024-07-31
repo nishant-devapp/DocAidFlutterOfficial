@@ -1,9 +1,12 @@
 class ApiEndpoints {
+
   static const String homeGetEndPoint = "/home/get";
 
   // Dashboard
 
   // Clinics
+  static const String addNewClinicEndPoint = '/clinic/add';
+  static const String updateClinicEndPoint = '/clinic/update';
 
   // Appointments
   static const String fetchAllAppointmentsEndPoint = "/clinic/ClincsToAppointment";
@@ -12,7 +15,7 @@ class ApiEndpoints {
   static const String updateAppointmentVisitStatusEndPoint = '/appointment/setAppointmentVisitStatus';
   static const String bookAppointmentEndPoint = '/appointment/book1';
   static const String updateAppointmentEndPoint = '/appointment/update';
-  static const String addNewClinicEndPoint = '/clinic/add';
+
 
 // Accounts
 

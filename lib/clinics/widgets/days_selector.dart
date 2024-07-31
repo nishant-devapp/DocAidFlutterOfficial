@@ -2,9 +2,10 @@ import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class DaysSelector extends StatefulWidget {
-  const DaysSelector({super.key, required this.onSelectionChanged});
+  const DaysSelector({super.key, required this.onSelectionChanged, required this.selectedDays});
 
   final Function(List<String>) onSelectionChanged;
+  final List<String> selectedDays;
 
   @override
   State<DaysSelector> createState() => _DaysSelectorState();
@@ -13,8 +14,13 @@ class DaysSelector extends StatefulWidget {
 class _DaysSelectorState extends State<DaysSelector> {
 
   final List<String> _weekDays = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-  final List<String> _selectedDays = [];
+  late List<String> _selectedDays = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedDays = widget.selectedDays; // Initialize with pre-selected days
+  }
 
   @override
   Widget build(BuildContext context) {

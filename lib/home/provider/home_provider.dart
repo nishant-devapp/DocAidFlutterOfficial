@@ -7,6 +7,7 @@ class HomeGetProvider extends ChangeNotifier {
   HomeGetModel? _doctorProfile;
   bool _isLoading = false;
   bool _isAddingClinic = false;
+  bool _isUpdatingClinic = false;
   String? _errorMessage;
 
   HomeGetModel? get doctorProfile => _doctorProfile;
@@ -14,6 +15,7 @@ class HomeGetProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   bool get isAddingClinic => _isAddingClinic;
+  bool get isUpdatingClinic => _isUpdatingClinic;
 
   String? get errorMessage => _errorMessage;
 
@@ -51,25 +53,67 @@ class HomeGetProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    try{
-      await _homeGetService.addNewClinic(
-          clinicName, location, incharge, startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days
-      );
+    try {
+      await _homeGetService.addNewClinic(clinicName, location, incharge,
+          startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days);
 
-      await fetchDoctorProfile();
-
-    }catch(error){
+      // Fetch updated doctor profile to reflect the new clinic
+      _doctorProfile = await _homeGetService.fetchDoctorProfile();
+    } catch (error) {
       _errorMessage = 'Error adding clinic: $error';
     } finally {
       _isAddingClinic = false;
       notifyListeners();
     }
+  }
+
+
+  Future<void> updateClinic(
+      int clinicId,
+      String clinicName,
+      String location,
+      String incharge,
+      String startTime,
+      String endTime,
+      String clinicContact,
+      String clinicNewFee,
+      String clinicOldFees,
+      List<String> days) async{
+
+    _isUpdatingClinic = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _homeGetService.updateClinic(clinicId, clinicName, location, incharge,
+          startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days);
+
+      doctorProfile?.data?.clinicDtos?.forEach((clinic) {
+        if (clinic.id == clinicId) {
+          clinic.clinicName = clinicName;
+          clinic.location = location;
+          clinic.incharge = incharge;
+          clinic.startTime = startTime;
+          clinic.endTime = endTime;
+          clinic.clinicContact = clinicContact;
+          clinic.clinicNewFees = clinicNewFee as double?;
+          clinic.clinicOldFees = clinicOldFees as double?;
+          clinic.days = days;
+        }
+      });
+
+    } catch (error) {
+      _errorMessage = 'Error updating clinic: $error';
+    } finally {
+      _isUpdatingClinic = false;
+      notifyListeners();
+    }
 
   }
+
 
   // Get a list of clinics
   List<ClinicDtos> getClinics() {
     return doctorProfile?.data?.clinicDtos ?? [];
   }
-
 }

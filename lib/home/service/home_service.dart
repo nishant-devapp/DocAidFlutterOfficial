@@ -90,4 +90,58 @@ class HomeGetService {
       throw error;
     }
   }
+
+  Future<void> updateClinic(
+      int clinicId,
+      String clinicName,
+      String location,
+      String incharge,
+      String startTime,
+      String endTime,
+      String clinicContact,
+      String clinicNewFee,
+      String clinicOldFees,
+      List<String> days) async {
+
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.updateClinicEndPoint}/$clinicId';
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.put(
+        url,
+        body: jsonEncode({
+          "clinicName": clinicName,
+          "location": location,
+          "incharge": incharge,
+          "startTime": startTime,
+          "endTime": endTime,
+          "clinicContact": clinicContact,
+          "clinicNewFees": clinicNewFee,
+          "clinicOldFees": clinicOldFees,
+          "days": days.map((day) => day.toUpperCase()).toList()
+        }),
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update clinic');
+      }
+
+
+    }catch(error){
+      print('Error updating clinic: $error');
+      throw error;
+    }
+
+  }
 }

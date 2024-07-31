@@ -1,6 +1,7 @@
 import 'package:code/clinics/widgets/add_clinic_form.dart';
 import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
+import 'package:code/home/models/home_get_model.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,25 @@ class _ClinicScreenState extends State<ClinicScreen> {
                             fontWeight: FontWeight.w400),
                       ),
                       IconButton(
-                        onPressed: () => _openClinicChargeDialog(context),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ClinicChargeDialog(
+                                title: "Additional Clinic Charges",
+                                description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
+                                onAccept: () {
+                                  Navigator.of(context).pop();
+                                  _openAddClinicBottomSheet(context, null);
+                                },
+                                onCancel: () {
+                                  Navigator.of(context).pop();
+                                  // Handle cancel action
+                                },
+                              );
+                            },
+                          );
+                        },
                         icon: const Icon(Icons.add,
                             size: 35.0, color: AppColors.textColor),
                       ),
@@ -57,7 +76,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                const ClinicItem(),
+                const Expanded(child: ClinicItem()),
               ],
             ),
           );
@@ -67,7 +86,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
   }
 
 
-  void _openClinicChargeDialog(BuildContext ctx){
+ /* void _openClinicChargeDialog(BuildContext ctx){
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -76,7 +95,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
           description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
           onAccept: () {
             Navigator.of(context).pop();
-            _openAddClinicBottomSheet();
+            _openAddClinicBottomSheet(context, cli);
           },
           onCancel: () {
             Navigator.of(context).pop();
@@ -85,9 +104,9 @@ class _ClinicScreenState extends State<ClinicScreen> {
         );
       },
     );
-  }
+  }*/
 
-  void _openAddClinicBottomSheet(){
+  void _openAddClinicBottomSheet(BuildContext context, ClinicDtos? clinic){
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen

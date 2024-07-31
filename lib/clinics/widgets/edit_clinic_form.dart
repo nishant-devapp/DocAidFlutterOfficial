@@ -1,44 +1,65 @@
-import 'package:code/utils/constants/colors.dart';
-import 'package:code/utils/helpers/Toaster.dart';
-import 'package:code/utils/helpers/time_picker.dart';
+import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
 
+import '../../home/models/home_get_model.dart';
 import '../../home/provider/home_provider.dart';
-import '../../home/widgets/doctor_profile_base.dart';
+import '../../utils/constants/colors.dart';
+import '../../utils/helpers/Toaster.dart';
+import '../../utils/helpers/time_picker.dart';
 import 'days_selector.dart';
 
-class AddClinicForm extends StatefulWidget {
-  const AddClinicForm({super.key});
+class EditClinicForm extends StatefulWidget {
+  const EditClinicForm({super.key,this.clinicToEdit});
 
-
+  final ClinicDtos? clinicToEdit;
 
   @override
-  State<AddClinicForm> createState() => _AddClinicFormState();
+  State<EditClinicForm> createState() => _EditClinicFormState();
+
 }
 
-class _AddClinicFormState extends State<AddClinicForm> {
-  final TextEditingController _clinicNameController = TextEditingController();
-  final TextEditingController _clinicAddressController =
-      TextEditingController();
-  final TextEditingController _clinicInchargeNameController =
-      TextEditingController();
-  final TextEditingController _clinicMobileNumberController =
-      TextEditingController();
-  final TextEditingController _clinicNewPatientFeeController =
-      TextEditingController();
-  final TextEditingController _clinicOldPatientFeeController =
-      TextEditingController();
-  final TextEditingController _startTimeController = TextEditingController();
-  final TextEditingController _endTimeController = TextEditingController();
+class _EditClinicFormState extends State<EditClinicForm> {
+
+  final TextEditingController _editClinicNameController = TextEditingController();
+  final TextEditingController _editClinicAddressController =
+  TextEditingController();
+  final TextEditingController _editClinicInchargeNameController =
+  TextEditingController();
+  final TextEditingController _editClinicMobileNumberController =
+  TextEditingController();
+  final TextEditingController _editClinicNewPatientFeeController =
+  TextEditingController();
+  final TextEditingController _editClinicOldPatientFeeController =
+  TextEditingController();
+  final TextEditingController _editStartTimeController = TextEditingController();
+  final TextEditingController _editEndTimeController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   List<String> _selectedDays = [];
 
-  void _onDaysChanged(List<String> days) {
-    setState(() {
-      _selectedDays = days.map((day) => day).toList();
-    });
+  @override
+  void initState() {
+    super.initState();
+    if (widget.clinicToEdit != null) {
+      _editClinicNameController.text = widget.clinicToEdit!.clinicName!;
+      _editClinicAddressController.text = widget.clinicToEdit!.location!;
+      _editClinicInchargeNameController.text = widget.clinicToEdit!.incharge!;
+      _editClinicMobileNumberController.text = widget.clinicToEdit!.clinicContact!;
+      if(widget.clinicToEdit!.clinicNewFees != null){
+        _editClinicNewPatientFeeController.text = widget.clinicToEdit!.clinicNewFees!.toInt().toString();
+      }else{
+        _editClinicNewPatientFeeController.text = '0';
+      }
+      if(widget.clinicToEdit!.clinicOldFees != null){
+        _editClinicOldPatientFeeController.text = widget.clinicToEdit!.clinicOldFees!.toInt().toString();
+      }else{
+        _editClinicOldPatientFeeController.text = '0';
+      }
+      _editStartTimeController.text = widget.clinicToEdit!.startTime!;
+      _editEndTimeController.text = widget.clinicToEdit!.endTime!;
+      _selectedDays = widget.clinicToEdit!.days!;
+    }
   }
 
   @override
@@ -46,7 +67,6 @@ class _AddClinicFormState extends State<AddClinicForm> {
     final mediaQuery = MediaQuery.of(context);
     final deviceHeight = mediaQuery.size.height;
     final deviceWidth = mediaQuery.size.width;
-
 
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
@@ -62,16 +82,16 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     height: 25.0,
                   ),
                   const Text(
-                    'Clinic Details',
+                    'Edit Clinic',
                     style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
+                    TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
                   ),
                   const SizedBox(
                     height: 20.0,
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
-                    controller: _clinicNameController,
+                    controller: _editClinicNameController,
                     keyboardType: TextInputType.name,
                     decoration: InputDecoration(
                         label: const Text('Clinic Name'),
@@ -90,7 +110,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.sentences,
-                    controller: _clinicAddressController,
+                    controller: _editClinicAddressController,
                     keyboardType: TextInputType.streetAddress,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.location_on_sharp),
@@ -110,7 +130,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
-                    controller: _clinicInchargeNameController,
+                    controller: _editClinicInchargeNameController,
                     keyboardType: TextInputType.name,
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.person),
@@ -129,7 +149,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     height: 12.0,
                   ),
                   TextFormField(
-                    controller: _clinicMobileNumberController,
+                    controller: _editClinicMobileNumberController,
                     maxLength: 10,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
@@ -153,7 +173,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: _startTimeController,
+                          controller: _editStartTimeController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -178,7 +198,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                       const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
-                          controller: _endTimeController,
+                          controller: _editEndTimeController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -212,7 +232,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: _clinicNewPatientFeeController,
+                          controller: _editClinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               label: const Text('New Patient Fee'),
@@ -230,7 +250,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                       const SizedBox(width: 10.0),
                       Expanded(
                         child: TextFormField(
-                          controller: _clinicOldPatientFeeController,
+                          controller: _editClinicOldPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               label: const Text('Old Patient Fee'),
@@ -263,13 +283,12 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  DaysSelector(onSelectionChanged: _onDaysChanged, selectedDays: [],),
+                  DaysSelector(onSelectionChanged: _onDaysChanged, selectedDays: _selectedDays,),
                   const SizedBox(
                     height: 25.0,
                   ),
                   SizedBox(
                       width: double.infinity,
-
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(double.infinity, deviceHeight * 0.06),
@@ -286,22 +305,22 @@ class _AddClinicFormState extends State<AddClinicForm> {
                             return;
                           }
 
-                          await homeProvider.addClinic(
-                              _clinicNameController.text.trim(),
-                              _clinicAddressController.text.trim(),
-                              _clinicInchargeNameController.text.trim(),
-                              _startTimeController.text.trim(),
-                              _endTimeController.text.trim(),
-                              _clinicMobileNumberController.text.trim(),
-                              _clinicNewPatientFeeController.text.trim(),
-                              _clinicOldPatientFeeController.text.trim(),
+                          await homeProvider.updateClinic(
+                              widget.clinicToEdit!.id!,
+                              _editClinicNameController.text.trim(),
+                              _editClinicAddressController.text.trim(),
+                              _editClinicInchargeNameController.text.trim(),
+                              _editStartTimeController.text.trim(),
+                              _editEndTimeController.text.trim(),
+                              _editClinicMobileNumberController.text.trim(),
+                              _editClinicNewPatientFeeController.text.trim(),
+                              _editClinicOldPatientFeeController.text.trim(),
                               _selectedDays);
 
                           Navigator.pop(context);
-
-
                         },
-                        child: homeProvider.isAddingClinic
+                        // child: const Text('Submit'),
+                        child: homeProvider.isUpdatingClinic
                             ? const CircularProgressIndicator()
                             : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18.0),),
                       )),
@@ -312,16 +331,14 @@ class _AddClinicFormState extends State<AddClinicForm> {
         );
       },
     );
+
   }
-
-
-
 
   Future<void> _selectStartTime() async {
     final String selectedStartTime = await selectTime(context);
     if (selectedStartTime.isNotEmpty) {
       setState(() {
-        _startTimeController.text = selectedStartTime;
+        _editStartTimeController.text = selectedStartTime;
       });
     }
   }
@@ -330,9 +347,16 @@ class _AddClinicFormState extends State<AddClinicForm> {
     final String selectedEndTime = await selectTime(context);
     if (selectedEndTime.isNotEmpty) {
       setState(() {
-        _endTimeController.text = selectedEndTime;
+        _editEndTimeController.text = selectedEndTime;
       });
     }
   }
+
+  void _onDaysChanged(List<String> days) {
+    setState(() {
+      _selectedDays = days.map((day) => day).toList();
+    });
+  }
+
 
 }
