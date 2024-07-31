@@ -47,6 +47,7 @@ class AppointmentItem extends StatelessWidget {
                           )
                               : UnpaidTextDesign(
                             appointmentId: appointment.id!,
+                            clinicLocation: appointment.clinicLocation!,
                           ),
                           IconButton(
                               onPressed: () {},

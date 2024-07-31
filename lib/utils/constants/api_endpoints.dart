@@ -15,6 +15,7 @@ class ApiEndpoints {
   static const String updateAppointmentVisitStatusEndPoint = '/appointment/setAppointmentVisitStatus';
   static const String bookAppointmentEndPoint = '/appointment/book1';
   static const String updateAppointmentEndPoint = '/appointment/update';
+  static const String createAppointmentPaymentEndPoint = '/payment/createAppointmentPayment';
 
 
 // Accounts

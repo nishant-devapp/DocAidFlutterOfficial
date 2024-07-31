@@ -235,6 +235,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
                           controller: _editClinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('New Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -253,6 +254,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
                           controller: _editClinicOldPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('Old Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),

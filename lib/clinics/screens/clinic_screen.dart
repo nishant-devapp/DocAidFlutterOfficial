@@ -86,7 +86,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
   }
 
 
- /* void _openClinicChargeDialog(BuildContext ctx){
+  void _openClinicChargeDialog(BuildContext ctx){
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -95,7 +95,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
           description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
           onAccept: () {
             Navigator.of(context).pop();
-            _openAddClinicBottomSheet(context, cli);
+            // _openAddClinicBottomSheet(context, cli);
           },
           onCancel: () {
             Navigator.of(context).pop();
@@ -104,7 +104,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
         );
       },
     );
-  }*/
+  }
 
   void _openAddClinicBottomSheet(BuildContext context, ClinicDtos? clinic){
     showModalBottomSheet(

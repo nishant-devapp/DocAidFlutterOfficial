@@ -215,7 +215,8 @@ class _AddClinicFormState extends State<AddClinicForm> {
                           controller: _clinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                              label: const Text('New Patient Fee'),
+                              label: const Text('New Patient Fee',),
+                              prefixIcon: const Icon(Icons.currency_rupee),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                               )),
@@ -233,6 +234,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                           controller: _clinicOldPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('Old Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
