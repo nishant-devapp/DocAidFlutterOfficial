@@ -1,4 +1,3 @@
-import 'package:code/utils/constants/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,6 +16,7 @@ class AppointmentDetailScreen extends StatefulWidget {
 }
 
 class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +103,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: (){},
                       splashColor: Colors.transparent,
                       child: SvgPicture.asset(
                         'assets/svg/print_icon.svg',
