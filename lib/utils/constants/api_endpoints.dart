@@ -11,11 +11,13 @@ class ApiEndpoints {
   // Appointments
   static const String fetchAllAppointmentsEndPoint = "/clinic/ClincsToAppointment";
   static const String fetchClinicAppointmentEndPoint = '/clinic/betweenDate';
-  static const String unpayAppointmentEndPoint = '/payment/appointmentUnpaid/';
   static const String updateAppointmentVisitStatusEndPoint = '/appointment/setAppointmentVisitStatus';
   static const String bookAppointmentEndPoint = '/appointment/book1';
   static const String updateAppointmentEndPoint = '/appointment/update';
+  static const String getAppointmentPaymentEndPoint = '/payment/getAppointmentPayment';
   static const String createAppointmentPaymentEndPoint = '/payment/createAppointmentPayment';
+  static const String updateAppointmentPaymentEndPoint = '/payment/updateAppointmentPayment';
+  static const String unpayAppointmentEndPoint = '/payment/appointmentUnpaid/';
 
 
 // Accounts

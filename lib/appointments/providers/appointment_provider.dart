@@ -2,20 +2,25 @@ import 'package:code/appointments/models/fetch_appointment_model.dart';
 import 'package:code/appointments/service/appointment_service.dart';
 import 'package:flutter/material.dart';
 
+import '../models/payment_info_model.dart';
+
 class AppointmentProvider with ChangeNotifier {
   final AppointmentService _service = AppointmentService();
 
   // List<AppointmentList> _appointmentList = [];
   AppointmentList? _appointmentList;
+  PaymentInfoModel? _paymentInfoModel;
   bool _isLoading = false;
   bool _isUpdating = false;
   bool _isUpdatingVisitStatus = false;
   bool _isUpdatingAppointment = false;
+  bool _isMakingAppointmentPayment = false;
+  bool _isInProcess = true;
   String? _errorMessage;
-  int? _selectedClinicId;
-  String? _selectedDate;
 
   AppointmentList? get appointments => _appointmentList;
+
+  PaymentInfoModel? get paymentInfoModel => _paymentInfoModel;
 
   bool get isLoading => _isLoading;
 
@@ -25,17 +30,11 @@ class AppointmentProvider with ChangeNotifier {
 
   bool get isUpdatingAppointment => _isUpdatingAppointment;
 
+  bool get isMakingAppointmentPayment => _isMakingAppointmentPayment;
+
+  bool get isInProcess => _isInProcess;
+
   String? get errorMessage => _errorMessage;
-
-  void setSelectedDate(String date) {
-    _selectedDate = date;
-    notifyListeners();
-  }
-
-  void setSelectedClinicId(int clinicId) {
-    _selectedClinicId = clinicId;
-    notifyListeners();
-  }
 
   Future<void> fetchAllAppointments(String date) async {
     // if (_appointmentList != null) {
@@ -68,29 +67,6 @@ class AppointmentProvider with ChangeNotifier {
       _errorMessage = 'Error fetching appointments: $error';
     } finally {
       _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> unpayAppointment(int appointmentId) async {
-    _isUpdating = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      await _service.unpayAppointment(appointmentId);
-      // Update the payment status in the local list
-      _appointmentList?.data?.forEach((appointment) {
-        if (appointment.id == appointmentId) {
-          appointment.paymentStatus = 'UNPAID';
-        }
-      });
-      notifyListeners(); // Notify listeners to update the UI
-    } catch (error) {
-      _errorMessage = 'Error updating payment status: $error';
-      notifyListeners();
-    } finally {
-      _isUpdating = false;
       notifyListeners();
     }
   }
@@ -156,6 +132,90 @@ class AppointmentProvider with ChangeNotifier {
       notifyListeners();
     } finally {
       _isUpdatingVisitStatus = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> makeAppointmentPayment(
+      int appointmentId, String modeOfPayment, String amount) async {
+    _isMakingAppointmentPayment = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _service.createAppointmentPayment(
+          appointmentId, modeOfPayment, amount);
+      // Update the payment status in the local list
+      _appointmentList?.data?.forEach((appointment) {
+        if (appointment.id == appointmentId) {
+          appointment.paymentStatus = 'PAID';
+        }
+      });
+      notifyListeners(); // Notify listeners to update the UI
+    } catch (error) {
+      _errorMessage = 'Error making payment: $error';
+      notifyListeners();
+    } finally {
+      _isMakingAppointmentPayment = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> unpayAppointment(int appointmentId) async {
+    _isUpdating = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _service.unpayAppointment(appointmentId);
+      // Update the payment status in the local list
+      _appointmentList?.data?.forEach((appointment) {
+        if (appointment.id == appointmentId) {
+          appointment.paymentStatus = 'UNPAID';
+        }
+      });
+      notifyListeners(); // Notify listeners to update the UI
+    } catch (error) {
+      _errorMessage = 'Error updating payment status: $error';
+      notifyListeners();
+    } finally {
+      _isUpdating = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getAppointmentPaymentInfo(int appointmentId) async {
+    _isInProcess = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _paymentInfoModel = await _service.getAppointmentPayment(appointmentId);
+    } catch (error) {
+      _errorMessage = 'Error fetching payment info: $error';
+    } finally {
+      _isInProcess = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateAppointmentPayment(
+      int appointmentId, String modeOfPayment, String amount) async {
+    _isInProcess = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _service.updateAppointmentPayment(
+          appointmentId, modeOfPayment, amount);
+
+      _paymentInfoModel = await _service.getAppointmentPayment(appointmentId);
+      notifyListeners(); // Notify listeners to update the UI
+    } catch (error) {
+      _errorMessage = 'Error updating payment: $error';
+      notifyListeners();
+    } finally {
+      _isInProcess = false;
       notifyListeners();
     }
   }

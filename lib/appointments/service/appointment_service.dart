@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:code/appointments/models/payment_info_model.dart';
+
 import '../../utils/constants/api_endpoints.dart';
 import '../../utils/constants/app_urls.dart';
 import '../../utils/helpers/TokenManager.dart';
@@ -80,84 +82,6 @@ class AppointmentService{
       print('Error fetching appointments: $error');
       throw error;
     }
-  }
-
-  Future<void> unpayAppointment(int appointmentId) async{
-
-    try{
-      final token = await _tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.unpayAppointmentEndPoint}/$appointmentId';
-
-      final url = Uri.parse(baseUrl);
-
-      final response = await http.patch(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print(data);
-
-      } else {
-        print('Failed to unpay appointment: ${response.body}');
-        throw Exception('Failed to unpay appointment');
-      }
-
-    }catch(error){
-      print('Error updating payment status: $error');
-      throw error;
-    }
-
-
-  }
-
-  Future<void> changeVisitStatus(int appointmentId, bool isVisited) async{
-
-    try{
-
-      final token = await _tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateAppointmentVisitStatusEndPoint;
-
-      final queryParameters = {
-        'appintmentId': appointmentId.toString(),
-        'checked': isVisited.toString(),
-      };
-
-      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-
-      final response = await http.patch(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print(data);
-      } else {
-        print('Failed to update visit status: ${response.body}');
-        throw Exception('Failed to update visit status');
-      }
-
-    }catch(error){
-      print('Error updating visit status: $error');
-      throw error;
-    }
-
   }
 
   Future<void> updateAppointmentInfo(int appointmentId, String name, String abha, int age, String contact, String gender, String appointmentDate, String appointmentTime, String clinicLocation) async{
@@ -261,5 +185,195 @@ class AppointmentService{
     }
 
   }
+
+  Future<void> changeVisitStatus(int appointmentId, bool isVisited) async{
+
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateAppointmentVisitStatusEndPoint;
+
+      final queryParameters = {
+        'appintmentId': appointmentId.toString(),
+        'checked': isVisited.toString(),
+      };
+
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to update visit status: ${response.body}');
+        throw Exception('Failed to update visit status');
+      }
+
+    }catch(error){
+      print('Error updating visit status: $error');
+      throw error;
+    }
+
+  }
+
+  Future<void> unpayAppointment(int appointmentId) async{
+
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.unpayAppointmentEndPoint}/$appointmentId';
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+
+      } else {
+        print('Failed to unpay appointment: ${response.body}');
+        throw Exception('Failed to unpay appointment');
+      }
+
+    }catch(error){
+      print('Error updating payment status: $error');
+      throw error;
+    }
+
+
+  }
+
+  Future<void> createAppointmentPayment(int appointmentId, String modeOfPayment, String amount) async{
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.createAppointmentPaymentEndPoint}/$appointmentId';
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.post(
+          url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            "modeOfPayment": modeOfPayment,
+            "amount": amount
+          }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to make payment: ${response.body}');
+        throw Exception('Failed to make payment');
+      }
+
+    }catch(error){
+      print('Error updating payment status: $error');
+      throw error;
+    }
+  }
+
+  Future<PaymentInfoModel> getAppointmentPayment(int appointmentId) async{
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.getAppointmentPaymentEndPoint}/$appointmentId';
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.get(
+          url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return PaymentInfoModel.fromJson(data);
+        print(data);
+      } else {
+        print('Failed to fetch payment info: ${response.body}');
+        throw Exception('Failed to fetch payment info');
+      }
+
+    }catch(error){
+      print('Error fetching payment info: $error');
+      throw error;
+    }
+  }
+
+  Future<void> updateAppointmentPayment(int appointmentId, String modeOfPayment, String amount) async{
+
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.updateAppointmentPaymentEndPoint}/$appointmentId';
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          "modeOfPayment": modeOfPayment,
+          "amount": amount
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to make payment: ${response.body}');
+        throw Exception('Failed to update payment');
+      }
+
+    }catch(error){
+      print('Error updating payment status: $error');
+      throw error;
+    }
+
+  }
+
 
 }

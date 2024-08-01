@@ -39,7 +39,7 @@ class PaymentInfoModel {
 class Data {
   int? id;
   String? modeOfPayment;
-  int? amount;
+  double? amount;
   Null createdAt;
   Null updatedAt;
   Null appointment;

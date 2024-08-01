@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../appointments/screens/appointment_screen.dart';
 import '../../home/provider/home_provider.dart';
-import 'add_clinic_form.dart';
 
 class ClinicItem extends StatelessWidget {
   const ClinicItem({super.key});

@@ -127,7 +127,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            _submit('UPI', _selectedFee.toString());
+                            _submit('UPI', widget.appointmentId);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(double.infinity, deviceHeight * 0.06),
@@ -146,7 +146,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            _submit('CASH', _selectedFee.toString());
+                            _submit('CASH', widget.appointmentId);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(double.infinity, deviceHeight * 0.06),
@@ -173,7 +173,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
     );
   }
 
-  void _submit(String paymentMethod, String amount) {
+  void _submit(String paymentMethod, int appointmentId) {
     if (_selectedFee == null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -197,6 +197,12 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
     // Print the selected fee (for demonstration purposes)
     print('Selected Fee: $selectedFee, Payment Method: $paymentMethod');
 
+    // Call the doPayment method of the provider
+    final appointmentProvider =
+    Provider.of<AppointmentProvider>(context, listen: false);
+    appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!);
+
+    Navigator.pop(context);
 
   }
 }
