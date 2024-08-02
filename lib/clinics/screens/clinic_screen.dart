@@ -86,26 +86,6 @@ class _ClinicScreenState extends State<ClinicScreen> {
   }
 
 
-  void _openClinicChargeDialog(BuildContext ctx){
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return ClinicChargeDialog(
-          title: "Additional Clinic Charges",
-          description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
-          onAccept: () {
-            Navigator.of(context).pop();
-            // _openAddClinicBottomSheet(context, cli);
-          },
-          onCancel: () {
-            Navigator.of(context).pop();
-            // Handle cancel action
-          },
-        );
-      },
-    );
-  }
-
   void _openAddClinicBottomSheet(BuildContext context, ClinicDtos? clinic){
     showModalBottomSheet(
       context: context,

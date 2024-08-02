@@ -36,7 +36,7 @@ class AppointmentItem extends StatelessWidget {
                   );
                 },
                 child: Card(
-                  elevation: 5.0,
+                  elevation: 4.0,
                   shadowColor: AppColors.verdigris.withOpacity(0.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),

@@ -1,4 +1,5 @@
 import 'package:code/appointments/providers/appointment_provider.dart';
+import 'package:code/appointments/providers/prescription_provider.dart';
 import 'package:code/auth/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ void main() => runApp(
     providers: [
       ChangeNotifierProvider(create: (_) => HomeGetProvider()),
       ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+      ChangeNotifierProvider(create: (_) => PrescriptionProvider()),
     ],
     child: const DocAid()));
 

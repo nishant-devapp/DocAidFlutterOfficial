@@ -1,3 +1,4 @@
+import 'package:code/appointments/screens/prescription_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -125,7 +126,14 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PrescriptionScreen(appointment: widget.appointment,),
+                          ),
+                        );
+                      },
                       splashColor: Colors.transparent,
                       child: SvgPicture.asset(
                         'assets/svg/upload_icon.svg',
