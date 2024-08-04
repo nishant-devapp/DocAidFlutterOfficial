@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class HomeGetModel {
   Data? data;
   int? statusCode;
@@ -176,6 +178,9 @@ class ClinicDtos {
   String? startTime;
   String? endTime;
   String? clinicContact;
+
+  DateTime get parsedStartTime => DateFormat('HH:mm:ss').parse(startTime!);
+  DateTime get parsedEndTime => DateFormat('HH:mm:ss').parse(endTime!);
 
   ClinicDtos(
       {this.id,

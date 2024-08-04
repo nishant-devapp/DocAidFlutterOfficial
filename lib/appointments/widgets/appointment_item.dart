@@ -1,3 +1,4 @@
+import 'package:code/appointments/widgets/edit_appointment_form.dart';
 import 'package:code/utils/helpers/time_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:code/appointments/widgets/paid_text_design.dart';
@@ -20,18 +21,20 @@ class AppointmentItem extends StatelessWidget {
     final appointments = appointmentList?.data ?? [];
 
     return Consumer<AppointmentProvider>(
-      builder: (context, appointmentProvider, child){
+      builder: (context, appointmentProvider, child) {
         return Expanded(
           child: ListView.builder(
             itemCount: appointments.length,
             itemBuilder: (context, index) {
               final appointment = appointments[index];
               return InkWell(
-                onTap: (){
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AppointmentDetailScreen(appointment: appointment,),
+                      builder: (context) => AppointmentDetailScreen(
+                        appointment: appointment,
+                      ),
                     ),
                   );
                 },
@@ -41,8 +44,8 @@ class AppointmentItem extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  margin:
-                  const EdgeInsets.only(bottom: 30.0, left: 10.0, right: 10.0),
+                  margin: const EdgeInsets.only(
+                      bottom: 30.0, left: 10.0, right: 10.0),
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
@@ -51,23 +54,54 @@ class AppointmentItem extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            appointment.paymentStatus == 'PAID'
-                                ? PaidTextDesign(
-                              appointmentId: appointment.id!,
-                            )
-                                : UnpaidTextDesign(
-                              appointmentId: appointment.id!,
-                              clinicLocation: appointment.clinicLocation!,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Text('${index + 1}.',
+                                      style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.jet)),
+                                  const SizedBox(width: 15.0),
+                                  appointment.paymentStatus == 'PAID'
+                                      ? PaidTextDesign(
+                                          appointmentId: appointment.id!,
+                                        )
+                                      : UnpaidTextDesign(
+                                          appointmentId: appointment.id!,
+                                          clinicLocation:
+                                              appointment.clinicLocation!,
+                                        ),
+                                ],
+                              ),
                             ),
                             IconButton(
-                                onPressed: () {},
-                                icon: SvgPicture.asset(
-                                  'assets/svg/edit_icon.svg',
-                                  height: 24,
-                                  width: 24,
-                                  colorFilter: const ColorFilter.mode(
-                                      AppColors.dashboardColor, BlendMode.srcIn),
-                                )),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true, // This makes the bottom sheet full screen
+                                  builder: (context) => DraggableScrollableSheet(
+                                    expand: false,
+                                    builder: (context, scrollController) => SingleChildScrollView(
+                                      controller: scrollController,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                                        ),
+                                        child: EditAppointmentForm(appointment: appointment,),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: SvgPicture.asset(
+                                'assets/svg/edit_icon.svg',
+                                height: 24,
+                                width: 24,
+                                colorFilter: const ColorFilter.mode(
+                                    AppColors.dashboardColor, BlendMode.srcIn),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10.0),
@@ -113,11 +147,15 @@ class AppointmentItem extends StatelessWidget {
                                   Checkbox(
                                     checkColor: Colors.white,
                                     activeColor: AppColors.verdigris,
-                                    value: appointment.appointmentvisitStatus == 'VISITED',
+                                    value: appointment.appointmentvisitStatus ==
+                                        'VISITED',
                                     onChanged: (value) async {
                                       if (value != null) {
-                                        await Provider.of<AppointmentProvider>(context, listen: false)
-                                            .updateAppointmentVisitStatus(appointment.id!, value);
+                                        await Provider.of<AppointmentProvider>(
+                                                context,
+                                                listen: false)
+                                            .updateAppointmentVisitStatus(
+                                                appointment.id!, value);
                                       }
                                     },
                                   ),

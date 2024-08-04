@@ -20,6 +20,10 @@ class ApiEndpoints {
   static const String unpayAppointmentEndPoint = '/payment/appointmentUnpaid/';
 
   static const String fetchPrescriptionEndPoint = '/prescriptionUpload/getImage';
+  static const String uploadPrescriptionEndPoint = '/prescriptionUpload';
+
+  static const String patientInfoByAbhaEndPoint = '/appointment/getByAbhaNumber';
+  static const String patientInfoByContactEndPoint = '/appointment/getByContactNumber';
 
 
 // Accounts

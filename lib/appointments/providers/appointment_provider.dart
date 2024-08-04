@@ -1,13 +1,13 @@
 import 'package:code/appointments/models/fetch_appointment_model.dart';
 import 'package:code/appointments/service/appointment_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/payment_info_model.dart';
 
 class AppointmentProvider with ChangeNotifier {
   final AppointmentService _service = AppointmentService();
 
-  // List<AppointmentList> _appointmentList = [];
   AppointmentList? _appointmentList;
   PaymentInfoModel? _paymentInfoModel;
   bool _isLoading = false;
@@ -21,6 +21,7 @@ class AppointmentProvider with ChangeNotifier {
   AppointmentList? get appointments => _appointmentList;
 
   PaymentInfoModel? get paymentInfoModel => _paymentInfoModel;
+
 
   bool get isLoading => _isLoading;
 
@@ -37,17 +38,15 @@ class AppointmentProvider with ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<void> fetchAllAppointments(String date) async {
-    // if (_appointmentList != null) {
-    //   return;
-    //   notifyListeners();
-    // }
 
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
+      // _appointmentList = await _service.fetchAllAppointments(date);
       _appointmentList = await _service.fetchAllAppointments(date);
+      _appointmentList = _sortAppointmentsByTime(_appointmentList);
     } catch (error) {
       _errorMessage = 'Error fetching appointments: $error';
     } finally {
@@ -62,7 +61,9 @@ class AppointmentProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // _appointmentList = await _service.fetchClinicAppointments(clinicId, date);
       _appointmentList = await _service.fetchClinicAppointments(clinicId, date);
+      _appointmentList = _sortAppointmentsByTime(_appointmentList);
     } catch (error) {
       _errorMessage = 'Error fetching appointments: $error';
     } finally {
@@ -70,6 +71,8 @@ class AppointmentProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+
 
   Future<void> updateAppointmentVisitStatus(
       int appointmentId, bool isVisited) async {
@@ -94,6 +97,38 @@ class AppointmentProvider with ChangeNotifier {
       _isUpdatingVisitStatus = false;
       notifyListeners();
     }
+  }
+
+  Future<void> bookAppointment(
+      int clinicId,
+      String name,
+      String abha,
+      String age,
+      String contact,
+      String gender,
+      String appointmentDate,
+      String appointmentTime,
+      String clinicLocation) async{
+
+    _isInProcess = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try{
+
+      await _service.addNewAppointment(clinicId, name, abha, age, contact, gender, appointmentDate, appointmentTime, "UNPAID", clinicLocation);
+
+      _appointmentList = await _service.fetchAllAppointments(appointmentDate);
+      _appointmentList = _sortAppointmentsByTime(_appointmentList);
+
+    }catch (error) {
+      _errorMessage = 'Error booking appointment: $error';
+      notifyListeners();
+    } finally {
+      _isInProcess = false;
+      notifyListeners();
+    }
+
   }
 
   Future<void> updateAppointmentInfo(
@@ -219,4 +254,22 @@ class AppointmentProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  AppointmentList _sortAppointmentsByTime(AppointmentList? appointmentList) {
+    if (appointmentList == null || appointmentList.data == null) {
+      return appointmentList!;
+    }
+
+    final DateFormat timeFormatter = DateFormat('HH:mm:ss');
+
+    appointmentList.data!.sort((a, b) {
+      final timeA = timeFormatter.parse(a.appointmentTime ?? '00:00:00');
+      final timeB = timeFormatter.parse(b.appointmentTime ?? '00:00:00');
+      return timeA.compareTo(timeB);
+    });
+
+    return appointmentList;
+  }
+
 }
+

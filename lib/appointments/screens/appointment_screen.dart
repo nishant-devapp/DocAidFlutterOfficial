@@ -1,4 +1,6 @@
 import 'package:code/appointments/widgets/appointment_loading_shimmer.dart';
+import 'package:code/appointments/widgets/book_appointment_abha_phone_sheet.dart';
+import 'package:code/appointments/widgets/book_appointment_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -136,7 +138,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         selectedClinic = newValue;
                                         _selectedClinicId = newValue?.id;
                                         _selectedClinicName =
-                                            newValue?.clinicName;
+                                            newValue?.location;
                                         allClinicsSelected = newValue == null;
                                         _fetchAppointments();
                                       });
@@ -146,7 +148,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             (ClinicDtos? clinic) {
                                       return DropdownMenuItem<ClinicDtos?>(
                                         value: clinic,
-                                        child: Text(clinic?.clinicName ??
+                                        child: Text(clinic?.location ??
                                             'All Clinics'),
                                       );
                                     }).toList(),
@@ -191,7 +193,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showToast(context, "Add Appointment Pressed!!", AppColors.celeste, AppColors.textColor);
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+            ),
+            builder: (BuildContext context) {
+              return const BookAppointmentAbhaPhoneSheet();
+            },
+          );
+
         },
         backgroundColor: AppColors.verdigris,
         foregroundColor: Colors.white,

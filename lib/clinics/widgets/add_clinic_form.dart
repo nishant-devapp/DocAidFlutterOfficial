@@ -10,8 +10,6 @@ import 'days_selector.dart';
 class AddClinicForm extends StatefulWidget {
   const AddClinicForm({super.key});
 
-
-
   @override
   State<AddClinicForm> createState() => _AddClinicFormState();
 }

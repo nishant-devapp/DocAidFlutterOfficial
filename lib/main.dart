@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'home/provider/home_provider.dart';
 
-void main() => runApp(
-    MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => HomeGetProvider()),
-      ChangeNotifierProvider(create: (_) => AppointmentProvider()),
-      ChangeNotifierProvider(create: (_) => PrescriptionProvider()),
-    ],
-    child: const DocAid()));
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+      MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => HomeGetProvider()),
+            ChangeNotifierProvider(create: (_) => AppointmentProvider()),
+            ChangeNotifierProvider(create: (_) => PrescriptionProvider()),
+          ],
+          child: const DocAid()));
+}
 
 
 class DocAid extends StatelessWidget {

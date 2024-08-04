@@ -1,4 +1,6 @@
 import 'package:code/appointments/screens/prescription_screen.dart';
+import 'package:code/appointments/widgets/print_patient_info_design.dart';
+import 'package:code/appointments/widgets/print_patient_prescription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -104,7 +106,24 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     InkWell(
-                      onTap: (){},
+                      onTap: (){
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // This makes the bottom sheet full screen
+                          builder: (context) => DraggableScrollableSheet(
+                            expand: false,
+                            builder: (context, scrollController) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: PrintPatientInfoDesign(appointment: widget.appointment,),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       splashColor: Colors.transparent,
                       child: SvgPicture.asset(
                         'assets/svg/print_icon.svg',
@@ -115,7 +134,24 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // This makes the bottom sheet full screen
+                          builder: (context) => DraggableScrollableSheet(
+                            expand: false,
+                            builder: (context, scrollController) => SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: PrintPatientPrescription(appointment: widget.appointment,),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       splashColor: Colors.transparent,
                       child: SvgPicture.asset(
                         'assets/svg/prescription.svg',

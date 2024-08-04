@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:code/appointments/service/prescription_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
@@ -30,4 +32,22 @@ class PrescriptionProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> uploadPrescription(String contact, File file) async{
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try{
+     await _prescriptionService.uploadPrescription(contact, file);
+     _mediaItems = await _prescriptionService.fetchPrescription(contact);
+    }catch(error){
+      _errorMessage = error.toString();
+    }finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+
+  }
+
 }

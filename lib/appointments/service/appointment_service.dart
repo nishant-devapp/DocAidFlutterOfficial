@@ -135,7 +135,7 @@ class AppointmentService{
 
   }
 
-  Future<void> addNewAppointment(int clinicId, String name, String abha, int age, String contact, String gender, String appointmentDate, String appointmentTime, String paymentStatus, String clinicLocation) async{
+  Future<void> addNewAppointment(int clinicId, String name, String abha, String age, String contact, String gender, String appointmentDate, String appointmentTime, String paymentStatus, String clinicLocation) async{
 
     try{
 
@@ -158,17 +158,19 @@ class AppointmentService{
             'Authorization': 'Bearer $token',
             'Content-Type': 'application/json',
           },
-          body: {
-            "name": name,
-            "abhaNumber": abha,
-            "age": age.toString(),
-            "contact": contact,
-            "gender": gender,
-            "appointmentDate": appointmentDate,
-            "appointmentTime": appointmentTime,
-            "paymentStatus": paymentStatus,
-            "clinicLocation": clinicLocation
-          }
+          body: jsonEncode(
+              {
+                "name": name,
+                "abhaNumber": abha,
+                "age": age,
+                "contact": contact,
+                "gender": gender,
+                "appointmentDate": appointmentDate,
+                "appointmentTime": appointmentTime,
+                "paymentStatus": paymentStatus,
+                "clinicLocation": clinicLocation
+              }
+          ),
       );
 
       if (response.statusCode == 200) {
