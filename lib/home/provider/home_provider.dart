@@ -73,20 +73,21 @@ class HomeGetProvider extends ChangeNotifier {
       String clinicName,
       String location,
       String incharge,
+      List<String> days,
       String startTime,
       String endTime,
       String clinicContact,
       String clinicNewFee,
       String clinicOldFees,
-      List<String> days) async{
+      ) async{
 
     _isUpdatingClinic = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _homeGetService.updateClinic(clinicId, clinicName, location, incharge,
-          startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days);
+      await _homeGetService.updateClinic(clinicId, clinicName, location, incharge, days,
+          startTime, endTime, clinicContact, clinicNewFee, clinicOldFees);
 
       doctorProfile?.data?.clinicDtos?.forEach((clinic) {
         if (clinic.id == clinicId) {
@@ -96,8 +97,8 @@ class HomeGetProvider extends ChangeNotifier {
           clinic.startTime = startTime;
           clinic.endTime = endTime;
           clinic.clinicContact = clinicContact;
-          clinic.clinicNewFees = clinicNewFee as double?;
-          clinic.clinicOldFees = clinicOldFees as double?;
+          clinic.clinicNewFees = double.parse(clinicNewFee);
+          clinic.clinicOldFees = double.parse(clinicOldFees);
           clinic.days = days;
         }
       });

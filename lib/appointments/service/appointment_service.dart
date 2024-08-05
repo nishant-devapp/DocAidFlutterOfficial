@@ -107,16 +107,18 @@ class AppointmentService{
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: {
-          "name": name,
-          "abhaNumber": abha,
-          "age": age.toString(),
-          "contact": contact,
-          "gender": gender,
-          "appointmentDate": appointmentDate,
-          "appointmentTime": appointmentTime,
-          "clinicLocation": clinicLocation
-        }
+        body: jsonEncode(
+            {
+              "name": name,
+              "abhaNumber": abha,
+              "age": age,
+              "contact": contact,
+              "gender": gender,
+              "appointmentDate": appointmentDate,
+              "appointmentTime": appointmentTime,
+              "clinicLocation": clinicLocation
+            }
+        ),
       );
 
       if (response.statusCode == 200) {

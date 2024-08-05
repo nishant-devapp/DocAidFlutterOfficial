@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../home/models/home_get_model.dart';
+import '../../home/provider/home_provider.dart';
 
 class EditAppointmentForm extends StatefulWidget {
   const EditAppointmentForm({super.key, this.appointment});
@@ -18,14 +19,17 @@ class EditAppointmentForm extends StatefulWidget {
 
 class _EditAppointmentFormState extends State<EditAppointmentForm> {
 
-  final _formKey = GlobalKey<FormState>();
-  DateTime? _selectedDate;
+  final _key = GlobalKey<FormState>();
   String? _selectedGender;
+  final List<String> _genders = ['Select Gender', 'MALE', 'FEMALE'];
+  DateTime? _selectedDate;
   ClinicDtos? _selectedClinic;
   List<ClinicDtos> _filteredClinics = [];
   List<ClinicDtos> _allClinics = [];
   List<String> _timeSlots = [];
-  final List<String> _genders = ['Select Gender', 'MALE', 'FEMALE'];
+  int? _selectedClinicId;
+  bool _isUpdating = false;
+  String? _selectedClinicLocation, _selectedTime;
 
   final TextEditingController _editAppointmentNameController = TextEditingController();
   final TextEditingController _editAbhaController = TextEditingController();
@@ -42,9 +46,37 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
       _editAbhaController.text = widget.appointment!.abhaNumber!;
       _editAgeController.text = widget.appointment!.age.toString();
       _editContactController.text = widget.appointment!.contact!;
-      _editDateController.text = widget.appointment!.appointmentDate!;
       _selectedGender = widget.appointment!.gender!;
+
+      // Initialize _selectedClinic
+      _selectedClinic = null;
+      _fetchAndInitializeClinics();
     }
+
+  }
+
+  Future<void> _fetchAndInitializeClinics() async {
+    final homeProvider =
+    context.read<HomeGetProvider>(); // Ensure correct provider usage
+    final clinics = homeProvider.getClinics();
+
+    // Debug statement
+    print('Clinics fetched: ${clinics.length}');
+
+    setState(() {
+      _allClinics = clinics;
+      _filterClinicsByDate(_allClinics);
+    });
+  }
+
+  @override
+  void dispose() {
+    _editAppointmentNameController.dispose();
+    _editAgeController.dispose();
+    _editContactController.dispose();
+    _editAbhaController.dispose();
+    _editDateController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,7 +91,7 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
           return Padding(
             padding: const EdgeInsets.all(12.0),
             child: Form(
-              key: _formKey,
+              key: _key,
               child: Column(
                 children: [
                   Text(widget.appointment!.id.toString()),
@@ -189,7 +221,93 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
                     ],
                   ),
                   const SizedBox(height: 15.0),
-
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<ClinicDtos>(
+                          value: _selectedClinic,
+                          decoration: InputDecoration(
+                            labelText: 'Select Clinic',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.all(15.0),
+                          ),
+                          onChanged: (ClinicDtos? newValue) {
+                            setState(() {
+                              _selectedClinic = newValue;
+                              _generateTimeSlots();
+                            });
+                            if (newValue != null) {
+                              _selectedClinicId = newValue.id;
+                              _selectedClinicLocation = newValue.location;
+                              print('Clinic ID: $_selectedClinicId');
+                              print('Clinic Name: $_selectedClinicLocation');
+                            }
+                          },
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Please select a clinic';
+                            }
+                            return null;
+                          },
+                          hint: const Text('Select Clinic'),
+                          items: _filteredClinics.map((clinic) {
+                            return DropdownMenuItem<ClinicDtos>(
+                              value: clinic,
+                              child: Text(clinic.location!),
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                          dropdownColor: Colors.white,
+                          iconSize: 24,
+                          elevation: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedTime,
+                          decoration: InputDecoration(
+                            labelText: 'Select Time',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                            contentPadding: const EdgeInsets.all(15.0),
+                          ),
+                          items: _timeSlots.map((time) {
+                            return DropdownMenuItem<String>(
+                              value: time,
+                              child: Text(time),
+                            );
+                          }).toList(),
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Please select time';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedTime = value;
+                              print(_selectedTime);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30.0),
+                  ElevatedButton(
+                    onPressed: _isUpdating ? null : _updateAppointment,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                      backgroundColor: AppColors.verdigris,
+                    ),
+                    child: _isUpdating
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                      'Submit',
+                      style: TextStyle(color: Colors.white, fontSize: 18.0),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -216,9 +334,128 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
         _selectedDate = pickedDate;
         _editDateController.text = DateFormat('yyyy-MM-dd').format(_selectedDate!);
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          // _filterClinicsByDate(_allClinics);
+          _filterClinicsByDate(_allClinics);
         });
       });
     }
   }
+
+  void _filterClinicsByDate(List<ClinicDtos> clinics) {
+    if (_selectedDate == null) {
+      _filteredClinics = [];
+      return;
+    }
+
+    // Filter clinics based on the selected date
+    final filteredClinics = clinics
+        .where((clinic) {
+      final operatingDays = clinic.days;
+      final dayOfWeek = DateFormat('EEEE').format(_selectedDate!).toUpperCase();
+      return operatingDays!.contains(dayOfWeek);
+    })
+        .toList(); // Ensure the result is a List<ClinicDtos>
+
+    setState(() {
+      _filteredClinics = filteredClinics;
+      if (_selectedClinic != null &&
+          !_filteredClinics.any((clinic) => clinic.id == _selectedClinic!.id)) {
+        _selectedClinic = null; // Reset selection if it's no longer valid
+      }
+    });
+  }
+
+  void _generateTimeSlots() {
+    if (_selectedClinic == null) return;
+
+    final startTime = _selectedClinic!.parsedStartTime;
+    final endTime = _selectedClinic!.parsedEndTime;
+    final timeSlots = <String>[];
+
+    DateTime currentTime = DateTime(
+        0, 1, 1, startTime.hour, startTime.minute, startTime.second
+    );
+
+    while (currentTime.isBefore(DateTime(0, 1, 1, endTime.hour, endTime.minute, endTime.second))) {
+      final formattedTime = DateFormat('h:mm a').format(currentTime);
+      timeSlots.add(formattedTime);
+      currentTime = currentTime.add(const Duration(minutes: 5));
+    }
+
+    setState(() {
+      _timeSlots = timeSlots;
+      _selectedTime = null;
+    });
+  }
+
+  void _updateAppointment() async{
+    if (!_key.currentState!.validate()) {
+      return;
+    }
+
+    final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime.toString()));
+    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FutureBuilder(
+          future: Provider.of<AppointmentProvider>(context, listen: false).updateAppointmentInfo(
+            widget.appointment!.id!,
+            _editAppointmentNameController.text.trim(),
+            widget.appointment!.abhaNumber!,
+            int.parse(_editAgeController.text.trim()),
+            widget.appointment!.contact!,
+            _selectedGender!,
+            bookingDate,
+            bookingTime,
+            _selectedClinicLocation!,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 20),
+                    Text('Updating...', style: TextStyle(color: AppColors.textColor, fontSize: 18.0),),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text('Error updating appointment: ${snapshot.error}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            } else {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Appointment Updated successfully!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pop(context); // Close the bottom sheet
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
+
+
+  }
+
 }

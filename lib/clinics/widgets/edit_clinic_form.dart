@@ -1,40 +1,41 @@
 import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../home/models/home_get_model.dart';
 import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/helpers/Toaster.dart';
 import '../../utils/helpers/time_picker.dart';
 import 'days_selector.dart';
 
 class EditClinicForm extends StatefulWidget {
-  const EditClinicForm({super.key,this.clinicToEdit});
+  const EditClinicForm({super.key, this.clinicToEdit});
 
   final ClinicDtos? clinicToEdit;
 
   @override
   State<EditClinicForm> createState() => _EditClinicFormState();
-
 }
 
 class _EditClinicFormState extends State<EditClinicForm> {
-
-  final TextEditingController _editClinicNameController = TextEditingController();
+  final TextEditingController _editClinicNameController =
+      TextEditingController();
   final TextEditingController _editClinicAddressController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editClinicInchargeNameController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editClinicMobileNumberController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editClinicNewPatientFeeController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editClinicOldPatientFeeController =
-  TextEditingController();
-  final TextEditingController _editStartTimeController = TextEditingController();
+      TextEditingController();
+  final TextEditingController _editStartTimeController =
+      TextEditingController();
   final TextEditingController _editEndTimeController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  bool _isUpdating = false;
 
   List<String> _selectedDays = [];
 
@@ -45,15 +46,18 @@ class _EditClinicFormState extends State<EditClinicForm> {
       _editClinicNameController.text = widget.clinicToEdit!.clinicName!;
       _editClinicAddressController.text = widget.clinicToEdit!.location!;
       _editClinicInchargeNameController.text = widget.clinicToEdit!.incharge!;
-      _editClinicMobileNumberController.text = widget.clinicToEdit!.clinicContact!;
-      if(widget.clinicToEdit!.clinicNewFees != null){
-        _editClinicNewPatientFeeController.text = widget.clinicToEdit!.clinicNewFees!.toInt().toString();
-      }else{
+      _editClinicMobileNumberController.text =
+          widget.clinicToEdit!.clinicContact!;
+      if (widget.clinicToEdit!.clinicNewFees != null) {
+        _editClinicNewPatientFeeController.text =
+            widget.clinicToEdit!.clinicNewFees!.toInt().toString();
+      } else {
         _editClinicNewPatientFeeController.text = '0';
       }
-      if(widget.clinicToEdit!.clinicOldFees != null){
-        _editClinicOldPatientFeeController.text = widget.clinicToEdit!.clinicOldFees!.toInt().toString();
-      }else{
+      if (widget.clinicToEdit!.clinicOldFees != null) {
+        _editClinicOldPatientFeeController.text =
+            widget.clinicToEdit!.clinicOldFees!.toInt().toString();
+      } else {
         _editClinicOldPatientFeeController.text = '0';
       }
       _editStartTimeController.text = widget.clinicToEdit!.startTime!;
@@ -84,7 +88,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
                   const Text(
                     'Edit Clinic',
                     style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
                   ),
                   const SizedBox(
                     height: 20.0,
@@ -235,7 +239,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
                           controller: _editClinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.currency_rupee),
+                              prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('New Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -254,7 +258,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
                           controller: _editClinicOldPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.currency_rupee),
+                              prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('Old Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -285,47 +289,27 @@ class _EditClinicFormState extends State<EditClinicForm> {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  DaysSelector(onSelectionChanged: _onDaysChanged, selectedDays: _selectedDays,),
+                  DaysSelector(
+                    onSelectionChanged: _onDaysChanged,
+                    selectedDays: _selectedDays,
+                  ),
                   const SizedBox(
                     height: 25.0,
                   ),
-                  SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                          backgroundColor: AppColors.verdigris,
-                        ),
-                        onPressed: () async {
-                          // print(_selectedDays);
-                          if (!_formKey.currentState!.validate()) {
-                            return;
-                          }
-                          if (_selectedDays.isEmpty) {
-                            showToast(context, 'Please select dates !',
-                                AppColors.vermilion, Colors.white);
-                            return;
-                          }
-
-                          await homeProvider.updateClinic(
-                              widget.clinicToEdit!.id!,
-                              _editClinicNameController.text.trim(),
-                              _editClinicAddressController.text.trim(),
-                              _editClinicInchargeNameController.text.trim(),
-                              _editStartTimeController.text.trim(),
-                              _editEndTimeController.text.trim(),
-                              _editClinicMobileNumberController.text.trim(),
-                              _editClinicNewPatientFeeController.text.trim(),
-                              _editClinicOldPatientFeeController.text.trim(),
-                              _selectedDays);
-
-                          Navigator.pop(context);
-                        },
-                        // child: const Text('Submit'),
-                        child: homeProvider.isUpdatingClinic
-                            ? const CircularProgressIndicator()
-                            : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18.0),),
-                      )),
+                  ElevatedButton(
+                    onPressed: _isUpdating ? null : _editClinic,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                      backgroundColor: AppColors.verdigris,
+                    ),
+                    child: _isUpdating
+                        ? const CircularProgressIndicator()
+                        : const Text(
+                            'Submit',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18.0),
+                          ),
+                  ),
                 ],
               ),
             ),
@@ -333,7 +317,82 @@ class _EditClinicFormState extends State<EditClinicForm> {
         );
       },
     );
+  }
 
+  void _editClinic() async {
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    setState(() {
+      _isUpdating = true;
+    });
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FutureBuilder(
+          future:
+              Provider.of<HomeGetProvider>(context, listen: false).updateClinic(
+            widget.clinicToEdit!.id!,
+            _editClinicNameController.text.trim(),
+            _editClinicAddressController.text.trim(),
+            _editClinicInchargeNameController.text.trim(),
+            _selectedDays,
+            _editStartTimeController.text.trim(),
+            _editEndTimeController.text.trim(),
+            _editClinicMobileNumberController.text.trim(),
+            _editClinicNewPatientFeeController.text.trim(),
+            _editClinicOldPatientFeeController.text.trim(),
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 20),
+                    Text(
+                      'Updating...',
+                      style:
+                          TextStyle(color: AppColors.textColor, fontSize: 18.0),
+                    ),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text('Error updating appointment: ${snapshot.error}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            } else {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Clinic Updated successfully!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pop(context); // Close the bottom sheet
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
   }
 
   Future<void> _selectStartTime() async {
@@ -359,6 +418,4 @@ class _EditClinicFormState extends State<EditClinicForm> {
       _selectedDays = days.map((day) => day).toList();
     });
   }
-
-
 }

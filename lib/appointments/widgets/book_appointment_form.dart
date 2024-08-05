@@ -35,6 +35,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   List<ClinicDtos> _allClinics = [];
   List<String> _timeSlots = [];
   int? _selectedClinicId;
+  bool _isBooking = false;
   String? _selectedClinicLocation, _selectedTime;
 
   @override
@@ -303,81 +304,17 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                       ),
                       const SizedBox(height: 30.0),
                       ElevatedButton(
-                        onPressed: () {
-                          if (!_key.currentState!.validate()) {
-                            return;
-                          }
-                          final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime!));
-                          final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return FutureBuilder(
-                                future: Provider.of<AppointmentProvider>(context, listen: false).bookAppointment(
-                                  _selectedClinicId!,
-                                  _nameController.text,
-                                  _abhaController.text,
-                                  _ageController.text,
-                                  _phoneController.text,
-                                  _selectedGender!,
-                                  bookingDate,
-                                  bookingTime,
-                                  _selectedClinicLocation!,
-                                ),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const AlertDialog(
-                                      content: Row(
-                                        children: [
-                                          CircularProgressIndicator(),
-                                          SizedBox(width: 20),
-                                          Text('Processing...'),
-                                        ],
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return AlertDialog(
-                                      title: const Text('Error'),
-                                      content: Text('Error booking appointment: ${snapshot.error}'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return AlertDialog(
-                                      title: const Text('Success'),
-                                      content: const Text('Appointment booked successfully!'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context); // Close the dialog
-                                            Navigator.pop(context); // Close the bottom sheet
-                                          },
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          );
-
-                        },
+                        onPressed: _isBooking ? null : _bookAppointment,
                         style: ElevatedButton.styleFrom(
                           minimumSize: Size(double.infinity, deviceHeight * 0.06),
                           backgroundColor: AppColors.verdigris,
                         ),
-                        child: appointmentProvider.isInProcess
+                        child: _isBooking
                             ? const CircularProgressIndicator()
-                            : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18.0),),
+                            : const Text(
+                          'Submit',
+                          style: TextStyle(color: Colors.white, fontSize: 18.0),
+                        ),
                       ),
                     ],
                   ),
@@ -457,6 +394,74 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
       _timeSlots = timeSlots;
       _selectedTime = null;
     });
+  }
+
+  void _bookAppointment() async{
+    if (!_key.currentState!.validate()) {
+      return;
+    }
+    final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime!));
+    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FutureBuilder(
+          future: Provider.of<AppointmentProvider>(context, listen: false).bookAppointment(
+            _selectedClinicId!,
+            _nameController.text.trim(),
+            _abhaController.text.trim(),
+            _ageController.text.trim(),
+            _phoneController.text.trim(),
+            _selectedGender!,
+            bookingDate,
+            bookingTime,
+            _selectedClinicLocation!,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 20),
+                    Text('Processing...', style: TextStyle(color: AppColors.textColor, fontSize: 18.0),),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text('Error booking appointment: ${snapshot.error}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            } else {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Appointment booked successfully!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pop(context); // Close the bottom sheet
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
   }
 
 }

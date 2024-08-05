@@ -96,12 +96,13 @@ class HomeGetService {
       String clinicName,
       String location,
       String incharge,
+      List<String> days,
       String startTime,
       String endTime,
       String clinicContact,
       String clinicNewFee,
       String clinicOldFees,
-      List<String> days) async {
+      ) async {
 
     try{
 
@@ -120,12 +121,13 @@ class HomeGetService {
           "clinicName": clinicName,
           "location": location,
           "incharge": incharge,
+          "days": days.map((day) => day.toUpperCase()).toList(),
           "startTime": startTime,
           "endTime": endTime,
           "clinicContact": clinicContact,
           "clinicNewFees": clinicNewFee,
           "clinicOldFees": clinicOldFees,
-          "days": days.map((day) => day.toUpperCase()).toList()
+
         }),
       );
 
@@ -133,10 +135,13 @@ class HomeGetService {
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update clinic');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to update appointment: ${response.body}');
+        throw Exception('Failed to update appointment');
       }
-
 
     }catch(error){
       print('Error updating clinic: $error');

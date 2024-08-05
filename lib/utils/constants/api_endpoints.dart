@@ -26,7 +26,11 @@ class ApiEndpoints {
   static const String patientInfoByContactEndPoint = '/appointment/getByContactNumber';
 
 
-// Accounts
+  // Accounts
 
-// Help
+  // Help
+  static const String sendHelpMsgEndPoint = '/feedback';
+
+
+
 }

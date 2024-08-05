@@ -1,4 +1,6 @@
+import 'package:code/help/service/help_service.dart';
 import 'package:code/utils/constants/colors.dart';
+import 'package:code/utils/helpers/Toaster.dart';
 import 'package:code/utils/widgets/AppButton.dart';
 import 'package:flutter/material.dart';
 
@@ -18,14 +20,10 @@ class _HelpScreenState extends State<HelpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _feedbackMsgController = TextEditingController();
+  HelpService _helpService = HelpService();
+  bool _isSendingMsg = false;
 
   final _formKey = GlobalKey<FormState>();
-
-  Future<void> _sendFeedback() async{
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +157,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                 TextFormField(
                                   controller: _feedbackMsgController,
                                   keyboardType: TextInputType.text,
+                                  textCapitalization: TextCapitalization.sentences,
                                   maxLines: 8,
                                   decoration: const InputDecoration(
                                     hintText: 'Feedback Message',
@@ -168,13 +167,25 @@ class _HelpScreenState extends State<HelpScreen> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter your feedback';
+                                      return 'Please enter your message';
                                     }
                                     return null;
                                   },
                                 ),
                                 SizedBox(height: deviceHeight * 0.02),
-                                AppButton(buttonColor: AppColors.ultraViolet, buttonPressedColor: AppColors.jet, buttonText: "Send Message", onPressed: _sendFeedback),
+                                ElevatedButton(
+                                  onPressed: _isSendingMsg ? null : _sendFeedback,
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(deviceWidth * 0.4, deviceHeight * 0.06),
+                                    backgroundColor: AppColors.ultraViolet,
+                                  ),
+                                  child: _isSendingMsg
+                                      ? const CircularProgressIndicator()
+                                      : const Text(
+                                    'Submit',
+                                    style: TextStyle(color: Colors.white, fontSize: 18.0),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -240,4 +251,22 @@ class _HelpScreenState extends State<HelpScreen> {
       ),
     );
   }
+
+  Future<void> _sendFeedback() async{
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    _isSendingMsg = true;
+
+    final _isSuccessfulResponse = await _helpService.sendHelpMessage(_firstNameController.text.trim(), _lastNameController.text.trim(), _emailController.text.trim(), _phoneController.text.trim(), _feedbackMsgController.text.trim());
+
+    if(_isSuccessfulResponse){
+      _feedbackMsgController.clear();
+      _isSendingMsg = false;
+      showToast(context, 'Message Sent!', AppColors.verdigris, Colors.white);
+    }
+
+  }
+
 }
