@@ -9,9 +9,9 @@ class IncomeCard extends StatelessWidget {
     required this.cashEarning,
   });
 
-  final String totalEarning;
-  final String upiEarning;
-  final String cashEarning;
+  final double totalEarning;
+  final double upiEarning;
+  final double cashEarning;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class IncomeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  totalEarning,
+                  "\u20B9 $totalEarning",
                   style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
@@ -66,7 +66,7 @@ class IncomeCard extends StatelessWidget {
                   thickness: 1,
                 ),
                 Text(
-                  upiEarning,
+                  "\u20B9 $upiEarning",
                   style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,
@@ -88,7 +88,7 @@ class IncomeCard extends StatelessWidget {
                   thickness: 1,
                 ),
                 Text(
-                  cashEarning,
+                  "\u20B9 $cashEarning",
                   style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w600,

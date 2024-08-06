@@ -27,6 +27,8 @@ class ApiEndpoints {
 
 
   // Accounts
+  static const String totalVisitEndPoint = '/clinic/countTotal';
+  static const String totalEarningEndPoint = '/home/doctorTotalIncome';
 
   // Help
   static const String sendHelpMsgEndPoint = '/feedback';

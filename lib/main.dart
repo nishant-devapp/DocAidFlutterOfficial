@@ -1,3 +1,4 @@
+import 'package:code/accounts/provider/account_provider.dart';
 import 'package:code/appointments/providers/appointment_provider.dart';
 import 'package:code/appointments/providers/prescription_provider.dart';
 import 'package:code/auth/screens/LoginScreen.dart';
@@ -14,6 +15,7 @@ void main() {
             ChangeNotifierProvider(create: (_) => HomeGetProvider()),
             ChangeNotifierProvider(create: (_) => AppointmentProvider()),
             ChangeNotifierProvider(create: (_) => PrescriptionProvider()),
+            ChangeNotifierProvider(create: (_) => AccountProvider()),
           ],
           child: const DocAid()));
 }

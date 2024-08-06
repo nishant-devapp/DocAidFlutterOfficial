@@ -8,7 +8,7 @@ class SingleVisitCard extends StatelessWidget {
     required this.description,
   });
 
-  final String count;
+  final int count;
   final String description;
 
   @override
@@ -42,7 +42,7 @@ class SingleVisitCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      count,
+                      count.toString(),
                       style: const TextStyle(
                         color: AppColors.princetonOrange,
                         fontSize: 24.0,

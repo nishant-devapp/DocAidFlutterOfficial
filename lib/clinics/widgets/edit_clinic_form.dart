@@ -339,12 +339,12 @@ class _EditClinicFormState extends State<EditClinicForm> {
             _editClinicNameController.text.trim(),
             _editClinicAddressController.text.trim(),
             _editClinicInchargeNameController.text.trim(),
-            _selectedDays,
             _editStartTimeController.text.trim(),
             _editEndTimeController.text.trim(),
             _editClinicMobileNumberController.text.trim(),
             _editClinicNewPatientFeeController.text.trim(),
             _editClinicOldPatientFeeController.text.trim(),
+            _selectedDays,
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -364,7 +364,7 @@ class _EditClinicFormState extends State<EditClinicForm> {
             } else if (snapshot.hasError) {
               return AlertDialog(
                 title: const Text('Error'),
-                content: Text('Error updating appointment: ${snapshot.error}'),
+                content: Text('Error updating clinic: ${snapshot.error}'),
                 actions: [
                   TextButton(
                     onPressed: () {

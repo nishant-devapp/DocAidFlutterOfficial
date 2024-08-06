@@ -96,12 +96,12 @@ class HomeGetService {
       String clinicName,
       String location,
       String incharge,
-      List<String> days,
       String startTime,
       String endTime,
       String clinicContact,
       String clinicNewFee,
       String clinicOldFees,
+      List<String> days,
       ) async {
 
     try{
@@ -112,6 +112,9 @@ class HomeGetService {
       }
 
       String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.updateClinicEndPoint}/$clinicId';
+      // String baseUrl = 'https://dev.doc-aid.in/main-backend-api-gateway/clinic/update/114';
+
+      print(baseUrl);
 
       final url = Uri.parse(baseUrl);
 
@@ -121,14 +124,14 @@ class HomeGetService {
           "clinicName": clinicName,
           "location": location,
           "incharge": incharge,
-          "days": days.map((day) => day.toUpperCase()).toList(),
           "startTime": startTime,
           "endTime": endTime,
           "clinicContact": clinicContact,
           "clinicNewFees": clinicNewFee,
           "clinicOldFees": clinicOldFees,
-
+          "days": days.map((day) => day.toUpperCase()).toList(),
         }),
+
       );
 
       // Log status code and response body for debugging
@@ -139,8 +142,8 @@ class HomeGetService {
         final data = json.decode(response.body);
         print(data);
       } else {
-        print('Failed to update appointment: ${response.body}');
-        throw Exception('Failed to update appointment');
+        print('Failed to update clinic: ${response.body}');
+        throw Exception('Failed to update clinic');
       }
 
     }catch(error){
