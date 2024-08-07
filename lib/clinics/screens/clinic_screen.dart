@@ -1,13 +1,22 @@
+import 'package:code/clinics/services/clinic_service.dart';
+import 'package:code/clinics/services/clinic_service.dart';
 import 'package:code/clinics/widgets/add_clinic_form.dart';
 import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
 import 'package:code/home/models/home_get_model.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../accounts/provider/account_provider.dart';
+import '../../accounts/service/account_service.dart';
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
+import '../../utils/constants/razorpay_keys.dart';
+import '../../utils/helpers/Toaster.dart';
 
 class ClinicScreen extends StatefulWidget {
   const ClinicScreen({super.key});
@@ -18,10 +27,33 @@ class ClinicScreen extends StatefulWidget {
 
 class _ClinicScreenState extends State<ClinicScreen> {
 
+
+  static const platform = MethodChannel("razorpay_flutter");
+
+  Razorpay _razorpay = Razorpay();
+  AccountService _accountService = AccountService();
+  ClinicService _clinicService = ClinicService();
+  String? endDate, oneDayAdded, paymentOrderId, docName, docContact, docEmail, paymentId, paymentStatus;
+  int? docId, duration, totalAmountToBePaid, daysDifference;
+
   @override
   void initState() {
     super.initState();
-    Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorProfile();
+
+    final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
+    final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+
+    _fetchEndDate(homeProvider.doctorProfile!.data!.id!);
+
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear(); // Removes all listeners
   }
   
   @override
@@ -34,6 +66,10 @@ class _ClinicScreenState extends State<ClinicScreen> {
       body: DoctorProfileBase(
         builder: (HomeGetProvider homeProvider) {
           final doctorProfile = homeProvider.doctorProfile!;
+          docId = doctorProfile.data!.id!;
+          docName = doctorProfile.data!.firstName! + doctorProfile.data!.lastName!;
+          docContact = doctorProfile.data!.contact!;
+          docEmail = doctorProfile.data!.email!;
           return SafeArea(
             child: Column(
               children: [
@@ -59,7 +95,8 @@ class _ClinicScreenState extends State<ClinicScreen> {
                                 description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
                                 onAccept: () {
                                   Navigator.of(context).pop();
-                                  _openAddClinicBottomSheet(context, null);
+                                  calculateAdditionalClinicCharge(daysDifference!);
+                                  // _openAddClinicBottomSheet(context, null);
                                 },
                                 onCancel: () {
                                   Navigator.of(context).pop();
@@ -85,6 +122,104 @@ class _ClinicScreenState extends State<ClinicScreen> {
     );
   }
 
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    print(response.signature);
+    print(response.orderId);
+    print(response.paymentId);
+
+    paymentId = response.paymentId;
+
+    try {
+      final verificationModel = await _accountService.getPaymentStatus(paymentId!);
+      setState(() {
+        paymentStatus = verificationModel.status;
+      });
+
+      if (paymentStatus == "captured" || paymentStatus == "authorised") {
+        try {
+          if (paymentOrderId != null && oneDayAdded != null && docId != null) {
+
+            // final result = await _accountService.updateCurrentSubscriptionDetails(
+            //   paymentOrderId!,
+            //   paymentId!,
+            //   oneDayAdded!,
+            //   3,
+            //   1,
+            //   docId!,
+            // );
+              final isHistoryCreated = await _accountService.createPaymentHistory(
+                  paymentOrderId!,
+                  paymentId!,
+                  oneDayAdded!,
+                  3,
+                  1,
+                  docId!);
+
+              if(isHistoryCreated){
+                showToast(context, 'Payment Successful', AppColors.verdigris, Colors.white);
+              }
+
+
+          } else {
+            print('Error: Required data is missing');
+          }
+        } catch (error) {
+          print('Error updating subscription details: $error');
+        }
+      }
+    } catch (error) {
+      print('Error fetching payment status: $error');
+    }
+
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+    print(response.error);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+  }
+
+  Future<void> _fetchEndDate(int id) async {
+    try {
+      final endDateModel = await _accountService.getEndDate(id);
+      setState(() {
+        endDate = endDateModel.data;
+        if (endDate != null) {
+          oneDayAdded = _addOneDay(endDate!);
+          daysDifference = _calculateDaysDifference(endDate!);
+          print(endDate);
+          print(oneDayAdded);
+          print(daysDifference);
+        }
+      });
+    } catch (error) {
+      print('Error Fetching End Date: $error');
+    }
+  }
+
+  String _addOneDay(String endDate) {
+    DateTime date = DateTime.parse(endDate);
+    DateTime newDate = date.add(Duration(days: 1));
+    return DateFormat('yyyy-MM-dd').format(newDate);
+  }
+
+  int _calculateDaysDifference(String endDate) {
+    // Future date
+    String futureDateStr = '2025-11-07';
+    DateTime futureDate = DateTime.parse(futureDateStr);
+
+    // Today's date
+    DateTime today = DateTime.now();
+
+    // Calculate the difference
+    Duration difference = futureDate.difference(today);
+
+     return difference.inDays;
+
+  }
 
   void _openAddClinicBottomSheet(BuildContext context, ClinicDtos? clinic){
     showModalBottomSheet(
@@ -105,6 +240,52 @@ class _ClinicScreenState extends State<ClinicScreen> {
     );
   }
 
+  Future<void> calculateAdditionalClinicCharge(int remainingDays) async{
+    try {
+      final calculateAmountModel = await _clinicService.calculateAdditionalClinicAmount(remainingDays);
+      setState(() {
+        totalAmountToBePaid = calculateAmountModel.data;
+        print(totalAmountToBePaid);
+      });
+      if (totalAmountToBePaid != null) {
+        await _fetchSubscriptionOrderId(totalAmountToBePaid!);
+      }
+    } catch (error) {
+      print('Error fetching Subscription Amount: $error');
+    }
+  }
 
+  Future<void> _fetchSubscriptionOrderId(int totalAmountToBePaid) async {
+    try {
+      final orderModel = await _accountService.getPaymentOrderId(totalAmountToBePaid);
+      setState(() {
+        paymentOrderId = orderModel.id;
+        print("orderId"+paymentOrderId!);
+      });
+
+      var options = {
+        'key': RazorpayKeys.productionKey,
+        'amount': 100, // Convert to paise.
+        'name': 'Doc-Aid',
+        'order_id': paymentOrderId, // Generate order_id using Orders API
+        'currency': "INR",
+        'description': "Payment",
+        'image': "https://d2sv8898xch8nu.cloudfront.net/MediaFiles/doc-aid.png",
+        'timeout': 180, // in seconds
+        "prefill": {
+          'name': docName,
+          "email": docEmail,
+          "contact": docContact,
+        },
+        "theme": {
+          "color": "#F37254",
+        },
+      };
+
+      _razorpay.open(options);
+    } catch (error) {
+      print('Error fetching OrderID: $error');
+    }
+  }
 
 }

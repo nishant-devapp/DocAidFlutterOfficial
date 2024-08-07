@@ -7,6 +7,7 @@ class ApiEndpoints {
   // Clinics
   static const String addNewClinicEndPoint = '/clinic/add';
   static const String updateClinicEndPoint = '/clinic/update';
+  static const String additionalClinicPaymentEndPoint = '/subscriptionAmount/additionalClinic';
 
   // Appointments
   static const String fetchAllAppointmentsEndPoint = "/clinic/ClincsToAppointment";
@@ -29,6 +30,12 @@ class ApiEndpoints {
   // Accounts
   static const String totalVisitEndPoint = '/clinic/countTotal';
   static const String totalEarningEndPoint = '/home/doctorTotalIncome';
+  static const String endDateEndPoint = '/currentSubscription/currentSubscriptionEndDate';
+  static const String getTotalAmountEndPoint = '/subscriptionAmount/renew';
+  static const String getSubscriptionOrderIdEndPoint = '/subscription/createOrder';
+  static const String getPaymentVerificationEndPoint = '/subscription/fetchDetailsByPaymentId';
+  static const String updatingNewEndDateEndPoint = '/currentSubscription/updateCurrentSubscriptionDetails';
+  static const String createPaymentHistoryEndPoint = '/subscriptionPaymentHistory/create';
 
   // Help
   static const String sendHelpMsgEndPoint = '/feedback';
