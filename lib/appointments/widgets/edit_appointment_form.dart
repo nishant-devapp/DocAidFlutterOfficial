@@ -295,19 +295,43 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
                     ],
                   ),
                   const SizedBox(height: 30.0),
-                  ElevatedButton(
-                    onPressed: _isUpdating ? null : _updateAppointment,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                      backgroundColor: AppColors.verdigris,
-                    ),
-                    child: _isUpdating
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                      'Submit',
-                      style: TextStyle(color: Colors.white, fontSize: 18.0),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _isUpdating ? null : _deleteAppointment,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                            backgroundColor: AppColors.vermilion,
+                          ),
+                          child: _isUpdating
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _isUpdating ? null : _updateAppointment,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                            backgroundColor: AppColors.verdigris,
+                          ),
+                          child: _isUpdating
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                            'Submit',
+                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+
                 ],
               ),
             ),
@@ -385,6 +409,63 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
       _timeSlots = timeSlots;
       _selectedTime = null;
     });
+  }
+
+  void _deleteAppointment() async{
+    if( widget.appointment!.id != null){
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return FutureBuilder(
+            future: Provider.of<AppointmentProvider>(context, listen: false)
+                .deleteAppointment(widget.appointment!.id!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const AlertDialog(
+                  content: Row(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(width: 20),
+                      Text('Deleting Appointment...', style: TextStyle(color: AppColors.textColor, fontSize: 16.0),),
+                    ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return AlertDialog(
+                  title: const Text('Error'),
+                  content: Text('Error deleting appointment: ${snapshot.error}'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              } else {
+                return AlertDialog(
+                  title: const Text('Success'),
+                  content: const Text('Appointment Deleted successfully!'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the dialog
+                        Navigator.pop(context); // Close the bottom sheet
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              }
+            },
+          );
+        },
+      );
+
+    }
   }
 
   void _updateAppointment() async{

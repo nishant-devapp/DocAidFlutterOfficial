@@ -119,7 +119,7 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
               ),
               onPressed: () {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  printContent(_key,PrintAlignment.topCenter);
+                  printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
                 });
               },
               child: const Padding(

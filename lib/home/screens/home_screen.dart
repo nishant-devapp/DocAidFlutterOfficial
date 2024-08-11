@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorProfile();
+      Provider.of<HomeGetProvider>(context, listen: false).fetchDoctorImage();
     });
   }
 

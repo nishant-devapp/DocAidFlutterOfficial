@@ -8,7 +8,8 @@ class AccountProvider extends ChangeNotifier {
   final AccountService _accountService = AccountService();
   VisitModel? _todayVisit, _thisMonthVisit;
   AmountModel? _todayEarning, _thisMonthEarning;
-  bool _isFetching = false;
+  bool _isFetchingVisit = false;
+  bool _isFetchingEarning = false;
   String? _errorMessage;
 
   VisitModel? get todayVisit => _todayVisit;
@@ -19,13 +20,14 @@ class AccountProvider extends ChangeNotifier {
 
   AmountModel? get thisMonthEarning => _thisMonthEarning;
 
-  bool get isFetching => _isFetching;
+  bool get isFetchingVisit => _isFetchingVisit;
+  bool get isFetchingEarning => _isFetchingEarning;
 
   String? get errorMessage => _errorMessage;
 
 
   Future<void> fetchTodayVisit() async {
-    _isFetching = true;
+    _isFetchingVisit = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -34,13 +36,13 @@ class AccountProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
-      _isFetching = false;
+      _isFetchingVisit = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchThisMonthVisit() async {
-    _isFetching = true;
+    _isFetchingVisit = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -49,13 +51,13 @@ class AccountProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
-      _isFetching = false;
+      _isFetchingVisit = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchTodayEarning() async {
-    _isFetching = true;
+    _isFetchingEarning = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -64,13 +66,13 @@ class AccountProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
-      _isFetching = false;
+      _isFetchingEarning = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchThisMonthEarning() async {
-    _isFetching = true;
+    _isFetchingEarning = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -79,7 +81,7 @@ class AccountProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
-      _isFetching = false;
+      _isFetchingEarning = false;
       notifyListeners();
     }
   }

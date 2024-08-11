@@ -1,6 +1,7 @@
 import 'package:code/profile/screens/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/helpers/TokenManager.dart';
 import '../../utils/constants/colors.dart';
 import '../provider/home_provider.dart';
@@ -16,6 +17,7 @@ class MainNavigationDrawer extends StatelessWidget {
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
         final doctorProfile = homeProvider.doctorProfile!;
+        // final doctorImage = homeProvider.profileImage!;
         return Drawer(
           child: Column(
             children: [
@@ -35,12 +37,18 @@ class MainNavigationDrawer extends StatelessWidget {
                   onTap: (){
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DoctorProfileScreen()));},
-                  child: const CircleAvatar(
+                  child:  CircleAvatar(
                     backgroundColor: Colors.white,
-                    child: Text(
-                      'D',
-                      style: TextStyle(fontSize: 20.0, color: Colors.blue),
-                    ),
+                    backgroundImage: homeProvider.profileImage != null
+                        ? MemoryImage(homeProvider.profileImage!)
+                        : null,
+                    child: homeProvider.profileImage == null
+                        ? Text(
+                      doctorProfile.data?.firstName?.isNotEmpty ?? false
+                          ? doctorProfile.data!.firstName![4].toUpperCase()
+                          : 'X',
+                      style: const TextStyle(fontSize: 25, color: Colors.black),
+                    ): null,
                   ),
                 ),
               ),
@@ -107,9 +115,11 @@ class MainNavigationDrawer extends StatelessWidget {
                   color: AppColors.vermilion,
                 ),
                 title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor)),
-                onTap: () {
-                  Navigator.pop(context);
+                onTap: () async{
                   TokenManager().deleteToken();
+                  final prefs = await  SharedPreferences.getInstance();
+                  await  prefs.clear();
+                  Navigator.pop(context);
                 },
               ),
               const SizedBox(height: 25.0),

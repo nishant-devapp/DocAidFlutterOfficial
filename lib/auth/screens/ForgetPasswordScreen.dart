@@ -31,9 +31,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     });
 
     final forgetResponse = await _forgetPasswordController.forgetPassword(
-      _emailController.text,
-      _newPasswordController.text,
-      _confirmPasswordController.text,
+      _emailController.text.trim(),
+      _newPasswordController.text.trim(),
+      _confirmPasswordController.text.trim(),
     );
 
     setState(() {

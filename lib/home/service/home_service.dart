@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:code/utils/constants/api_endpoints.dart';
 import 'package:code/utils/constants/app_urls.dart';
 import 'package:code/utils/helpers/TokenManager.dart';
 import 'package:code/home/models/home_get_model.dart';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class HomeGetService {
@@ -35,6 +39,76 @@ class HomeGetService {
     } catch (error) {
       print('Error fetching doctor profile: $error');
       throw error;
+    }
+  }
+
+  Future<Uint8List?> fetchDoctorImage() async{
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      const String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchDoctorImageEndPoint;
+
+      final url = Uri.parse(baseUrl);
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes; // Returns Uint8List
+      } else {
+        throw Exception('Failed to load image');
+      }
+
+    } catch (error) {
+      print('Error fetching doctor profile: $error');
+      throw error;
+    }
+  }
+
+  Future<void> updateDoctorImage(File imageFile) async{
+    try {
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateDoctorImageEndPoint;
+
+      final uri = Uri.parse(baseUrl);
+
+      final request = http.MultipartRequest('PUT', uri)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..files.add(
+          http.MultipartFile(
+            'image',
+            imageFile.readAsBytes().asStream(),
+            imageFile.lengthSync(),
+            filename: imageFile.path.split('/').last,
+          ),
+        );
+
+      final response = await request.send();
+
+      print(response);
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        print('Image upload successful: $responseBody');
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        print('Failed to update image: $responseBody');
+        throw Exception('Failed to upload file: $responseBody');
+      }
+    } catch (e) {
+      print('Error uploading file: $e');
     }
   }
 
@@ -101,8 +175,7 @@ class HomeGetService {
       String clinicContact,
       String clinicNewFee,
       String clinicOldFees,
-      List<String> days,
-      ) async {
+      List<String> days,) async {
 
     try{
 
@@ -120,6 +193,9 @@ class HomeGetService {
 
       final response = await http.put(
         url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: jsonEncode({
           "clinicName": clinicName,
           "location": location,
@@ -152,4 +228,74 @@ class HomeGetService {
     }
 
   }
+
+  Future<void> updateDoctorProfile(
+      String firstName,
+      String lastName,
+      String email,
+      String contact,
+      List<String> degrees,
+      List<String> achievements,
+      List<String> researchJournal,
+      List<String> citations,
+      List<String> specialization,
+      int experience,
+      String licenceNumber
+      ) async{
+
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateProfileEndPoint;
+
+      print(baseUrl);
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "firstName": firstName,
+          "lastName": lastName,
+          "email": email,
+          "contact": contact,
+          "degree": degrees,
+          "achievements": achievements,
+          "research_journal": researchJournal,
+          "citations": citations,
+          "specialization": specialization,
+          "experience": experience,
+          "licenceNumber": licenceNumber
+        }),
+
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to update profile: ${response.body}');
+        throw Exception('Failed to update profile');
+      }
+
+    }catch(error){
+      print('Error updating profile: $error');
+      throw error;
+    }
+
+
+  }
+
 }

@@ -115,11 +115,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Row(
-                          children: <Widget>[
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children:[
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12.0),
+                                    horizontal: 10.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: AppColors.princetonOrange,

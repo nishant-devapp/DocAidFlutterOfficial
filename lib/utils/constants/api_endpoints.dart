@@ -1,6 +1,10 @@
 class ApiEndpoints {
 
   static const String homeGetEndPoint = "/home/get";
+  static const String updateProfileEndPoint = "/home/updateDoctor";
+  static const String addDoctorImageEndPoint = "/image";
+  static const String updateDoctorImageEndPoint = "/image/update";
+  static const String fetchDoctorImageEndPoint = "/image/getImage";
 
   // Dashboard
 
@@ -15,6 +19,7 @@ class ApiEndpoints {
   static const String updateAppointmentVisitStatusEndPoint = '/appointment/setAppointmentVisitStatus';
   static const String bookAppointmentEndPoint = '/appointment/book1';
   static const String updateAppointmentEndPoint = '/appointment/update';
+  static const String deleteAppointmentEndPoint = '/clinic/deleteAppointment';
   static const String getAppointmentPaymentEndPoint = '/payment/getAppointmentPayment';
   static const String createAppointmentPaymentEndPoint = '/payment/createAppointmentPayment';
   static const String updateAppointmentPaymentEndPoint = '/payment/updateAppointmentPayment';
@@ -26,9 +31,12 @@ class ApiEndpoints {
   static const String patientInfoByAbhaEndPoint = '/appointment/getByAbhaNumber';
   static const String patientInfoByContactEndPoint = '/appointment/getByContactNumber';
 
+  static const String calendarAppointmentCountEndPoint = '/clinic/appointmentsCountByDate';
+  static const String clinicWiseAppointmentCountEndPoint = '/clinic/totalAppointOfEachClinicOfDoctor';
+
 
   // Accounts
-  static const String totalVisitEndPoint = '/clinic/countTotal';
+  static const String totalVisitEndPoint = '/clinic/totalAppointOfDoctor';
   static const String totalEarningEndPoint = '/home/doctorTotalIncome';
   static const String endDateEndPoint = '/currentSubscription/currentSubscriptionEndDate';
   static const String getTotalAmountEndPoint = '/subscriptionAmount/renew';

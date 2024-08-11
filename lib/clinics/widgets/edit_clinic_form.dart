@@ -328,6 +328,17 @@ class _EditClinicFormState extends State<EditClinicForm> {
       _isUpdating = true;
     });
 
+   /* print(widget.clinicToEdit!.id!);
+    print(_editClinicNameController.text.trim());
+    print(_editClinicAddressController.text.trim());
+    print(_editClinicInchargeNameController.text.trim());
+    print(_editStartTimeController.text.trim());
+    print(_editEndTimeController.text.trim());
+    print(_editClinicMobileNumberController.text.trim());
+    print(_editClinicNewPatientFeeController.text.trim());
+    print(_editClinicOldPatientFeeController.text.trim());
+    print(_selectedDays);*/
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -354,9 +365,9 @@ class _EditClinicFormState extends State<EditClinicForm> {
                     CircularProgressIndicator(),
                     SizedBox(width: 20),
                     Text(
-                      'Updating...',
+                      'Updating clinic...',
                       style:
-                          TextStyle(color: AppColors.textColor, fontSize: 18.0),
+                          TextStyle(color: AppColors.textColor, fontSize: 168.0),
                     ),
                   ],
                 ),

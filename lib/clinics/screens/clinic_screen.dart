@@ -17,6 +17,7 @@ import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
 import '../../utils/constants/razorpay_keys.dart';
 import '../../utils/helpers/Toaster.dart';
+import '../widgets/duration_selector_bottom_sheet.dart';
 
 class ClinicScreen extends StatefulWidget {
   const ClinicScreen({super.key});
@@ -95,12 +96,14 @@ class _ClinicScreenState extends State<ClinicScreen> {
                                 description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
                                 onAccept: () {
                                   Navigator.of(context).pop();
-                                  calculateAdditionalClinicCharge(daysDifference!);
-                                  // _openAddClinicBottomSheet(context, null);
+                                  // durationSelectionHere
+                                  // _openDurationSelectionSheet(context);
+                                  // calculateAdditionalClinicCharge(daysDifference!);
+                                  _openAddClinicBottomSheet(context);
+
                                 },
                                 onCancel: () {
                                   Navigator.of(context).pop();
-                                  // Handle cancel action
                                 },
                               );
                             },
@@ -152,11 +155,12 @@ class _ClinicScreenState extends State<ClinicScreen> {
                   paymentId!,
                   oneDayAdded!,
                   3,
-                  1,
+                  totalAmountToBePaid!,
                   docId!);
 
               if(isHistoryCreated){
                 showToast(context, 'Payment Successful', AppColors.verdigris, Colors.white);
+                _openAddClinicBottomSheet(context);
               }
 
 
@@ -202,13 +206,13 @@ class _ClinicScreenState extends State<ClinicScreen> {
 
   String _addOneDay(String endDate) {
     DateTime date = DateTime.parse(endDate);
-    DateTime newDate = date.add(Duration(days: 1));
+    DateTime newDate = date.add(const Duration(days: 1));
     return DateFormat('yyyy-MM-dd').format(newDate);
   }
 
   int _calculateDaysDifference(String endDate) {
     // Future date
-    String futureDateStr = '2025-11-07';
+    String futureDateStr = endDate;
     DateTime futureDate = DateTime.parse(futureDateStr);
 
     // Today's date
@@ -221,7 +225,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
 
   }
 
-  void _openAddClinicBottomSheet(BuildContext context, ClinicDtos? clinic){
+  void _openAddClinicBottomSheet(BuildContext context){
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen
@@ -240,7 +244,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
     );
   }
 
-  Future<void> calculateAdditionalClinicCharge(int remainingDays) async{
+  Future<void> calculateAdditionalClinicCharge(int remainingDays) async {
     try {
       final calculateAmountModel = await _clinicService.calculateAdditionalClinicAmount(remainingDays);
       setState(() {
@@ -264,8 +268,8 @@ class _ClinicScreenState extends State<ClinicScreen> {
       });
 
       var options = {
-        'key': RazorpayKeys.productionKey,
-        'amount': 100, // Convert to paise.
+        'key': RazorpayKeys.testKey,
+        'amount': totalAmountToBePaid, // Convert to paise.
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
         'currency': "INR",
@@ -286,6 +290,37 @@ class _ClinicScreenState extends State<ClinicScreen> {
     } catch (error) {
       print('Error fetching OrderID: $error');
     }
+  }
+
+
+  void _openDurationSelectionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // This makes the bottom sheet full screen
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: DurationSelectorBottomSheet(
+              onDurationSelected: (selectedDuration){
+                setState(() {
+                  duration = selectedDuration;
+                });
+                Navigator.pop(context);
+                // if(duration != null){
+                //   calculateAdditionalClinicCharge(daysDifference!);
+                // }
+                // _openAddClinicBottomSheet(context);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
 }

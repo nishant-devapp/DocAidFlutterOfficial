@@ -45,11 +45,55 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                                 color: AppColors.textColor),
                           ),
                         ),
-                        const SizedBox(height: 20.0,),
-
+                        const SizedBox(height: 8.0,),
+                        Text(
+                          doctorProfile.data?.specialization!.first ?? '',
+                          style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textColor),
+                        ),
+                        const SizedBox(height: 5.0,),
+                        Text(
+                          doctorProfile.data?.degree!.first ?? '',
+                          style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textColor),
+                        ),
+                         const SizedBox(height: 5.0,),
+                        Text(
+                          doctorProfile.data?.licenceNumber ?? '',
+                          style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textColor),
+                        ),
+                         const SizedBox(height: 5.0,),
+                        Text("Location: ${widget.appointment.clinicLocation!}",
+                          style: const TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textColor),
+                        ),
+                        const SizedBox(height: 15.0),
+                        Container(width: double.infinity, height: 1.5, color: AppColors.jet.withOpacity(0.6),),
+                        const SizedBox(height: 15.0),
+                        const Text('Patient Details', style: TextStyle(fontSize: 16.0, color: AppColors.textColor, fontWeight: FontWeight.w500),),
+                        const SizedBox(height: 8.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(widget.appointment.name!),
+                            Text(widget.appointment.age.toString()),
+                            Text(widget.appointment.gender!),
+                            Text(widget.appointment.appointmentDate!),
+                          ],
+                        ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20.0,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -59,7 +103,7 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                         ),
                         onPressed: () {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            printContent(_key,PrintAlignment.topLeft);
+                            printContent(context, _key, '${widget.appointment.name!}_prescription.pdf');
                           });
                         },
                         child: const Padding(

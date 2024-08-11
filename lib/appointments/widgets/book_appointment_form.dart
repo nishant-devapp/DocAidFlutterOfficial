@@ -4,6 +4,7 @@ import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../models/patient_info_by_abha_phone_model.dart' as patient_model;
@@ -30,13 +31,16 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   String? _selectedGender;
   final List<String> _genders = ['Select Gender', 'MALE', 'FEMALE'];
   DateTime? _selectedDate;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
   ClinicDtos? _selectedClinic;
   List<ClinicDtos> _filteredClinics = [];
   List<ClinicDtos> _allClinics = [];
   List<String> _timeSlots = [];
-  int? _selectedClinicId;
+  int? _selectedClinicId, doctorId;
   bool _isBooking = false;
   String? _selectedClinicLocation, _selectedTime;
+  Map<String, int>? _clinicAppointmentCounts;
 
   @override
   void initState() {
@@ -73,6 +77,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     });
   }
 
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -92,6 +97,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     return Consumer<AppointmentProvider>(
         builder: (context, appointmentProvider, child) {
           return DoctorProfileBase(builder: (HomeGetProvider homeProvider) {
+            doctorId = homeProvider.doctorProfile!.data!.id;
             return SizedBox(
               width: double.infinity,
               child: Padding(
@@ -214,11 +220,17 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                                     Icons.calendar_today_outlined,
                                     color: AppColors.verdigris,
                                   ),
-                                  onPressed: () => _selectDate(context),
+                                  // onPressed: () => _selectDate(context),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => _buildCalendarDialog(context),
+                                    );
+                                  },
                                 ),
                               ),
                               validator: (value) {
-                                if (_selectedDate == null) {
+                                if (_selectedDay == null) {
                                   return 'Please select date';
                                 }
                                 return null;
@@ -350,7 +362,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   }
 
   void _filterClinicsByDate(List<ClinicDtos> clinics) {
-    if (_selectedDate == null) {
+    if (_selectedDay == null) {
       _filteredClinics = [];
       return;
     }
@@ -359,10 +371,12 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     final filteredClinics = clinics
         .where((clinic) {
       final operatingDays = clinic.days;
-      final dayOfWeek = DateFormat('EEEE').format(_selectedDate!).toUpperCase();
+      final dayOfWeek = DateFormat('EEEE').format(_selectedDay).toUpperCase();
       return operatingDays!.contains(dayOfWeek);
     })
         .toList(); // Ensure the result is a List<ClinicDtos>
+
+    print('Filtered Clinics: $filteredClinics');
 
     setState(() {
       _filteredClinics = filteredClinics;
@@ -401,7 +415,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
       return;
     }
     final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime!));
-    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDay);
 
     showDialog(
       context: context,
@@ -463,5 +477,96 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
       },
     );
   }
+
+  void _fetchAppointmentsForCalendar() {
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    final DateTime now = DateTime.now();
+    String startDate = dateFormat.format(DateTime(now.year - 1, 1, 1));
+    String endDate = dateFormat.format(DateTime(now.year + 4, 12, 31));
+
+    // Fetch appointment counts for the current visible month
+    Provider.of<AppointmentProvider>(context, listen: false)
+        .fetchCalendarAppointmentCount(doctorId!, startDate, endDate);
+  }
+
+  Future<void> _fetchClinicAppointmentCount() async{
+    final provider = Provider.of<AppointmentProvider>(context, listen: false);
+    await provider.fetchClinicWiseAppointmentCount(DateFormat('yyyy-MM-dd').format(_selectedDay));
+
+    setState(() {
+      _clinicAppointmentCounts = provider.clinicWiseAppointmentCounts ?? {};
+    });
+  }
+
+  Widget _buildCalendarDialog(BuildContext context) {
+    return Dialog(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Consumer<AppointmentProvider>(
+          builder: (context, provider, _) {
+            return TableCalendar(
+              firstDay: DateTime.now().subtract(const Duration(days: 365 * 50)), // 50 years back
+              lastDay: DateTime.now().add(const Duration(days: 365 * 50)), // 50 years ahead
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              availableCalendarFormats: const { // Lock the calendar format
+                CalendarFormat.month: 'Month',
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                  _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDay);
+                  // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _filterClinicsByDate(_allClinics);
+                    _fetchClinicAppointmentCount();
+                  // });
+                });
+
+                Navigator.pop(context);
+              },
+              onPageChanged: (focusedDay) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                });
+
+                _fetchAppointmentsForCalendar();
+              },
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, focusedDay) {
+                  return _buildDateCell(context, day);
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateCell(BuildContext context, DateTime day) {
+    final provider = Provider.of<AppointmentProvider>(context);
+    final formattedDay = DateFormat('yyyy-MM-dd').format(day);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          day.day.toString(),
+          style: const TextStyle(color: Colors.black),
+        ),
+        if (provider.appointmentCounts != null &&
+            provider.appointmentCounts!.containsKey(formattedDay))
+          const SizedBox(height: 4), // Adds some space between the date and the count
+        Text(
+          provider.appointmentCounts![formattedDay]!.toString(),
+          style: const TextStyle(color: AppColors.verdigris, fontSize: 12),
+        ),
+      ],
+    );
+  }
+
 
 }

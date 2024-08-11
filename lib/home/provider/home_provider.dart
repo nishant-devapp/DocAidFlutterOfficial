@@ -1,21 +1,31 @@
+import 'dart:io';
+
 import 'package:code/home/models/home_get_model.dart';
 import 'package:code/home/service/home_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
 class HomeGetProvider extends ChangeNotifier {
   final HomeGetService _homeGetService = HomeGetService();
   HomeGetModel? _doctorProfile;
+  Uint8List? _profileImage;
   bool _isLoading = false;
+  bool _isUpdatingProfile = false;
   bool _isAddingClinic = false;
   bool _isUpdatingClinic = false;
+  bool _isUpdatingImage = false;
+  bool _isFetchingImage = false;
   String? _errorMessage;
 
   HomeGetModel? get doctorProfile => _doctorProfile;
+  Uint8List? get profileImage => _profileImage;
 
   bool get isLoading => _isLoading;
-
+  bool get isUpdatingProfile => _isUpdatingProfile;
+  bool get isUpdatingImage => _isUpdatingImage;
   bool get isAddingClinic => _isAddingClinic;
   bool get isUpdatingClinic => _isUpdatingClinic;
+  bool get isFetchingImage => _isFetchingImage;
 
   String? get errorMessage => _errorMessage;
 
@@ -36,6 +46,77 @@ class HomeGetProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> fetchDoctorImage() async{
+    if (_profileImage != null) {
+      return;
+    }
+    _isFetchingImage = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _profileImage = await _homeGetService.fetchDoctorImage();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = 'Failed to load image: $error';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+
+  }
+
+  Future<void> updateDoctorImage(File imageFile) async{
+    _isUpdatingImage = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try{
+      // Call the service class to upload the image
+      await _homeGetService.updateDoctorImage(imageFile);
+      _profileImage = await imageFile.readAsBytes();
+      notifyListeners();
+    }catch(error){
+      _errorMessage = error.toString();
+    }finally {
+      _isUpdatingImage = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateDoctorProfile(
+      String firstName,
+      String lastName,
+      String email,
+      String contact,
+      List<String> degrees,
+      List<String> achievements,
+      List<String> researchJournal,
+      List<String> citations,
+      List<String> specialization,
+      int experience,
+      String licenceNumber) async{
+    _isUpdatingProfile = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _homeGetService.updateDoctorProfile(firstName, lastName, email, contact, degrees, achievements, researchJournal, citations, specialization, experience, licenceNumber);
+
+      _doctorProfile = await _homeGetService.fetchDoctorProfile();
+
+
+      notifyListeners(); // Notify listeners to update the UI
+    } catch (error) {
+      _errorMessage = 'Error updating profile: $error';
+      notifyListeners();
+    } finally {
+      _isUpdatingProfile = false;
+      notifyListeners();
+    }
+
   }
 
   Future<void> addClinic(
@@ -97,8 +178,8 @@ class HomeGetProvider extends ChangeNotifier {
           clinic.startTime = startTime;
           clinic.endTime = endTime;
           clinic.clinicContact = clinicContact;
-          clinic.clinicNewFees = clinicNewFee as double?;
-          clinic.clinicOldFees = clinicOldFees as double?;
+          clinic.clinicNewFees = double.parse(clinicNewFee);
+          clinic.clinicOldFees = double.parse(clinicOldFees);
           clinic.days = days;
         }
       });

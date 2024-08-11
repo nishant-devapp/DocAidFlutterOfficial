@@ -11,7 +11,7 @@ import '../../utils/helpers/TokenManager.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/end_date_model.dart';
-import '../model/payment_verfication_model.dart';
+import '../model/payment_verification_model.dart';
 import '../model/subscription_order_model.dart';
 
 class AccountService {

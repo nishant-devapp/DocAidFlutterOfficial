@@ -190,7 +190,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     } catch (e) {
       print('Error picking image from camera: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image from camera')),
+        const SnackBar(content: Text('Failed to pick image from camera')),
       );
     }
   }
@@ -207,7 +207,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     } catch (e) {
       print('Error picking image from gallery: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image from gallery')),
+        const SnackBar(content: Text('Failed to pick image from gallery')),
       );
     }
   }
@@ -224,7 +224,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     } catch (e) {
       print('Error picking PDF file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick PDF file')),
+        const SnackBar(content: Text('Failed to pick PDF file')),
       );
     }
   }

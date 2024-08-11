@@ -188,7 +188,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
       });
 
       var options = {
-        'key': RazorpayKeys.productionKey,
+        'key': RazorpayKeys.testKey,
         'amount': 100, // Convert to paise.
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API

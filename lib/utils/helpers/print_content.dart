@@ -1,22 +1,17 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
-import 'package:flutter/material.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'dart:math' as math;
 
-enum PrintAlignment {
-  topCenter,
-  topLeft,
-  // Add other alignments if needed
-}
-
-Future<void> printContent(GlobalKey key, PrintAlignment alignment) async {
+Future<void> printContent(BuildContext context, GlobalKey key, String pdfName) async {
   try {
     // Capture the content as an image
     RenderRepaintBoundary boundary = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage(pixelRatio: 9.0);
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List imageBytes = byteData!.buffer.asUint8List();
 
@@ -24,55 +19,53 @@ Future<void> printContent(GlobalKey key, PrintAlignment alignment) async {
     final pdf = pw.Document();
     final imageProvider = pw.MemoryImage(imageBytes);
 
-    // Calculate the size and position
+    // Get the width and height of the A4 size paper
     final pageWidth = PdfPageFormat.a4.width;
     final pageHeight = PdfPageFormat.a4.height;
+
+    // Get the width and height of the content
     final contentWidth = image.width.toDouble();
     final contentHeight = image.height.toDouble();
 
-    final scaledWidth = contentWidth * 0.6; // Scale factor
-    final scaledHeight = contentHeight * 0.5;
+    // Calculate the scaling factor to fit the content within the A4 size paper
+    final scaleX = pageWidth / contentWidth;
+    final scaleY = pageHeight / contentHeight;
 
-    double topPosition;
-    double leftPosition;
+    // Reduce the scaling factor to make the content smaller on the page
+    final scaleW = math.min(scaleX, scaleY) * 1.0; // Adjust this factor to make the content smaller
+    final scaleH = math.min(scaleX, scaleY) * 0.4; // Adjust this factor to make the content smaller
 
-    switch (alignment) {
-      case PrintAlignment.topCenter:
-        topPosition = 0;
-        leftPosition = (pageWidth - scaledWidth) / 2;
-        break;
-      case PrintAlignment.topLeft:
-        topPosition = 0;
-        leftPosition = 0;
-        break;
-    // Add more cases if needed
-    }
+    // Calculate the adjusted content width and height after scaling
+    final adjustedContentWidth = contentWidth * scaleW;
+    final adjustedContentHeight = contentHeight * scaleH;
+
+    // Calculate the offset to center the content horizontally
+    final offsetX = (pageWidth - adjustedContentWidth) / 2;
+    final offsetY = (pageHeight - adjustedContentHeight) / 2; // Center the content vertically
 
     // Add the scaled and positioned image to the PDF
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Stack(
-            children: [
-              pw.Positioned(
-                top: topPosition,
-                left: leftPosition,
-                child: pw.Container(
-                  width: scaledWidth,
-                  height: scaledHeight,
-                  child: pw.Image(imageProvider),
-                ),
-              ),
-            ],
+          return pw.Container(
+            alignment: pw.Alignment.topCenter,
+            child: pw.Image(
+              imageProvider,
+              width: adjustedContentWidth,
+              height: adjustedContentHeight,
+            ),
           );
         },
       ),
     );
 
-    // Print the PDF
+    // Save the PDF
+    final pdfData = await pdf.save();
+
+    // Save PDF to file (for demonstration purposes, you can replace with your file saving logic)
     await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
+      onLayout: (PdfPageFormat format) async => pdfData,
     );
   } catch (e) {
     // Handle exceptions

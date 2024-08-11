@@ -38,8 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     final loginResponse = await _loginController.login(
-      _emailController.text,
-      _passwordController.text,
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
     );
 
     setState(() {

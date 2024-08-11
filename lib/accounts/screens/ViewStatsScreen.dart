@@ -27,12 +27,12 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
   Widget build(BuildContext context) {
     return Consumer<AccountProvider>(
       builder: (context, accountProvider, child){
-        if (accountProvider.isFetching) {
+        if (accountProvider.isFetchingVisit || accountProvider.isFetchingEarning) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (accountProvider.errorMessage != null) {
-          return Center(child: Text('Error: ${accountProvider.errorMessage}'));
-        }
+        // if (accountProvider.errorMessage != null) {
+        //   return Center(child: Text('Error: ${accountProvider.errorMessage}'));
+        // }
         return Scaffold(
           body: SingleChildScrollView(
             child: Column(

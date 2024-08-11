@@ -10,10 +10,13 @@ class AppointmentProvider with ChangeNotifier {
 
   AppointmentList? _appointmentList;
   PaymentInfoModel? _paymentInfoModel;
+  Map<String, int>? _appointmentCounts;
+  Map<String, int>? _clinicWiseAppointmentCounts;
   bool _isLoading = false;
   bool _isUpdating = false;
   bool _isUpdatingVisitStatus = false;
   bool _isUpdatingAppointment = false;
+  bool _isDeletingAppointment = false;
   bool _isMakingAppointmentPayment = false;
   bool _isInProcess = true;
   String? _errorMessage;
@@ -22,6 +25,8 @@ class AppointmentProvider with ChangeNotifier {
 
   PaymentInfoModel? get paymentInfoModel => _paymentInfoModel;
 
+  Map<String, int>? get appointmentCounts => _appointmentCounts;
+  Map<String, int>? get clinicWiseAppointmentCounts => _clinicWiseAppointmentCounts;
 
   bool get isLoading => _isLoading;
 
@@ -30,6 +35,7 @@ class AppointmentProvider with ChangeNotifier {
   bool get isUpdatingVisitStatus => _isUpdatingVisitStatus;
 
   bool get isUpdatingAppointment => _isUpdatingAppointment;
+  bool get isDeletingAppointment => _isDeletingAppointment;
 
   bool get isMakingAppointmentPayment => _isMakingAppointmentPayment;
 
@@ -72,7 +78,21 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 
+  AppointmentList _sortAppointmentsByTime(AppointmentList? appointmentList) {
+    if (appointmentList == null || appointmentList.data == null) {
+      return appointmentList!;
+    }
 
+    final DateFormat timeFormatter = DateFormat('HH:mm:ss');
+
+    appointmentList.data!.sort((a, b) {
+      final timeA = timeFormatter.parse(a.appointmentTime ?? '00:00:00');
+      final timeB = timeFormatter.parse(b.appointmentTime ?? '00:00:00');
+      return timeA.compareTo(timeB);
+    });
+
+    return appointmentList;
+  }
 
   Future<void> updateAppointmentVisitStatus(
       int appointmentId, bool isVisited) async {
@@ -98,6 +118,7 @@ class AppointmentProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   Future<void> bookAppointment(
       int clinicId,
@@ -167,6 +188,28 @@ class AppointmentProvider with ChangeNotifier {
       notifyListeners();
     } finally {
       _isUpdatingVisitStatus = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteAppointment(int appointmentId) async{
+    _isDeletingAppointment = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final isDeleted = await _service.deleteAppointment(appointmentId);
+
+      if(isDeleted){
+        _appointmentList?.data?.removeWhere((appointment) => appointment.id == appointmentId);
+        notifyListeners(); // Notify listeners to update the UI
+      }
+
+    } catch (error) {
+      _errorMessage = 'Error deleting appointment: $error';
+      notifyListeners();
+    } finally {
+      _isDeletingAppointment = false;
       notifyListeners();
     }
   }
@@ -255,21 +298,43 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 
-  AppointmentList _sortAppointmentsByTime(AppointmentList? appointmentList) {
-    if (appointmentList == null || appointmentList.data == null) {
-      return appointmentList!;
+
+  Future<void> fetchCalendarAppointmentCount(int docId, String startDate, String endDate) async{
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final counts = await _service.fetchCalendarAppointmentCount(docId, startDate, endDate);
+      print('Counts Fetched for Calendar: $counts');  // Add this line to verify fetched data
+      _appointmentCounts = counts;
+    } catch (e) {
+      _errorMessage = 'Failed to load appointment counts: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-
-    final DateFormat timeFormatter = DateFormat('HH:mm:ss');
-
-    appointmentList.data!.sort((a, b) {
-      final timeA = timeFormatter.parse(a.appointmentTime ?? '00:00:00');
-      final timeB = timeFormatter.parse(b.appointmentTime ?? '00:00:00');
-      return timeA.compareTo(timeB);
-    });
-
-    return appointmentList;
   }
+
+  Future<void> fetchClinicWiseAppointmentCount(String localDate) async{
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final clinicAppointCount = await _service.fetchClinicWiseAppointmentCount(localDate);
+      print('Counts Fetched for clinic: $clinicAppointCount');  // Add this line to verify fetched data
+      _clinicWiseAppointmentCounts = clinicAppointCount;
+    } catch (e) {
+      _errorMessage = 'Failed to load appointment counts: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
 
 }
 
