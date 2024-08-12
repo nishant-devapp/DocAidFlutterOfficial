@@ -3,22 +3,22 @@ import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../home/models/home_get_model.dart' as home_model;
+import '../../home/models/home_get_model.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/helpers/print_content.dart';
-import '../models/fetch_appointment_model.dart' as appointment_model;
+import '../models/fetch_appointment_model.dart';
 
 class PrintPatientInfoDesign extends StatefulWidget {
   const PrintPatientInfoDesign({super.key, required this.appointment});
 
-  final appointment_model.Data appointment;
+  final AppointmentData appointment;
 
   @override
   State<PrintPatientInfoDesign> createState() => _PrintPatientInfoDesignState();
 }
 
 class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
-  home_model.ClinicDtos? clinic;
+  ClinicDtos? clinic;
   final GlobalKey _key = GlobalKey();
 
   @override

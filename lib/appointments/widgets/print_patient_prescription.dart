@@ -8,7 +8,7 @@ import '../models/fetch_appointment_model.dart';
 class PrintPatientPrescription extends StatefulWidget {
    PrintPatientPrescription({super.key, required this.appointment});
 
-  Data appointment;
+   AppointmentData appointment;
 
   @override
   State<PrintPatientPrescription> createState() => _PrintPatientPrescriptionState();

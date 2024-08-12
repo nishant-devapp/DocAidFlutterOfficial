@@ -11,7 +11,7 @@ import '../models/fetch_appointment_model.dart';
 class AppointmentDetailScreen extends StatefulWidget {
   const AppointmentDetailScreen({super.key, required this.appointment});
 
-  final Data appointment;
+  final AppointmentData appointment;
 
   @override
   State<AppointmentDetailScreen> createState() =>

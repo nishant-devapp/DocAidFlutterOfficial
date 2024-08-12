@@ -1,3 +1,4 @@
+import 'package:code/dashboard/widgets/add_schedule_form.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../home/provider/home_provider.dart';
+import '../../home/widgets/doctor_profile_base.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -30,12 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<HomeGetProvider>(builder: (context, homeProvider, child) {
-        if (homeProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (homeProvider.errorMessage != null) {
-          return Center(child: Text('Error: ${homeProvider.errorMessage}'));
-        } else if (homeProvider.doctorProfile != null) {
+      body: DoctorProfileBase(
+        builder: (HomeGetProvider homeProvider) {
           final doctorProfile = homeProvider.doctorProfile!;
           return  SafeArea(
             child: Column(
@@ -48,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 3.0),
-                  child: Align(alignment: AlignmentDirectional.topStart,child: Text(doctorProfile.data!.firstName!, style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
+                  child: Align(alignment: AlignmentDirectional.topStart,child: Text(doctorProfile.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
                 ),
                 Expanded(
                   child: SfCalendar(
@@ -62,10 +60,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           );
-        } else {
-          return const Center(child: Text('No data available'));
-        }
-      }),
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+            ),
+            builder: (BuildContext context) {
+              return const AddScheduleForm();
+            },
+          );
+
+        },
+        backgroundColor: AppColors.verdigris,
+        foregroundColor: Colors.white,
+        splashColor: AppColors.princetonOrange,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

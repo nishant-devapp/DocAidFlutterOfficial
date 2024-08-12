@@ -1,15 +1,15 @@
 import 'package:code/appointments/widgets/appointment_loading_shimmer.dart';
 import 'package:code/appointments/widgets/book_appointment_abha_phone_sheet.dart';
-import 'package:code/appointments/widgets/book_appointment_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../../home/models/home_get_model.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/helpers/Toaster.dart';
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
+import '../models/fetch_appointment_model.dart' as appointment_data;
+import '../models/fetch_appointment_model.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/appointment_item.dart';
 
@@ -37,7 +37,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   List<Data> _filteredAppointments = [];
 
   final TextEditingController _dateController = TextEditingController();
-
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -103,8 +103,24 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ); // Show error message if there is an error
               } else {
+                List<appointment_data.AppointmentData> filteredAppointments =
+                    appointmentProvider.appointments!.data!;
+                if (searchValue.isNotEmpty) {
+                  filteredAppointments =
+                      filteredAppointments.where((appointment) {
+                    return appointment.name!
+                            .toLowerCase()
+                            .contains(searchValue.toLowerCase()) ||
+                        appointment.contact!
+                            .toLowerCase()
+                            .contains(searchValue.toLowerCase());
+                  }).toList();
+                }
                 content = AppointmentItem(
-                    appointmentList: appointmentProvider.appointments!);
+                    appointmentList:
+                        AppointmentList(data: filteredAppointments));
+
+                // content = AppointmentItem(appointmentList: appointmentProvider.appointments!);
               }
 
               return SafeArea(
@@ -116,7 +132,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         padding: const EdgeInsets.all(5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children:[
+                          children: [
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -149,8 +165,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             (ClinicDtos? clinic) {
                                       return DropdownMenuItem<ClinicDtos?>(
                                         value: clinic,
-                                        child: Text(clinic?.location ??
-                                            'All Clinics'),
+                                        child: Text(
+                                            clinic?.location ?? 'All Clinics'),
                                       );
                                     }).toList(),
                                   ),
@@ -180,9 +196,37 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            labelText: 'Search by Name or Contact',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _searchController.clear();
+                                  searchValue = ''; // Clear the search value
+                                });
+                              },
+                              icon: const Icon(Icons.highlight_remove),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              searchValue = value;
+                            });
+                          },
+                        ),
+                      ),
                       const SizedBox(
                         height: 10.0,
                       ),
+                      // I want search button here
                       Expanded(child: content),
                     ],
                   ),
@@ -204,7 +248,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               return const BookAppointmentAbhaPhoneSheet();
             },
           );
-
         },
         backgroundColor: AppColors.verdigris,
         foregroundColor: Colors.white,
@@ -248,5 +291,4 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       }
     }
   }
-
 }

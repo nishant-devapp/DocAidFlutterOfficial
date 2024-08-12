@@ -14,7 +14,7 @@ import '../models/fetch_appointment_model.dart';
 class PrescriptionScreen extends StatefulWidget {
   const PrescriptionScreen({super.key, required this.appointment});
 
-  final Data appointment;
+  final AppointmentData appointment;
 
   @override
   State<PrescriptionScreen> createState() => _PrescriptionScreenState();

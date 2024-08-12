@@ -17,7 +17,7 @@ class AppointmentList{
 }*/
 
 class AppointmentList {
-  List<Data>? data;
+  List<AppointmentData>? data;
   int? statusCode;
   String? message;
 
@@ -25,9 +25,9 @@ class AppointmentList {
 
   AppointmentList.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <AppointmentData>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new AppointmentData.fromJson(v));
       });
     }
     statusCode = json['statusCode'];
@@ -45,7 +45,7 @@ class AppointmentList {
   }
 }
 
-class Data {
+class AppointmentData {
   int? id;
   String? name;
   String? contact;
@@ -60,7 +60,7 @@ class Data {
   String? clinicLocation;
   Null clinic;
 
-  Data(
+  AppointmentData(
       {this.id,
         this.name,
         this.contact,
@@ -75,7 +75,7 @@ class Data {
         this.clinicLocation,
         this.clinic});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  AppointmentData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     contact = json['contact'];

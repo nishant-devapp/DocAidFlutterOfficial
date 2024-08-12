@@ -11,7 +11,7 @@ import '../../home/provider/home_provider.dart';
 class EditAppointmentForm extends StatefulWidget {
   const EditAppointmentForm({super.key, this.appointment});
 
-  final appointment_model.Data? appointment;
+  final appointment_model.AppointmentData? appointment;
 
   @override
   State<EditAppointmentForm> createState() => _EditAppointmentFormState();
