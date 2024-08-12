@@ -1,9 +1,7 @@
 import 'package:code/clinics/services/clinic_service.dart';
-import 'package:code/clinics/services/clinic_service.dart';
 import 'package:code/clinics/widgets/add_clinic_form.dart';
 import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
-import 'package:code/home/models/home_get_model.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +15,6 @@ import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
 import '../../utils/constants/razorpay_keys.dart';
 import '../../utils/helpers/Toaster.dart';
-import '../widgets/duration_selector_bottom_sheet.dart';
 
 class ClinicScreen extends StatefulWidget {
   const ClinicScreen({super.key});
@@ -98,8 +95,8 @@ class _ClinicScreenState extends State<ClinicScreen> {
                                   Navigator.of(context).pop();
                                   // durationSelectionHere
                                   // _openDurationSelectionSheet(context);
-                                  // calculateAdditionalClinicCharge(daysDifference!);
-                                  _openAddClinicBottomSheet(context);
+                                  calculateAdditionalClinicCharge(daysDifference!);
+
 
                                 },
                                 onCancel: () {
@@ -142,14 +139,6 @@ class _ClinicScreenState extends State<ClinicScreen> {
         try {
           if (paymentOrderId != null && oneDayAdded != null && docId != null) {
 
-            // final result = await _accountService.updateCurrentSubscriptionDetails(
-            //   paymentOrderId!,
-            //   paymentId!,
-            //   oneDayAdded!,
-            //   3,
-            //   1,
-            //   docId!,
-            // );
               final isHistoryCreated = await _accountService.createPaymentHistory(
                   paymentOrderId!,
                   paymentId!,
@@ -292,35 +281,5 @@ class _ClinicScreenState extends State<ClinicScreen> {
     }
   }
 
-
-  void _openDurationSelectionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // This makes the bottom sheet full screen
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        builder: (context, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: DurationSelectorBottomSheet(
-              onDurationSelected: (selectedDuration){
-                setState(() {
-                  duration = selectedDuration;
-                });
-                Navigator.pop(context);
-                // if(duration != null){
-                //   calculateAdditionalClinicCharge(daysDifference!);
-                // }
-                // _openAddClinicBottomSheet(context);
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
 }

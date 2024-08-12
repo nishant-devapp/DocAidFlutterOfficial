@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../widgets/duration_selector_bottom_sheet.dart';
+
 class ReviewSubscriptionScreen extends StatefulWidget {
   const ReviewSubscriptionScreen({super.key});
 
@@ -212,7 +214,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     }
   }
 
-  void _openPaymentOptionBottomSheet(int totalClinics) {
+  void _openDurationSelectionSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen
@@ -224,23 +226,17 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child: const Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Card(
-                      child: Column(
-                        children: [
-                          Text('Monthly', style: TextStyle(),)
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                  ],
-                ),
-              ),
+            child: DurationSelectorBottomSheet(
+              onDurationSelected: (selectedDuration){
+                setState(() {
+                  duration = selectedDuration;
+                });
+                Navigator.pop(context);
+                // if(duration != null){
+                //   calculateAdditionalClinicCharge(daysDifference!);
+                // }
+                // _openAddClinicBottomSheet(context);
+              },
             ),
           ),
         ),
