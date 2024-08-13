@@ -49,12 +49,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
 
           final doctorIntr = homeProvider.doctorProfile!.data!.docIntr!;
-          if (doctorIntr == null) {
-            print('doctorIntr is null');
-          } else {
-            print('doctorIntr length: ${doctorIntr.length}');
-          }
-          final todaySchedules = doctorIntr!.where((intr) {
+          print('doctorIntr length: ${doctorIntr.length}');
+
+          final todaySchedules = doctorIntr.where((intr) {
             print('stDate: ${intr.stDate}'); // Add this line
             return DateFormat('yyyy-MM-dd').format(DateTime.now()) == intr.stDate;
           }).toList();
@@ -66,13 +63,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return Center(child: Lottie.asset('assets/lottie/no_schedule_lottie.json', repeat: true));
           }
 
-          return ListView.builder(
-            itemCount: todaySchedules.length,
-            itemBuilder: (context, index) {
-              final schedule = todaySchedules[index];
-              return DashboardItem(schedule: schedule);
-            },
+          // Time slot is shown two times, means 23:00 is displayed two times
+
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Text(
+                    DateFormat('d MMM, yyyy').format(DateTime.now()),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Text(
+                    'Today',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[600]),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: todaySchedules.length,
+                    itemBuilder: (context, index) {
+                      final schedule = todaySchedules[index];
+                      return DashboardItem(schedule: schedule);
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
+
         },
       ),
       floatingActionButton: FloatingActionButton(
