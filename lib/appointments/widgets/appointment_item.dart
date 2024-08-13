@@ -18,6 +18,7 @@ class AppointmentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     final appointments = appointmentList?.data ?? [];
 
     return Consumer<AppointmentProvider>(
@@ -44,10 +45,12 @@ class AppointmentItem extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
-                  margin: const EdgeInsets.only(
-                      bottom: 30.0, left: 10.0, right: 10.0),
+                  margin: EdgeInsets.symmetric(
+                    vertical: screenWidth * 0.05,
+                    horizontal: screenWidth * 0.03,
+                  ),
                   child: Container(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: EdgeInsets.all(screenWidth * 0.04),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -58,11 +61,11 @@ class AppointmentItem extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text('${index + 1}.',
-                                      style: const TextStyle(
-                                          fontSize: 18.0,
+                                      style: TextStyle(
+                                          fontSize: screenWidth * 0.045,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.jet)),
-                                  const SizedBox(width: 15.0),
+                                  SizedBox(width: screenWidth * 0.04),
                                   appointment.paymentStatus == 'PAID'
                                       ? PaidTextDesign(
                                           appointmentId: appointment.id!,
@@ -104,35 +107,35 @@ class AppointmentItem extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10.0),
+                        SizedBox(height: screenWidth * 0.03),
                         Text(
                           appointment.name ?? 'N/A',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textColor,
                             wordSpacing: 1,
-                            fontSize: 20,
+                            fontSize: screenWidth * 0.05,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8.0),
+                        SizedBox(height: screenWidth * 0.02),
                         Text(
                           'Ph. No: ${appointment.contact ?? 'N/A'}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textColor,
                             wordSpacing: 1,
-                            fontSize: 14,
+                            fontSize: screenWidth * 0.04,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        const SizedBox(height: 8.0),
+                        SizedBox(height: screenWidth * 0.02),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               formatTime(appointment.appointmentTime!),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.textColor,
-                                fontSize: 16,
+                                fontSize: screenWidth * 0.045,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -140,9 +143,9 @@ class AppointmentItem extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Visited: ',
-                                    style: TextStyle(fontSize: 17.0),
+                                    style: TextStyle(fontSize: screenWidth * 0.045),
                                   ),
                                   Checkbox(
                                     checkColor: Colors.white,

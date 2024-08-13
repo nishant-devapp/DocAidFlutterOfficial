@@ -1,10 +1,11 @@
 import 'package:code/dashboard/widgets/add_schedule_form.dart';
+import 'package:code/dashboard/widgets/dashboard_item.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
-
+import '../../home/models/home_get_model.dart';
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
 
@@ -16,6 +17,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
+// List<DocIntr>? doctorIntr;
 
   @override
   void initState() {
@@ -31,34 +34,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final deviceHeight = mediaQuery.size.height;
+
     return Scaffold(
-      body: DoctorProfileBase(
-        builder: (HomeGetProvider homeProvider) {
-          final doctorProfile = homeProvider.doctorProfile!;
-          return  SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              // mainAxisSize: MainAxisSize.min,
-              children: [
-                const  Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 3.0),
-                  child: Align(alignment: AlignmentDirectional.topStart,child:  Text('Welcome', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor, fontSize: 20.0),)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 3.0),
-                  child: Align(alignment: AlignmentDirectional.topStart,child: Text(doctorProfile.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.verdigris, fontSize: 30.0),)),
-                ),
-                Expanded(
-                  child: SfCalendar(
-                    onTap: _onCalendarTap,
-                    view: CalendarView.day,
-                    dataSource: MeetingDataSource(_getDataSource()),
-                    monthViewSettings: const MonthViewSettings(
-                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment),
-                  ),
-                ),
-              ],
-            ),
+      body: Consumer<HomeGetProvider>(
+        builder: (context, homeProvider, child) {
+          if (homeProvider.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (homeProvider.doctorProfile == null || homeProvider.doctorProfile!.data == null || homeProvider.doctorProfile!.data!.docIntr == null) {
+            return Center(child: Text("No schedules available"));
+          }
+
+          final doctorIntr = homeProvider.doctorProfile!.data!.docIntr!;
+          if (doctorIntr == null) {
+            print('doctorIntr is null');
+          } else {
+            print('doctorIntr length: ${doctorIntr.length}');
+          }
+          final todaySchedules = doctorIntr!.where((intr) {
+            print('stDate: ${intr.stDate}'); // Add this line
+            return DateFormat('yyyy-MM-dd').format(DateTime.now()) == intr.stDate;
+          }).toList();
+
+          print('Today\'s schedules: ${todaySchedules.length}');
+
+
+          if (todaySchedules.isEmpty) {
+            return Center(child: Lottie.asset('assets/lottie/no_schedule_lottie.json', repeat: true));
+          }
+
+          return ListView.builder(
+            itemCount: todaySchedules.length,
+            itemBuilder: (context, index) {
+              final schedule = todaySchedules[index];
+              return DashboardItem(schedule: schedule);
+            },
           );
         },
       ),
@@ -67,14 +80,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+            builder: (context) => DraggableScrollableSheet(
+              expand: false,
+              builder: (context, scrollController) => SingleChildScrollView(
+                controller: scrollController,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: const AddScheduleForm(),
+                ),
+              ),
             ),
-            builder: (BuildContext context) {
-              return const AddScheduleForm();
-            },
           );
-
         },
         backgroundColor: AppColors.verdigris,
         foregroundColor: Colors.white,
@@ -84,86 +102,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  List<Meeting> _getDataSource() {
-    final List<Meeting> meetings = <Meeting>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime = DateTime(today.year, today.month, today.day, 9);
-    final DateTime endTime = startTime.add(const Duration(minutes: 180));
-    meetings.add(Meeting(
-        'Meeting with CM \n\n(CM House)', startTime, endTime, const Color(0xFF0F8644), false));
-    meetings.add(Meeting(
-        'Reshita Office', startTime, endTime, const Color(0xFFE339EF), false));
-    return meetings;
-  }
-
-  void _onCalendarTap(CalendarTapDetails details) {
-    Fluttertoast.showToast(
-        msg: "Schedule",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: AppColors.celeste,
-        textColor: AppColors.textColor,
-        fontSize: 16.0
-    );
-  }
-
-
-}
-
-class MeetingDataSource extends CalendarDataSource{
-  /// collection to the calendar
-  MeetingDataSource(List<Meeting> source) {
-    appointments = source;
-  }
-
-  @override
-  DateTime getStartTime(int index) {
-    return _getMeetingData(index).from;
-  }
-
-  @override
-  DateTime getEndTime(int index) {
-    return _getMeetingData(index).to;
-  }
-
-  @override
-  String getSubject(int index) {
-    return _getMeetingData(index).eventName;
-  }
-
-  @override
-  Color getColor(int index) {
-    return _getMeetingData(index).background;
-  }
-
-  @override
-  bool isAllDay(int index) {
-    return _getMeetingData(index).isAllDay;
-  }
-
-  Meeting _getMeetingData(int index) {
-    final dynamic meeting = appointments![index];
-    late final Meeting meetingData;
-    if (meeting is Meeting) {
-      meetingData = meeting;
-    }
-
-    return meetingData;
-  }
-}
-
-class Meeting {
-
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
-
-  String eventName;
-
-  DateTime from;
-
-  DateTime to;
-
-  Color background;
-
-  bool isAllDay;
 }

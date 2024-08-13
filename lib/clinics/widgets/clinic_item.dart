@@ -13,6 +13,10 @@ class ClinicItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final deviceWidth = mediaQuery.size.width;
+    final deviceHeight = mediaQuery.size.height;
+
     return Consumer<HomeGetProvider>(
       builder: (context, homeProvider, child) {
         final clinics = homeProvider.getClinics();
@@ -30,20 +34,22 @@ class ClinicItem extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              margin: const EdgeInsets.only(
-                  bottom: 30.0, left: 10.0, right: 10.0),
+              margin: EdgeInsets.symmetric(
+                vertical: deviceHeight * 0.01,
+                horizontal: deviceWidth * 0.02,
+              ),
               elevation: 10,
               shadowColor: AppColors.verdigris.withOpacity(0.4),
               child: Container(
-                padding: const EdgeInsets.all(15.0),
+                padding: EdgeInsets.all(deviceWidth * 0.04),
                 child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(clinic.clinicName!,
-                            style: const TextStyle(
-                                fontSize: 22,
+                            style: TextStyle(
+                                fontSize: deviceWidth * 0.05,
                                 color: AppColors.princetonOrange,
                                 fontWeight: FontWeight.bold)),
                         Row(
@@ -52,120 +58,102 @@ class ClinicItem extends StatelessWidget {
                               Icons.location_pin,
                               color: AppColors.vermilion,
                             ),
-                            const SizedBox(
-                              width: 5,
-                            ),
+                            SizedBox(width: deviceWidth * 0.01),
                             Text(
                               clinic.location!,
-                              style: const TextStyle(
-                                  fontSize: 18,
+                              style: TextStyle(
+                                  fontSize: deviceWidth * 0.04,
                                   fontWeight: FontWeight.w500),
                             )
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 12.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.02),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Visiting New Patient Fees',
+                        Text('Visiting New Patient Fees',
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: deviceWidth * 0.04,
                                 color: AppColors.textColor,
                                 fontWeight: FontWeight.bold)),
                         Text(
                           'Rs. ${clinic.clinicNewFees}',
-                          style: const TextStyle(
-                              fontSize: 16,
+                          style: TextStyle(
+                              fontSize: deviceWidth * 0.04,
                               fontWeight: FontWeight.w500),
                         )
                       ],
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.01),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Visiting Old Patient Fees',
+                        Text('Visiting Old Patient Fees',
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: deviceWidth * 0.04,
                                 color: AppColors.textColor,
                                 fontWeight: FontWeight.bold)),
                         Text(
                           'Rs. ${clinic.clinicOldFees}',
-                          style: const TextStyle(
-                              fontSize: 16,
+                          style: TextStyle(
+                              fontSize: deviceWidth * 0.04,
                               fontWeight: FontWeight.w500),
                         )
                       ],
                     ),
-                    const SizedBox(
-                      height: 12.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.02),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           "Compounder: ",
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: deviceWidth * 0.04,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textColor),
                         ),
-                        const SizedBox(
-                          width: 3,
-                        ),
+                        SizedBox(width: deviceWidth * 0.01),
                         Text(
                           clinic.incharge!,
-                          style: const TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: deviceWidth * 0.04,),
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.01),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           "Phone No.: ",
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: deviceWidth * 0.04,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textColor),
                         ),
-                        const SizedBox(
-                          width: 3,
-                        ),
+                        SizedBox(width: deviceWidth * 0.01),
                         Text(
                           clinic.clinicContact!,
-                          style: const TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: deviceWidth * 0.038,),
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.02),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               "Time: ",
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: deviceWidth * 0.04,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.textColor),
                             ),
-                            const SizedBox(
-                              width: 3.0,
-                            ),
+                            SizedBox(width: deviceWidth * 0.01),
                             Text(
                               "${formatTime(clinic.startTime!)} - ${formatTime(clinic.endTime!)}",
-                              style: const TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: deviceWidth * 0.036,),
                             ),
                           ],
                         ),
@@ -175,8 +163,8 @@ class ClinicItem extends StatelessWidget {
                             alignment: AlignmentDirectional.centerEnd,
                             child: Text(
                               clinicDays,
-                              style: const TextStyle(
-                                  fontSize: 18,
+                              style: TextStyle(
+                                  fontSize: deviceWidth * 0.04,
                                   color: AppColors.vermilion,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -184,9 +172,7 @@ class ClinicItem extends StatelessWidget {
                         )
                       ],
                     ),
-                    const SizedBox(
-                      height: 12.0,
-                    ),
+                    SizedBox(height: deviceHeight * 0.02),
                     Row(
                       children: [
                         TextButton(
@@ -209,22 +195,20 @@ class ClinicItem extends StatelessWidget {
                             );
                           },
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            padding:  EdgeInsets.symmetric(vertical: deviceHeight * 0.02),
                             backgroundColor: AppColors.lightGrey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Edit',
                             style: TextStyle(
                                 color: Colors.black54,
-                                fontSize: 16),
+                              fontSize: deviceWidth * 0.04,),
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: deviceWidth * 0.02),
                         Expanded(
                           child: TextButton(
                             onPressed: () {
@@ -239,17 +223,17 @@ class ClinicItem extends StatelessWidget {
                               );
                             },
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 15.0),
+                              padding: EdgeInsets.symmetric(vertical: deviceHeight * 0.02),
                               backgroundColor: AppColors.verdigris,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Check Appointments',
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16),
+                                fontSize: deviceWidth * 0.04,),
                             ),
                           ),
                         ),

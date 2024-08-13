@@ -45,6 +45,10 @@ class _AddClinicFormState extends State<AddClinicForm> {
     final deviceHeight = mediaQuery.size.height;
     final deviceWidth = mediaQuery.size.width;
 
+    // Adjust padding and spacing based on device width
+    final double horizontalPadding = deviceWidth * 0.05;
+    final double verticalSpacing = deviceHeight * 0.02;
+    final double buttonHeight = deviceHeight * 0.07;
 
     return DoctorProfileBase(
       builder: (HomeGetProvider homeProvider) {
@@ -56,8 +60,8 @@ class _AddClinicFormState extends State<AddClinicForm> {
               key: _formKey,
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 25.0,
+                  SizedBox(
+                      height: verticalSpacing * 2
                   ),
                   const Text(
                     'Clinic Details',

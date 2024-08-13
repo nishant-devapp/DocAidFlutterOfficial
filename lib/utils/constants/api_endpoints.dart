@@ -7,6 +7,7 @@ class ApiEndpoints {
   static const String fetchDoctorImageEndPoint = "/image/getImage";
 
   // Dashboard
+  static const String addScheduleEndpoint = '/inter/add';
 
   // Clinics
   static const String addNewClinicEndPoint = '/clinic/add';

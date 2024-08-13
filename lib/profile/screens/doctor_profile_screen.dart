@@ -64,7 +64,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             bottomLeft: Radius.circular(40.0),
                             bottomRight: Radius.circular(40.0))),
                     child: Padding(
-                      padding: const EdgeInsets.all(22.0),
+                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.05, vertical: deviceHeight * 0.03),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +76,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 child: Column(
                                   children: [
                                     CircleAvatar(
-                                      radius: 75,
+                                      radius: deviceWidth * 0.2,
                                       backgroundColor: Colors.white,
                                       backgroundImage: homeProvider.profileImage != null
                                           ? MemoryImage(homeProvider.profileImage!)
@@ -86,10 +86,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         doctorProfile.data?.firstName?.isNotEmpty ?? false
                                             ? doctorProfile.data!.firstName![4].toUpperCase()
                                             : 'X',
-                                        style: const TextStyle(fontSize: 25, color: Colors.black),
+                                        style: TextStyle(fontSize: deviceWidth * 0.1, color: Colors.black),
                                       ): null,
                                     ),
-                                    const SizedBox(height: 8.0),
+                                    SizedBox(height: deviceHeight * 0.02),
                                     if (hasProfileImage)
                                       ElevatedButton(
                                         onPressed: _isUpdatingImage ? null : _pickImageFromGallery,
@@ -99,10 +99,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         ),
                                         child: _isUpdatingImage
                                             ? const CircularProgressIndicator()
-                                            : const Text(
+                                            : Text(
                                           'Update Image',
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 18.0),
+                                              color: Colors.white,  fontSize: deviceWidth * 0.05),
                                         ),
                                       )
 
@@ -116,9 +116,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
-                                width: 25.0,
-                              ),
+                              SizedBox(width: deviceWidth * 0.05),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +129,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textColor),
                                     ),
-                                    const SizedBox(height: 5.0),
+                                    SizedBox(height: deviceHeight * 0.02),
                                     Text(
                                       '${doctorProfile.data?.firstName ?? ''} ${doctorProfile.data?.lastName ?? ''}',
                                       style: const TextStyle(
@@ -170,6 +168,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   ],
                                 ),
                               ),
+                              SizedBox(width: deviceWidth * 0.05),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +193,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 15.0),
+                          SizedBox(height: deviceHeight * 0.015),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -219,7 +218,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12.0),
+                  SizedBox(height: deviceHeight * 0.02),
                   Padding(
                     padding: const EdgeInsets.only(right: 12.0),
                     child: Align(
@@ -228,12 +227,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.magnolia,
                         ),
-                        child:  const Row(
+                        child:  Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.edit_note, size: 28, color: AppColors.jet,),
-                            SizedBox(width: 10.0),
-                            Text('Edit', style: TextStyle(fontSize: 16.0, color: AppColors.textColor),),
+                            Icon(Icons.edit_note, size: deviceWidth * 0.07, color: AppColors.jet),
+                            SizedBox(width: deviceWidth * 0.02),
+                            Text('Edit', style: TextStyle(fontSize: deviceWidth * 0.04, color: AppColors.textColor)),
                           ],
                         ),
                         onPressed: () {
@@ -258,14 +257,14 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 12.0),
+                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.05, vertical: deviceHeight * 0.02),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text('Specialization', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
-                        const SizedBox(height: 8.0),
+                        SizedBox(height: deviceHeight * 0.01),
                         Container(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: EdgeInsets.all(deviceWidth * 0.03),
                           decoration:  BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             border: Border.all(
@@ -275,17 +274,18 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           ),
                           child: Text(specialization!, style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
                         ),
-                        const SizedBox(height: 10.0),
-                        const Text('Degree', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
-                        const SizedBox(height: 10.0),
+                        SizedBox(height: deviceHeight * 0.02),
+                        const Text('Degree', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        SizedBox(height: deviceHeight * 0.02),
                         SizedBox(
-                          height: 70,
-                          child: ListView.builder(
+                          height: 50,
+                          child: ListView.separated(
                               scrollDirection: Axis.horizontal,
+                              separatorBuilder: (context, index) => SizedBox(width: deviceWidth * 0.02),
                               itemCount: degrees!.length,
                               itemBuilder: (context, index){
                                 return Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
                                   child: Container(
                                     padding: const EdgeInsets.all(10.0),
                                     decoration:  BoxDecoration(
@@ -301,9 +301,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               }
                           ),
                         ),
-                        const SizedBox(height: 10.0),
-                        const Text('Total Experience', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
-                        const SizedBox(height: 10.0),
+                        SizedBox(height: deviceHeight * 0.02),
+                        const Text('Experience', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        SizedBox(height: deviceHeight * 0.02),
                         Container(
                           padding: const EdgeInsets.all(10.0),
                           decoration:  BoxDecoration(
@@ -313,11 +313,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               color: Colors.grey.withOpacity(0.5),
                             ),
                           ),
-                          child:  Text("$experience years", style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                          child:  Text("$experience years", style: TextStyle(color: Colors.black87, fontSize: deviceWidth * 0.04, fontWeight: FontWeight.w500),),
                         ),
-                        const SizedBox(height: 10.0),
-                        const Text('Achievements', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
-                        const SizedBox(height: 10.0),
+                        SizedBox(height: deviceHeight * 0.02),
+                        const Text('Achievements', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        SizedBox(height: deviceHeight * 0.02),
                         SizedBox(
                           height: 70,
                           child: ListView.builder(

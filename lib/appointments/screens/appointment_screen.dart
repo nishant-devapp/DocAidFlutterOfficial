@@ -34,7 +34,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   ClinicDtos? selectedClinic;
   bool allClinicsSelected = true;
   DateTime? _selectedDate;
-  List<Data> _filteredAppointments = [];
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
@@ -90,14 +89,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 content = Center(
                   child: Column(
                     children: [
-                      Lottie.asset('assets/lottie/no_data_lottie.json'),
+                      Expanded(child: Lottie.asset('assets/lottie/no_data_lottie.json')),
                       const SizedBox(height: 15.0),
-                      const Text(
-                        'No appointments available on this date..',
-                        style: TextStyle(
-                            color: AppColors.verdigris,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500),
+                      const Expanded(
+                        child: Text(
+                          'No appointments available on this date..',
+                          style: TextStyle(
+                              color: AppColors.verdigris,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500),
+                        ),
                       )
                     ],
                   ),
@@ -125,110 +126,110 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
               return SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: AppColors.princetonOrange,
-                                      width: 1),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<ClinicDtos?>(
-                                    hint: const Text('Select Clinic'),
-                                    value: _selectedClinicId == null
-                                        ? null
-                                        : clinics.firstWhere((clinic) =>
-                                            clinic.id == _selectedClinicId),
-                                    onChanged: (ClinicDtos? newValue) {
-                                      setState(() {
-                                        selectedClinic = newValue;
-                                        _selectedClinicId = newValue?.id;
-                                        _selectedClinicName =
-                                            newValue?.location;
-                                        allClinicsSelected = newValue == null;
-                                        _fetchAppointments();
-                                      });
-                                    },
-                                    items: clinicsWithAll
-                                        .map<DropdownMenuItem<ClinicDtos?>>(
-                                            (ClinicDtos? clinic) {
-                                      return DropdownMenuItem<ClinicDtos?>(
-                                        value: clinic,
-                                        child: Text(
-                                            clinic?.location ?? 'All Clinics'),
-                                      );
-                                    }).toList(),
+                  padding: EdgeInsets.all(deviceWidth * 0.03),
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(deviceWidth * 0.02),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: deviceWidth * 0.03),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColors.princetonOrange,
+                                        width: 1),
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _dateController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ),
-                                  labelText: 'Select Date',
-                                  prefixIcon: IconButton(
-                                    icon: const Icon(
-                                      Icons.calendar_today_outlined,
-                                      color: AppColors.verdigris,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<ClinicDtos?>(
+                                      hint: const Text('Select Clinic'),
+                                      value: _selectedClinicId == null
+                                          ? null
+                                          : clinics.firstWhere((clinic) =>
+                                              clinic.id == _selectedClinicId),
+                                      onChanged: (ClinicDtos? newValue) {
+                                        setState(() {
+                                          selectedClinic = newValue;
+                                          _selectedClinicId = newValue?.id;
+                                          _selectedClinicName =
+                                              newValue?.location;
+                                          allClinicsSelected = newValue == null;
+                                          _fetchAppointments();
+                                        });
+                                      },
+                                      items: clinicsWithAll
+                                          .map<DropdownMenuItem<ClinicDtos?>>(
+                                              (ClinicDtos? clinic) {
+                                        return DropdownMenuItem<ClinicDtos?>(
+                                          value: clinic,
+                                          child: Text(
+                                              clinic?.location ?? 'All Clinics'),
+                                        );
+                                      }).toList(),
                                     ),
-                                    onPressed: () => _selectDate(context),
                                   ),
                                 ),
-                                readOnly: true,
+                              ),
+                              SizedBox(width: deviceWidth * 0.03),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _dateController,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    labelText: 'Select Date',
+                                    prefixIcon: IconButton(
+                                      icon: const Icon(
+                                        Icons.calendar_today_outlined,
+                                        color: AppColors.verdigris,
+                                      ),
+                                      onPressed: () => _selectDate(context),
+                                    ),
+                                  ),
+                                  readOnly: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              labelText: 'Search by Name or Phone',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _searchController.clear();
+                                    searchValue = ''; // Clear the search value
+                                  });
+                                },
+                                icon: const Icon(Icons.highlight_remove),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            labelText: 'Search by Name or Contact',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _searchController.clear();
-                                  searchValue = ''; // Clear the search value
-                                });
-                              },
-                              icon: const Icon(Icons.highlight_remove),
-                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                searchValue = value;
+                              });
+                            },
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              searchValue = value;
-                            });
-                          },
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      // I want search button here
-                      Expanded(child: content),
-                    ],
+                        SizedBox(height: deviceHeight * 0.02),
+                        // I want search button here
+                        Flexible(child: content),
+                      ],
+                    ),
                   ),
                 ),
               );
