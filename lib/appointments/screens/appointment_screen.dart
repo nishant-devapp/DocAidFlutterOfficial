@@ -138,7 +138,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               Expanded(
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth * 0.03),
+                                      horizontal: deviceWidth * 0.02),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color: AppColors.princetonOrange,

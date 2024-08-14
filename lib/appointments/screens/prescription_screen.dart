@@ -47,7 +47,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                 Text(
                   widget.appointment.name!,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 22.0),
+                      fontWeight: FontWeight.w600, fontSize: 20.0),
                 ),
                 IconButton(
                     onPressed: () => _showMediaOptions(context),

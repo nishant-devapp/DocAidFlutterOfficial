@@ -137,7 +137,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                       onTap: () {
                         showModalBottomSheet(
                           context: context,
-                          isScrollControlled: true, // This makes the bottom sheet full screen
+                          isScrollControlled: true,
+                          backgroundColor: Colors.white,// This makes the bottom sheet full screen
                           builder: (context) => DraggableScrollableSheet(
                             expand: false,
                             builder: (context, scrollController) => SingleChildScrollView(
