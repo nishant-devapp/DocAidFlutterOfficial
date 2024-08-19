@@ -8,6 +8,7 @@ class ApiEndpoints {
 
   // Dashboard
   static const String addScheduleEndpoint = '/inter/add';
+  static const String updateScheduleEndpoint = '/inter/update';
 
   // Clinics
   static const String addNewClinicEndPoint = '/clinic/add';
@@ -45,6 +46,7 @@ class ApiEndpoints {
   static const String getPaymentVerificationEndPoint = '/subscription/fetchDetailsByPaymentId';
   static const String updatingNewEndDateEndPoint = '/currentSubscription/updateCurrentSubscriptionDetails';
   static const String createPaymentHistoryEndPoint = '/subscriptionPaymentHistory/create';
+  static const String fetchSubscriptionHistoryEndPoint = '/subscriptionPaymentHistory/allSubscriptionPaymentHistory';
 
   // Help
   static const String sendHelpMsgEndPoint = '/feedback';

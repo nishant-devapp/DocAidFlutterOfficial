@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/helpers/Toaster.dart';

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 import '../model/end_date_model.dart';
 import '../model/payment_verification_model.dart';
+import '../model/subscription_history_model.dart';
 import '../model/subscription_order_model.dart';
 
 class AccountService {
@@ -416,7 +417,43 @@ class AccountService {
     }
   }
 
+  Future<SubscriptionHistoryModel> fetchSubscriptionHistory(int doctorId) async{
 
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchSubscriptionHistoryEndPoint;
+
+      final queryParameters = {'doctorId': doctorId.toString()};
+
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return SubscriptionHistoryModel.fromJson(data);
+      } else {
+        throw Exception('Failed to get subscription history');
+      }
+    } catch (error) {
+      print('Error fetching endDate: $error');
+      throw error;
+    }
+
+
+  }
 
 }
 

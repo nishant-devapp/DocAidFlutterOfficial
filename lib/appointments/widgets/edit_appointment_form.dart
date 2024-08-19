@@ -118,6 +118,7 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
                     controller: _editAbhaController,
                     keyboardType: TextInputType.number,
                     maxLength: 14,
+                    readOnly: true,
                     decoration: InputDecoration(
                         label: const Text('ABHA'),
                         border: OutlineInputBorder(
@@ -145,6 +146,7 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
                   TextFormField(
                     controller: _editContactController,
                     maxLength: 10,
+                    readOnly: true,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                         label: const Text('Mobile Number'),

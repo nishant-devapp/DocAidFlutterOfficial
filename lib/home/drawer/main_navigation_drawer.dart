@@ -1,3 +1,4 @@
+import 'package:code/auth/screens/LoginScreen.dart';
 import 'package:code/profile/screens/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -116,10 +117,17 @@ class MainNavigationDrawer extends StatelessWidget {
                 ),
                 title: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.textColor)),
                 onTap: () async{
-                  TokenManager().deleteToken();
-                  final prefs = await  SharedPreferences.getInstance();
-                  await  prefs.clear();
-                  Navigator.pop(context);
+                  // Delete token and clear shared preferences before navigating
+                  await TokenManager().deleteToken();
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+
+                  // Navigate to the login screen and remove all previous routes
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        (Route<dynamic> route) => false,
+                  );
                 },
               ),
               const SizedBox(height: 25.0),

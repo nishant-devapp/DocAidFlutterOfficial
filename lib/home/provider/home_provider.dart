@@ -18,13 +18,19 @@ class HomeGetProvider extends ChangeNotifier {
   String? _errorMessage;
 
   HomeGetModel? get doctorProfile => _doctorProfile;
+
   Uint8List? get profileImage => _profileImage;
 
   bool get isLoading => _isLoading;
+
   bool get isUpdatingProfile => _isUpdatingProfile;
+
   bool get isUpdatingImage => _isUpdatingImage;
+
   bool get isAddingClinic => _isAddingClinic;
+
   bool get isUpdatingClinic => _isUpdatingClinic;
+
   bool get isFetchingImage => _isFetchingImage;
 
   String? get errorMessage => _errorMessage;
@@ -48,7 +54,7 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchDoctorImage() async{
+  Future<void> fetchDoctorImage() async {
     if (_profileImage != null) {
       return;
     }
@@ -65,22 +71,21 @@ class HomeGetProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-
   }
 
-  Future<void> updateDoctorImage(File imageFile) async{
+  Future<void> updateDoctorImage(File imageFile) async {
     _isUpdatingImage = true;
     _errorMessage = null;
     notifyListeners();
 
-    try{
+    try {
       // Call the service class to upload the image
       await _homeGetService.updateDoctorImage(imageFile);
       _profileImage = await imageFile.readAsBytes();
       notifyListeners();
-    }catch(error){
+    } catch (error) {
       _errorMessage = error.toString();
-    }finally {
+    } finally {
       _isUpdatingImage = false;
       notifyListeners();
     }
@@ -97,16 +102,26 @@ class HomeGetProvider extends ChangeNotifier {
       List<String> citations,
       List<String> specialization,
       int experience,
-      String licenceNumber) async{
+      String licenceNumber) async {
     _isUpdatingProfile = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _homeGetService.updateDoctorProfile(firstName, lastName, email, contact, degrees, achievements, researchJournal, citations, specialization, experience, licenceNumber);
+      await _homeGetService.updateDoctorProfile(
+          firstName,
+          lastName,
+          email,
+          contact,
+          degrees,
+          achievements,
+          researchJournal,
+          citations,
+          specialization,
+          experience,
+          licenceNumber);
 
       _doctorProfile = await _homeGetService.fetchDoctorProfile();
-
 
       notifyListeners(); // Notify listeners to update the UI
     } catch (error) {
@@ -116,7 +131,6 @@ class HomeGetProvider extends ChangeNotifier {
       _isUpdatingProfile = false;
       notifyListeners();
     }
-
   }
 
   Future<void> addClinic(
@@ -129,7 +143,6 @@ class HomeGetProvider extends ChangeNotifier {
       String clinicNewFee,
       String clinicOldFees,
       List<String> days) async {
-
     _isAddingClinic = true;
     _errorMessage = null;
     notifyListeners();
@@ -148,27 +161,34 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
-
   Future<void> updateClinic(
-      int clinicId,
-      String clinicName,
-      String location,
-      String incharge,
-      String startTime,
-      String endTime,
-      String clinicContact,
-      String clinicNewFee,
-      String clinicOldFees,
-      List<String> days,
-      ) async{
-
+    int clinicId,
+    String clinicName,
+    String location,
+    String incharge,
+    String startTime,
+    String endTime,
+    String clinicContact,
+    String clinicNewFee,
+    String clinicOldFees,
+    List<String> days,
+  ) async {
     _isUpdatingClinic = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _homeGetService.updateClinic(clinicId, clinicName, location, incharge,
-          startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days);
+      await _homeGetService.updateClinic(
+          clinicId,
+          clinicName,
+          location,
+          incharge,
+          startTime,
+          endTime,
+          clinicContact,
+          clinicNewFee,
+          clinicOldFees,
+          days);
 
       doctorProfile?.data?.clinicDtos?.forEach((clinic) {
         if (clinic.id == clinicId) {
@@ -183,16 +203,65 @@ class HomeGetProvider extends ChangeNotifier {
           clinic.days = days;
         }
       });
-
     } catch (error) {
       _errorMessage = 'Error updating clinic: $error';
     } finally {
       _isUpdatingClinic = false;
       notifyListeners();
     }
-
   }
 
+  Future<void> addDoctorSchedule(String startTime, String endTime,
+      String location, String purpose, String startDate, String endDate) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _homeGetService.addNewSchedule(
+          startTime, endTime, location, purpose, startDate, endDate);
+      _doctorProfile = await _homeGetService.fetchDoctorProfile();
+    } catch (error) {
+      _errorMessage = 'Error adding schedule: $error';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateDoctorSchedule(
+      int interfaceId,
+      String startTime,
+      String endTime,
+      String location,
+      String purpose,
+      String startDate,
+      String endDate) async {
+    _isUpdatingClinic = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _homeGetService.updateSchedule(interfaceId, startTime, endTime,
+          location, purpose, startDate, endDate);
+
+      doctorProfile?.data?.docIntr?.forEach((intr) {
+        if (intr.id == interfaceId) {
+          intr.clinicName = location;
+          intr.purpose = purpose;
+          intr.stDate = startDate;
+          intr.endDate = endDate;
+          intr.startTime = startTime;
+          intr.endTime = endTime;
+        }
+      });
+    } catch (error) {
+      _errorMessage = 'Error updating clinic: $error';
+    } finally {
+      _isUpdatingClinic = false;
+      notifyListeners();
+    }
+  }
 
   // Get a list of clinics
   List<ClinicDtos> getClinics() {

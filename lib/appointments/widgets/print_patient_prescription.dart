@@ -1,16 +1,20 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
-
 import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/helpers/print_content.dart';
 import '../models/fetch_appointment_model.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+
+import '../providers/prescription_provider.dart';
+
 
 class PrintPatientPrescription extends StatefulWidget {
   PrintPatientPrescription({super.key, required this.appointment});
@@ -24,6 +28,7 @@ class PrintPatientPrescription extends StatefulWidget {
 
 class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
   final GlobalKey _key = GlobalKey();
+  bool _isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +205,7 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10.0),
+                    const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -211,12 +216,17 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                                 child: TextField(
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding:
-                                    EdgeInsets.symmetric(vertical: 5),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 5),
                                   ),
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.multiline,   // Allows multi-line input
+                                  textInputAction: TextInputAction.newline, // Changes the action to new line
                                   textAlign: TextAlign.start,
-                                  showCursor: false,
+                                  style: TextStyle(
+                                    fontSize: 10.0, // Set the font size to 10
+                                  ),
+                                  showCursor: false,  // Shows cursor
+                                  maxLines: null,    // Allows unlimited lines (null will allow the TextField to grow vertically)
+                                  minLines: 1,       // Minimum number of lines to display
                                 ),
                               ),
                               const SizedBox(height: 30.0,),
@@ -227,20 +237,25 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                                 child: TextField(
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    contentPadding:
-                                    EdgeInsets.symmetric(vertical: 5),
+                                    contentPadding: EdgeInsets.symmetric(vertical: 5),
                                   ),
-                                  keyboardType: TextInputType.text,
+                                  keyboardType: TextInputType.multiline,   // Allows multi-line input
+                                  textInputAction: TextInputAction.newline, // Changes the action to new line
                                   textAlign: TextAlign.start,
-                                  showCursor: false,
+                                  style: TextStyle(
+                                    fontSize: 10.0, // Set the font size to 10
+                                  ),
+                                  showCursor: false,  // Shows cursor
+                                  maxLines: null,    // Allows unlimited lines (null will allow the TextField to grow vertically)
+                                  minLines: 1,       // Minimum number of lines to display
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        if (speciality == 'Dentist')
+                        if (speciality == 'Dentist' || speciality == 'dentist')
                           Expanded(child: Image.asset('assets/icons/prescriptions_dentist.png', height: 250)),
-                        if (speciality == 'Eye Specialist' || speciality == 'eye specialist' || speciality == 'Eye speciality')
+                        if (speciality == 'Eye Specialist' || speciality == 'eye specialist' || speciality == 'Eye speciality' || speciality == 'Ophthalmologist' || speciality == 'ophthalmologist')
                           Expanded(child: Image.asset('assets/icons/prescriptions_optometrist.png', height: 250)),
                       ],
                  )
@@ -259,10 +274,6 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                       backgroundColor: AppColors.verdigris,
                     ),
                     onPressed: () => _printPrescription(context),
-                    /* WidgetsBinding.instance.addPostFrameCallback((_) {
-                            printContent(context, _key, '${widget.appointment.name!}_prescription.pdf');
-                          });*/
-
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
@@ -275,10 +286,14 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.verdigris,
                     ),
-                    onPressed: () {},
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
+                    onPressed: _isSubmitting ? null : _submitPrescription,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _isSubmitting
+                          ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                          : const Text(
                         'Submit',
                         style: TextStyle(fontSize: 18.0, color: Colors.white),
                       ),
@@ -338,4 +353,48 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
       );
     }
   }
+
+  void _submitPrescription() async {
+
+    setState(() {
+      _isSubmitting = true; // Start the submission process
+    });
+
+    try {
+      // Capture the prescription as an image
+      Uint8List? imageBytes = await _capturePrescriptionImage();
+      if (imageBytes == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to capture prescription!")),
+        );
+        return;
+      }
+
+      // Save the image to a temporary file
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = '${tempDir.path}/prescription_${widget.appointment.contact}.jpg';
+      File tempFile = File(tempPath);
+      await tempFile.writeAsBytes(imageBytes);
+
+      // Upload the file using the PrescriptionProvider
+      if (tempFile != null) {
+        await Provider.of<PrescriptionProvider>(context, listen: false).uploadPrescription(
+          widget.appointment.contact!,
+          tempFile,
+        );
+      }
+
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: $e")),
+      );
+    } finally {
+      setState(() {
+        _isSubmitting = false; // End the submission process
+      });
+    }
+  }
+
+
 }

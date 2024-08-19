@@ -294,8 +294,102 @@ class HomeGetService {
       print('Error updating profile: $error');
       throw error;
     }
+  }
 
+  Future<void> addNewSchedule(String startTime, String endTime, String location, String purpose, String startDate, String endDate) async{
 
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      const String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.addScheduleEndpoint;
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "startTime": startTime,
+          "endTime": endTime,
+          "clinicName": location,
+          "stDate": startDate,
+          "endDate": endDate,
+          "purpose": purpose
+        }),
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to add schedule');
+      }
+    } catch (error) {
+      print('Error adding schedule: $error');
+      throw error;
+    }
+
+  }
+
+  Future<void> updateSchedule(int interfaceId, String startTime, String endTime, String location, String purpose, String startDate, String endDate) async{
+    try{
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateScheduleEndpoint;
+
+      final queryParameters = {
+        'doctorInterfaceId': interfaceId.toString()
+      };
+
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      print(baseUrl);
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "startTime": startTime,
+          "endTime": endTime,
+          "clinicName": location,
+          "stDate": startDate,
+          "endDate": endDate,
+          "purpose": purpose
+        }),
+
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed to update schedule: ${response.body}');
+        throw Exception('Failed to update schedule');
+      }
+
+    }catch(error){
+      print('Error updating schedule: $error');
+      throw error;
+    }
   }
 
 }

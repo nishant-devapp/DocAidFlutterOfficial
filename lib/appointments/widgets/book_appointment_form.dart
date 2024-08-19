@@ -440,7 +440,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 20),
-                    Text('Processing...', style: TextStyle(color: AppColors.textColor, fontSize: 18.0),),
+                    Text('Processing..', style: TextStyle(color: AppColors.textColor, fontSize: 18.0),),
                   ],
                 ),
               );
@@ -478,6 +478,15 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     );
   }
 
+  Future<void> _fetchClinicAppointmentCount() async{
+    final provider = Provider.of<AppointmentProvider>(context, listen: false);
+    await provider.fetchClinicWiseAppointmentCount(DateFormat('yyyy-MM-dd').format(_selectedDay));
+
+    setState(() {
+      _clinicAppointmentCounts = provider.clinicWiseAppointmentCounts ?? {};
+    });
+  }
+
   void _fetchAppointmentsForCalendar() {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     final DateTime now = DateTime.now();
@@ -489,15 +498,6 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         .fetchCalendarAppointmentCount(doctorId!, startDate, endDate);
   }
 
-  Future<void> _fetchClinicAppointmentCount() async{
-    final provider = Provider.of<AppointmentProvider>(context, listen: false);
-    await provider.fetchClinicWiseAppointmentCount(DateFormat('yyyy-MM-dd').format(_selectedDay));
-
-    setState(() {
-      _clinicAppointmentCounts = provider.clinicWiseAppointmentCounts ?? {};
-    });
-  }
-
   Widget _buildCalendarDialog(BuildContext context) {
     return Dialog(
       child: SizedBox(
@@ -505,6 +505,9 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         height: MediaQuery.of(context).size.height * 0.5,
         child: Consumer<AppointmentProvider>(
           builder: (context, provider, _) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator()); // Display a loading spinner
+            }
             return TableCalendar(
               firstDay: DateTime.now().subtract(const Duration(days: 365 * 50)), // 50 years back
               lastDay: DateTime.now().add(const Duration(days: 365 * 50)), // 50 years ahead
@@ -560,10 +563,12 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         if (provider.appointmentCounts != null &&
             provider.appointmentCounts!.containsKey(formattedDay))
           const SizedBox(height: 4), // Adds some space between the date and the count
-        Text(
-          provider.appointmentCounts![formattedDay]!.toString(),
-          style: const TextStyle(color: AppColors.verdigris, fontSize: 12),
-        ),
+        if (provider.appointmentCounts != null &&
+            provider.appointmentCounts!.containsKey(formattedDay))
+            Text(
+              provider.appointmentCounts![formattedDay]!.toString(),
+              style: const TextStyle(color: AppColors.verdigris, fontSize: 12),
+            ),
       ],
     );
   }

@@ -253,12 +253,12 @@ class _ClinicScreenState extends State<ClinicScreen> {
       final orderModel = await _accountService.getPaymentOrderId(totalAmountToBePaid);
       setState(() {
         paymentOrderId = orderModel.id;
-        print("orderId"+paymentOrderId!);
+        // print("orderId"+paymentOrderId!);
       });
 
       var options = {
         'key': RazorpayKeys.testKey,
-        'amount': totalAmountToBePaid, // Convert to paise.
+        'amount': totalAmountToBePaid,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
         'currency': "INR",

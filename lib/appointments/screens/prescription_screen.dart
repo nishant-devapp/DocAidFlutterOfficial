@@ -85,8 +85,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     return ListView.builder(
                       itemCount: prescriptionProvider.mediaItems.length,
                       itemBuilder: (context, index) {
-                        final mediaBytes =
-                            prescriptionProvider.mediaItems[index];
+                        // final mediaBytes = prescriptionProvider.mediaItems[index];                 // normal list
+                        final mediaBytes = prescriptionProvider.mediaItems.reversed.toList()[index]; // reversed list
 
                         return _buildPrescriptionPreview(mediaBytes);
                       },
@@ -102,44 +102,41 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
   }
 
   Widget _buildPrescriptionPreview(Uint8List bytes) {
-    if (bytes.isEmpty) return Offstage(child: Container()); // Handle empty bytes
+    if (bytes.isEmpty) return Offstage(); // Handle empty bytes
 
-    // Check for image formats using common magic numbers
-    final isJpeg = bytes.length > 2 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF;
-    final isPng = bytes.length > 8 && bytes.sublist(1, 8).join() == '89504E47'; // PNG Magic Number
-    final isGif = bytes.length > 6 && bytes.sublist(0, 6).join() == '474946'; // GIF Magic Number
-    final isWebp = bytes.length > 12 && bytes.sublist(0, 12).join() == '52494646'; // WEBP Magic Number
-
-    if (isJpeg || isPng || isGif || isWebp) {
+    try {
+      // Attempt to decode the bytes as an image
+      final image = Image.memory(bytes);
       return Card(
         elevation: 3,
         shadowColor: AppColors.princetonOrange.withOpacity(0.5),
-        color: AppColors.celeste.withOpacity(0.6),
+        color: Colors.white,
         child: SizedBox(
           height: 300.0,
           width: double.infinity,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image.memory(bytes),
+            child: image, // Render as image
+          ),
+        ),
+      );
+    } catch (e) {
+      // If decoding fails, assume it's a PDF
+      return Card(
+        elevation: 3,
+        shadowColor: AppColors.princetonOrange.withOpacity(0.5),
+        color: Colors.white,
+        child: SizedBox(
+          height: 300.0,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PDFPreview(bytes: bytes), // Render as PDF
           ),
         ),
       );
     }
 
-    // If not an image, assume it's a PDF
-    return Card(
-      elevation: 3,
-      shadowColor: AppColors.princetonOrange.withOpacity(0.5),
-      color: AppColors.celeste.withOpacity(0.6),
-      child: SizedBox(
-        height: 300.0,
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PDFPreview(bytes: bytes), // Ensure this widget is set up correctly to handle PDFs
-        ),
-      ),
-    );
   }
 
   void _showMediaOptions(BuildContext context) {

@@ -12,12 +12,14 @@ import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../widgets/duration_selector_bottom_sheet.dart';
+import '../widgets/subscription_history_item.dart';
 
 class ReviewSubscriptionScreen extends StatefulWidget {
   const ReviewSubscriptionScreen({super.key});
 
   @override
-  State<ReviewSubscriptionScreen> createState() => _ReviewSubscriptionScreenState();
+  State<ReviewSubscriptionScreen> createState() =>
+      _ReviewSubscriptionScreenState();
 }
 
 class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
@@ -25,16 +27,23 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
   Razorpay _razorpay = Razorpay();
   AccountService _accountService = AccountService();
-  String? endDate, oneDayAdded, paymentOrderId, docName, docContact, docEmail, paymentId, paymentStatus;
-  int? docId, duration, totalAmountToBePaid;
-
+  String? endDate,
+      oneDayAdded,
+      paymentOrderId,
+      docName,
+      docContact,
+      docEmail,
+      paymentId,
+      paymentStatus;
+  int? docId, duration, totalClinics, totalAmountToBePaid;
 
   @override
   void initState() {
     super.initState();
 
     final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
-    final accountProvider = Provider.of<AccountProvider>(context, listen: false);
+    Provider.of<AccountProvider>(context, listen: false)
+        .fetchSubscriptionHistory(homeProvider.doctorProfile!.data!.id!);
 
     _fetchEndDate(homeProvider.doctorProfile!.data!.id!);
 
@@ -46,51 +55,95 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
   @override
   void dispose() {
     super.dispose();
-    _razorpay.clear(); // Removes all listeners
+    _razorpay.clear();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    return  DoctorProfileBase(
-        builder: (HomeGetProvider homeProvider){
-          final doctorProfile = homeProvider.doctorProfile!;
-          docId = doctorProfile.data!.id!;
-          docName = doctorProfile.data!.firstName! + doctorProfile.data!.lastName!;
-          docContact = doctorProfile.data!.contact!;
-          docEmail = doctorProfile.data!.email!;
-          final totalClinics = doctorProfile.data!.clinicDtos!.length;
-          return Scaffold(
-            body: Center(
-              child: Column(
-                children: [
-                  const Text(
-                      'Review Subscription'
+    final mediaQuery = MediaQuery.of(context);
+    final deviceWidth = mediaQuery.size.width;
+
+    return DoctorProfileBase(builder: (HomeGetProvider homeProvider) {
+      final doctorProfile = homeProvider.doctorProfile!;
+      docId = doctorProfile.data!.id!;
+      docName = doctorProfile.data!.firstName! + doctorProfile.data!.lastName!;
+      docContact = doctorProfile.data!.contact!;
+      docEmail = doctorProfile.data!.email!;
+      totalClinics = doctorProfile.data!.clinicDtos!.length;
+
+      return Consumer<AccountProvider>(
+          builder: (context, accountProvider, child) {
+        return Scaffold(
+          body: Column(
+            children: [
+              Card(
+                elevation: 6.0,
+                shadowColor: AppColors.princetonOrange.withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                margin: EdgeInsets.symmetric(
+                  vertical: deviceWidth * 0.03,
+                  horizontal: deviceWidth * 0.04,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Choose Subscription', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),),
+                      const SizedBox(height: 8.0),
+                      const Text('Monthly Subscription amount is Rs. 1500/month',  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.0),),
+                      const SizedBox(height: 10.0),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _openDurationSelectionSheet(context);
+                          },
+                          icon: const Icon(Icons.payment_outlined, color: AppColors.darkGreenColor),
+                          label: Text(
+                            "Pay Now",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.darkGreenColor.withOpacity(0.6),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2.0,
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                      onPressed: (){
-                        // _openPaymentOptionBottomSheet(totalClinics);
-                    _fetchSubscriptionAmount(3, totalClinics);
-                  }, child: const Text('Pay now', style: TextStyle(fontSize: 16.0, color: AppColors.textColor),)),
-                ],
+                ),
               ),
-            ),
-          );
-        }
-    );
+
+              const SizedBox(height: 15.0),
+              Expanded(child: SubscriptionHistoryItem(subscriptionHistory: accountProvider.subscriptionHistory!,)),
+            ],
+          ),
+        );
+      });
+    });
   }
 
-
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    print(response.signature);
-    print(response.orderId);
-    print(response.paymentId);
+    print("Signature: ${response.signature}");
+    print("Order ID: ${response.orderId}");
+    print("Payment ID: ${response.paymentId}");
 
     paymentId = response.paymentId;
 
+    print("PaymentId: $paymentId");
+
     try {
-      final verificationModel = await _accountService.getPaymentStatus(paymentId!);
+      final verificationModel =
+          await _accountService.getPaymentStatus(paymentId!);
       setState(() {
         paymentStatus = verificationModel.status;
       });
@@ -98,30 +151,32 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
       if (paymentStatus == "captured" || paymentStatus == "authorised") {
         try {
           if (paymentOrderId != null && oneDayAdded != null && docId != null) {
-
-            final result = await _accountService.updateCurrentSubscriptionDetails(
+            final result =
+                await _accountService.updateCurrentSubscriptionDetails(
               paymentOrderId!,
               paymentId!,
               oneDayAdded!,
-              3,
-              1,
+              duration!,
+              totalAmountToBePaid!,
               docId!,
             );
             if (result) {
-              final isHistoryCreated = await _accountService.createPaymentHistory(
-                  paymentOrderId!,
-                  paymentId!,
-                  oneDayAdded!,
-                  3,
-                  1,
-                  docId!);
+              final isHistoryCreated =
+                  await _accountService.createPaymentHistory(
+                      paymentOrderId!,
+                      paymentId!,
+                      oneDayAdded!,
+                      duration!,
+                      totalAmountToBePaid!,
+                      docId!);
 
-              if(isHistoryCreated){
-                showToast(context, 'Payment Successful', AppColors.verdigris, Colors.white);
+              if (isHistoryCreated) {
+                showToast(context, 'Payment Successful', AppColors.verdigris,
+                    Colors.white);
               }
-
             } else {
-              showToast(context, 'Payment Failed', AppColors.vermilion, Colors.white);
+              showToast(
+                  context, 'Payment Failed', AppColors.vermilion, Colors.white);
             }
           } else {
             print('Error: Required data is missing');
@@ -143,7 +198,6 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
   }
-
 
   String _addOneDay(String endDate) {
     DateTime date = DateTime.parse(endDate);
@@ -169,10 +223,12 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
   Future<void> _fetchSubscriptionAmount(int duration, int totalClinics) async {
     try {
-      final subscriptionModel = await _accountService.getTotalAmount(duration, totalClinics);
-      setState(() {
-        totalAmountToBePaid = subscriptionModel.data;
-      });
+      final subscriptionModel =
+          await _accountService.getTotalAmount(duration, totalClinics);
+      totalAmountToBePaid = subscriptionModel.data;
+
+      print('Total Amount: $totalAmountToBePaid');
+
       if (totalAmountToBePaid != null) {
         await _fetchSubscriptionOrderId(totalAmountToBePaid!);
       }
@@ -181,17 +237,16 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     }
   }
 
-  Future<void> _fetchSubscriptionOrderId(int totalAmountToBePaid) async {
+  Future<void> _fetchSubscriptionOrderId(int paymentAmount) async {
     try {
-      // final orderModel = await _accountService.getPaymentOrderId(totalAmountToBePaid);
-      final orderModel = await _accountService.getPaymentOrderId(100);
-      setState(() {
-        paymentOrderId = orderModel.id;
-      });
+      final orderModel = await _accountService.getPaymentOrderId(paymentAmount);
+      paymentOrderId = orderModel.id;
+
+      print('Payment Order Id: $paymentOrderId');
 
       var options = {
         'key': RazorpayKeys.testKey,
-        'amount': 100, // Convert to paise.
+        'amount': paymentAmount,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
         'currency': "INR",
@@ -227,15 +282,17 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: DurationSelectorBottomSheet(
-              onDurationSelected: (selectedDuration){
-                setState(() {
-                  duration = selectedDuration;
-                });
+              onDurationSelected: (selectedDuration) {
+                if (mounted) {
+                  setState(() {
+                    duration = selectedDuration;
+                  });
+                }
+                print("Total Clinics: ${totalClinics.toString()}");
+                print("Duration: $duration");
+                _fetchSubscriptionAmount(duration!, totalClinics!);
+
                 Navigator.pop(context);
-                // if(duration != null){
-                //   calculateAdditionalClinicCharge(daysDifference!);
-                // }
-                // _openAddClinicBottomSheet(context);
               },
             ),
           ),
@@ -243,9 +300,4 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
       ),
     );
   }
-
-
 }
-
-
-

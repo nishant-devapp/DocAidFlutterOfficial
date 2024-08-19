@@ -14,21 +14,6 @@ class _DurationSelectorBottomSheetState extends State<DurationSelectorBottomShee
 
   int? _selectedDuration;
 
-  int _getDuration(String option) {
-    switch (option) {
-      case 'Monthly':
-        return 1;
-      case 'Quarterly':
-        return 4;
-      case 'Half Yearly':
-        return 6;
-      case 'Yearly':
-        return 12;
-      default:
-        return 0; // Just in case
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -49,9 +34,9 @@ class _DurationSelectorBottomSheetState extends State<DurationSelectorBottomShee
             ),
             const SizedBox(height: 20),
 
-            _buildDurationCard(3, 'Monthly', 'Rs. 1500 + 500/ Additional Clinics', '+18% GST'),
+            _buildDurationCard(1, 'Monthly', 'Rs. 1500 + 500/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
-            _buildDurationCard(4, 'Quarterly', 'Rs. 4500 + 1500/ Additional Clinics', '+18% GST'),
+            _buildDurationCard(3, 'Quarterly', 'Rs. 4500 + 1500/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
             _buildDurationCard(6, 'Half Yearly', 'Rs. 9000 + 3000/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
