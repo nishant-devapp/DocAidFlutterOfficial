@@ -78,6 +78,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
             children: [
               Card(
                 elevation: 6.0,
+                color: AppColors.celeste.withOpacity(0.8),
                 shadowColor: AppColors.princetonOrange.withOpacity(0.3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
@@ -87,13 +88,22 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                   horizontal: deviceWidth * 0.04,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Choose Subscription', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),),
+                      const Text(
+                        'Choose Subscription',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16.0),
+                      ),
                       const SizedBox(height: 8.0),
-                      const Text('Monthly Subscription amount is Rs. 1500/month',  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14.0),),
+                      const Text(
+                        'Monthly Subscription amount is Rs. 1500/month',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 14.0),
+                      ),
                       const SizedBox(height: 10.0),
                       Align(
                         alignment: AlignmentDirectional.centerEnd,
@@ -101,7 +111,8 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                           onPressed: () {
                             _openDurationSelectionSheet(context);
                           },
-                          icon: const Icon(Icons.payment_outlined, color: AppColors.darkGreenColor),
+                          icon: const Icon(Icons.payment_outlined,
+                              color: AppColors.darkGreenColor),
                           label: Text(
                             "Pay Now",
                             style: TextStyle(
@@ -111,7 +122,8 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                           ),
                           style: ElevatedButton.styleFrom(
                             elevation: 2.0,
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
@@ -122,9 +134,11 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 15.0),
-              Expanded(child: SubscriptionHistoryItem(subscriptionHistory: accountProvider.subscriptionHistory!,)),
+              Expanded(
+                  child: SubscriptionHistoryItem(
+                subscriptionHistory: accountProvider.subscriptionHistory!,
+              )),
             ],
           ),
         );

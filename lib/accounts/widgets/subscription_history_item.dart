@@ -89,7 +89,7 @@ class _SubscriptionHistoryItemState extends State<SubscriptionHistoryItem> {
         ),
         const SizedBox(height:8.0),
         Text(
-          '${subscription.subscriptionStartDate!}  -  ${subscription.subscriptionEndDate!}',
+          '${subscription.subscriptionStartDate!}  to  ${subscription.subscriptionEndDate!}',
           style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14.0,
