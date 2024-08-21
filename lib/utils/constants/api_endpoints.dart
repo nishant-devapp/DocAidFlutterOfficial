@@ -9,6 +9,7 @@ class ApiEndpoints {
   // Dashboard
   static const String addScheduleEndpoint = '/inter/add';
   static const String updateScheduleEndpoint = '/inter/update';
+  static const String deleteScheduleEndpoint = '/inter/delete';
 
   // Clinics
   static const String addNewClinicEndPoint = '/clinic/add';

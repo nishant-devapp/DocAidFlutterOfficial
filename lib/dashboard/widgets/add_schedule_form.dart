@@ -295,7 +295,6 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
     );
   }
 
-  void _addSchedule() async {}
 
   static List<String> _generateTimeOptions() {
     final List<String> options = [];

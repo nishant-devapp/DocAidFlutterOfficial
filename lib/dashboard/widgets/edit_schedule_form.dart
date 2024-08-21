@@ -1,9 +1,10 @@
+import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../home/models/home_get_model.dart';
+import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/helpers/Toaster.dart';
 
 class EditScheduleForm extends StatefulWidget {
   const EditScheduleForm({super.key, required this.schedule});
@@ -15,40 +16,42 @@ class EditScheduleForm extends StatefulWidget {
 }
 
 class _EditScheduleFormState extends State<EditScheduleForm> {
-
   final _key = GlobalKey<FormState>();
   bool _isUpdating = false;
 
   TextEditingController _purposeController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
-  final List<String> _timeOptions = _generateTimeOptions();
+  TextEditingController _startTimeController = TextEditingController();
+  TextEditingController _endTimeController = TextEditingController();
+  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _endDateController = TextEditingController();
 
-  String? _selectedStartTime;
-  String? _selectedEndTime;
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
 
-  bool _isStartTimeValid = true;
-  bool _isEndTimeValid = true;
-  bool _isStartDateValid = true;
-  bool _isEndDateValid = true;
-  // final TextEditingController startTimeController = TextEditingController(
-  //   text: DateFormat('HH:mm').format(_parseTime(widget.schedule.startTime!)),
-  // );
-  // final TextEditingController endTimeController = TextEditingController(
-  //   text: DateFormat('HH:mm').format(_parseTime(widget.schedule.endTime!)),
-  // );
+  final DateFormat _dateFormatter = DateFormat('yyyy-MM-dd');
+  final DateFormat _timeFormatter = DateFormat('hh:mm:ss');
 
   @override
   void initState() {
     super.initState();
 
-    if(widget.schedule != null){
-      _purposeController.text = widget.schedule!.purpose!;
-      _locationController.text = widget.schedule!.clinicName!;
+    if (widget.schedule != null) {
+      _purposeController.text = widget.schedule!.purpose ?? '';
+      _locationController.text = widget.schedule!.clinicName ?? '';
+      _startDateController.text = widget.schedule!.stDate ?? '';
+      _endDateController.text = widget.schedule!.endDate ?? '';
+      _startTimeController.text = widget.schedule!.startTime ?? '';
+      _endTimeController.text = widget.schedule!.endTime ?? '';
 
+      // Convert existing date strings to DateTime objects
+      _selectedStartDate = widget.schedule!.stDate != null
+          ? _dateFormatter.parse(widget.schedule!.stDate!)
+          : null;
+      _selectedEndDate = widget.schedule!.endDate != null
+          ? _dateFormatter.parse(widget.schedule!.endDate!)
+          : null;
     }
-
   }
 
   @override
@@ -57,286 +60,355 @@ class _EditScheduleFormState extends State<EditScheduleForm> {
     final deviceHeight = mediaQuery.size.height;
     final deviceWidth = mediaQuery.size.width;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: deviceHeight * 0.01,
-        horizontal: deviceWidth * 0.03,
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Form(
-          key: _key,
-          child: Column(
-            children: [
-              SizedBox(height: deviceHeight * 0.02),
-              Text('Edit Schedule', style: TextStyle(fontSize: deviceHeight * 0.028, fontWeight: FontWeight.w600),),
-              SizedBox(height: deviceHeight * 0.03),
-              TextFormField(
-                textCapitalization: TextCapitalization.sentences,
-                controller: _purposeController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
+    return DoctorProfileBase(builder: (HomeGetProvider homeProvider){
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: deviceHeight * 0.01,
+          horizontal: deviceWidth * 0.03,
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          child: Form(
+            key: _key,
+            child: Column(
+              children: [
+                SizedBox(height: deviceHeight * 0.02),
+                Text(
+                  'Edit Schedule',
+                  style: TextStyle(
+                    fontSize: deviceHeight * 0.028,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: deviceHeight * 0.03),
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _purposeController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
                     label: const Text('Purpose'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                    )),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter purpose';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: deviceHeight * 0.02),
-              TextFormField(
-                textCapitalization: TextCapitalization.sentences,
-                controller: _locationController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter purpose';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: deviceHeight * 0.02),
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _locationController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
                     label: const Text('Location'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                    )),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter location';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: deviceHeight * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: deviceWidth * 0.03,
-                        vertical: deviceHeight * 0.005,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            // color: _isStartTimeValid
-                            //     ? AppColors.princetonOrange
-                            //     : Colors.red,
-                          color: AppColors.princetonOrange,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedStartTime,
-                          hint: Text('Start Time'),
-                          items: _timeOptions.map((String time) {
-                            return DropdownMenuItem<String>(
-                              value: time,
-                              child: Text(time),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedStartTime = newValue;
-                            });
-                          },
-                        ),
-                      ),
                     ),
                   ),
-                  SizedBox(width: deviceWidth * 0.04),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: deviceWidth * 0.03,
-                        vertical: deviceHeight * 0.005,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            // color: _isEndTimeValid
-                            //     ? AppColors.princetonOrange
-                            //     : Colors.red,
-                          color: AppColors.princetonOrange,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedEndTime,
-                          hint: const Text('End Time'),
-                          items: _timeOptions.map((String time) {
-                            return DropdownMenuItem<String>(
-                              value: time,
-                              child: Text(time),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedEndTime = newValue;
-                            });
-                          },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter location';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: deviceHeight * 0.02),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: _startTimeController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          label: const Text('Start Time'),
+                          prefixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.access_time_outlined,
+                              color: AppColors.princetonOrange,
+                            ),
+                            onPressed: _selectStartTime,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter start time';
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: deviceHeight * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(context, true),
-                      child: Container(
-                        padding:  EdgeInsets.symmetric(
-                          vertical: deviceHeight * 0.02,
+                    SizedBox(width: deviceWidth * 0.04),
+                    Expanded(
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: _endTimeController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          label: const Text('End Time'),
+                          prefixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.access_time_outlined,
+                              color: AppColors.princetonOrange,
+                            ),
+                            onPressed: _selectEndTime,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color:  _isStartDateValid
-                              ? AppColors.verdigris
-                              : Colors.red,),
-                          borderRadius: BorderRadius.circular(8.0),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter end time';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: deviceHeight * 0.02),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: _startDateController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          label: const Text('Start Date'),
+                          prefixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.access_time_outlined,
+                              color: AppColors.verdigris,
+                            ),
+                            onPressed: () => _selectDate(context, true),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
                         ),
-                        child: Center(
-                          child: Text(
-                            _selectedStartDate == null
-                                ? 'Start Date'
-                                : DateFormat('yyyy-MM-dd').format(_selectedStartDate!),
-                            style: TextStyle(fontSize: deviceHeight * 0.018),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter start date';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(width: deviceWidth * 0.04),
+                    Expanded(
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: _endDateController,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          label: const Text('End Date'),
+                          prefixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.access_time_outlined,
+                              color: AppColors.verdigris,
+                            ),
+                            onPressed: () => _selectDate(context, false),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter end date';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: deviceHeight * 0.03),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed:  _isUpdating ? null :() async{
+                          setState(() {
+                            _isUpdating = true;
+                          });
+
+                          await homeProvider.deleteSchedule(widget.schedule!.id!);
+
+                          Navigator.pop(context);
+
+                          setState(() {
+                            _isUpdating = false;
+                          });
+                        },
+                        icon: _isUpdating
+                            ? const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.0,
+                        )
+                            : const Icon(Icons.delete, color: Colors.white),
+                        label: Text(
+                          _isUpdating ? "Deleting..." : "Delete",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2.0,
+                          backgroundColor: AppColors.vermilion,
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: deviceWidth * 0.04),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(context, false),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: deviceHeight * 0.02,
+                    const SizedBox(width: 20.0,),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _isUpdating ? null :() async {
+                          if (!_key.currentState!.validate()) {
+                            return;
+                          }
+                          // Print form values for debugging
+                         /* print(_purposeController.text.trim());
+                          print(_locationController.text.trim());
+                          print('Start Time: ${_startTimeController.text.trim()}');
+                          print('End Time: ${_endTimeController.text.trim()}');
+                          print('Start Date: ${_startDateController.text.trim()}');
+                          print('End Date: ${_endDateController.text.trim()}');*/
+
+                          setState(() {
+                            _isUpdating = true;
+                          });
+
+                          await homeProvider.updateDoctorSchedule(
+                            widget.schedule!.id!,
+                              _startTimeController.text.trim(),
+                              _endTimeController.text.trim(),
+                              _locationController.text.trim(),
+                              _purposeController.text.trim(),
+                              _startDateController.text.trim(),
+                              _endDateController.text.trim());
+
+                          Navigator.pop(context);
+
+                          setState(() {
+                            _isUpdating = false;
+                          });
+                        },
+                        icon: _isUpdating
+                            ? const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.0,
+                        )
+                            : const Icon(Icons.edit_calendar, color: Colors.white),
+                        label: Text(
+                          _isUpdating ? "Updating..." : "Edit",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: _isEndDateValid
-                              ? AppColors.verdigris
-                              : Colors.red),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Center(
-                          child: Text(
-                            _selectedEndDate == null
-                                ? 'End Date'
-                                : DateFormat('yyyy-MM-dd').format(_selectedEndDate!),
-                            style: TextStyle(fontSize: deviceHeight * 0.018),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2.0,
+                          backgroundColor: AppColors.verdigris,
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: deviceHeight * 0.03),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                      backgroundColor: AppColors.verdigris,
-                    ),
-                    onPressed: _deleteSchedule,
-                    child: Text('Delete', style: TextStyle(color: Colors.white, fontSize: deviceHeight * 0.022,),),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                      backgroundColor: AppColors.verdigris,
-                    ),
-                    onPressed: _updateSchedule,
-                    child: Text('Edit', style: TextStyle(color: Colors.white, fontSize: deviceHeight * 0.022,),),
-                  )
-                ],
-              ),
-
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      );
+    });
+
+
+  }
+
+  void _deleteSchedule() {
+    // Implement deletion logic here
+  }
+
+  Future<void> _selectStartTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
     );
 
-  }
-
-  void _updateSchedule() async{
-    if (!_key.currentState!.validate()) {
-      return;
+    if (selectedTime != null) {
+      final String formattedTime = _convertTo24HourFormat(selectedTime);
+      setState(() {
+        _startTimeController.text = formattedTime;
+      });
     }
-
-    // setState(() {
-    //   _isStartTimeValid = _selectedStartTime != null;
-    //   _isEndTimeValid = _selectedEndTime != null;
-    //   _isStartDateValid = _selectedStartDate != null;
-    //   _isEndDateValid = _selectedEndDate != null;
-    // });
-    //
-    // if (_isStartTimeValid && _isEndTimeValid && _isStartDateValid && _isEndDateValid) {
-    //   final finalStartTime = _convertTo24HourFormat(_selectedStartTime!);
-    //   final finalEndTime = _convertTo24HourFormat(_selectedEndTime!);
-    //
-    //   final finalStartDate = DateFormat('yyyy-MM-dd').format(_selectedStartDate!);
-    //   final finalEndDate = DateFormat('yyyy-MM-dd').format(_selectedEndDate!);
-    //
-    //   print(_purposeController.text.trim());
-    //   print(_locationController.text.trim());
-    //   print('Start Time: $finalStartTime');
-    //   print('End Time: $finalEndTime');
-    //   print('Start Date: $finalStartDate');
-    //   print('End Date: $finalEndDate');
-    //
-    // } else {
-    //   showToast(context, 'Please fill all fields', AppColors.vermilion, Colors.white);
-    // }
-
   }
 
-  void _deleteSchedule() async{}
+  Future<void> _selectEndTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      final String formattedTime = _convertTo24HourFormat(selectedTime);
+      setState(() {
+        _endTimeController.text = formattedTime;
+      });
+    }
+  }
 
 
-
-  static List<String> _generateTimeOptions() {
-    final List<String> options = [];
-    final timeFormat = DateFormat("h:mm a");
+  String _convertTo24HourFormat(TimeOfDay timeOfDay) {
     final now = DateTime.now();
-    DateTime currentTime = DateTime(now.year, now.month, now.day, 0, 0);
-
-    for (int i = 0; i < 24 * 60; i += 15) {
-      options.add(timeFormat.format(currentTime));
-      currentTime = currentTime.add(const Duration(minutes: 15));
-    }
-
-    return options;
+    final DateTime dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final DateFormat outputFormat = DateFormat('HH:mm:ss');
+    return outputFormat.format(dateTime);
   }
 
-  String _convertTo24HourFormat(String time) {
-    final format = DateFormat('h:mm a');
-    final parsedTime = format.parse(time);
-    return DateFormat('HH:mm:ss').format(parsedTime);
-  }
+
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? selectedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(DateTime.now().year - 100),
-      lastDate: DateTime(DateTime.now().year + 100),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
-    if (pickedDate != null && pickedDate != (isStartDate ? _selectedStartDate : _selectedEndDate)) {
-      setState(() {
-        if (isStartDate) {
-          _selectedStartDate = pickedDate;
-        } else {
-          _selectedEndDate = pickedDate;
-        }
-      });
+
+    if (selectedDate != null) {
+      final formattedDate = _dateFormatter.format(selectedDate);
+
+      if (isStartDate) {
+        setState(() {
+          _selectedStartDate = selectedDate;
+          _startDateController.text = formattedDate;
+        });
+      } else {
+        setState(() {
+          _selectedEndDate = selectedDate;
+          _endDateController.text = formattedDate;
+        });
+      }
     }
   }
 }

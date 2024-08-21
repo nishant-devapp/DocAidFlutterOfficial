@@ -392,4 +392,42 @@ class HomeGetService {
     }
   }
 
+  Future<bool> deleteSchedule(int interfaceId) async{
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      const String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.deleteScheduleEndpoint;
+
+      final queryParameters = {
+        'doctorInterfaceId': interfaceId.toString()
+      };
+
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final response = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // Log status code and response body for debugging
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
 }

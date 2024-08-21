@@ -17,7 +17,6 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-
   final ImagePicker _picker = ImagePicker();
   File? _selectedFile;
   bool _isUpdatingImage = false;
@@ -31,14 +30,18 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.magnolia,
-        title: const Text('Your Profile', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),),
+        title: const Text(
+          'Your Profile',
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
+        ),
         centerTitle: true,
-       ),
+      ),
       body: DoctorProfileBase(
         builder: (HomeGetProvider homeProvider) {
           final doctorProfile = homeProvider.doctorProfile!;
           final hasProfileImage = homeProvider.profileImage != null;
-          final specialization = doctorProfile.data?.specialization != null && doctorProfile.data!.specialization!.isNotEmpty
+          final specialization = doctorProfile.data?.specialization != null &&
+                  doctorProfile.data!.specialization!.isNotEmpty
               ? doctorProfile.data!.specialization?.first
               : 'No specialization available';
           final degrees = doctorProfile.data?.degree!;
@@ -63,7 +66,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             bottomLeft: Radius.circular(40.0),
                             bottomRight: Radius.circular(40.0))),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.05, vertical: deviceHeight * 0.03),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: deviceWidth * 0.05,
+                          vertical: deviceHeight * 0.03),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,41 +82,57 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                     CircleAvatar(
                                       radius: deviceWidth * 0.2,
                                       backgroundColor: Colors.white,
-                                      backgroundImage: homeProvider.profileImage != null
-                                          ? MemoryImage(homeProvider.profileImage!)
-                                          : null,
+                                      backgroundImage:
+                                          homeProvider.profileImage != null
+                                              ? MemoryImage(
+                                                  homeProvider.profileImage!)
+                                              : null,
                                       child: homeProvider.profileImage == null
                                           ? Text(
-                                        doctorProfile.data?.firstName?.isNotEmpty ?? false
-                                            ? doctorProfile.data!.firstName![4].toUpperCase()
-                                            : 'X',
-                                        style: TextStyle(fontSize: deviceWidth * 0.1, color: Colors.black),
-                                      ): null,
+                                              doctorProfile.data?.firstName
+                                                          ?.isNotEmpty ??
+                                                      false
+                                                  ? doctorProfile
+                                                      .data!.firstName![4]
+                                                      .toUpperCase()
+                                                  : 'X',
+                                              style: TextStyle(
+                                                  fontSize: deviceWidth * 0.1,
+                                                  color: Colors.black),
+                                            )
+                                          : null,
                                     ),
                                     SizedBox(height: deviceHeight * 0.02),
-                                    if (hasProfileImage)
-                                      ElevatedButton(
-                                        onPressed: _isUpdatingImage ? null : _pickImageFromGallery,
+                                    // if (hasProfileImage)
+                                    ElevatedButton(
+                                        onPressed: _isUpdatingImage
+                                            ? null
+                                            : _pickImageFromGallery,
                                         style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(double.infinity, deviceHeight * 0.05),
+                                          minimumSize: Size(double.infinity,
+                                              deviceHeight * 0.05),
                                           backgroundColor: AppColors.verdigris,
                                         ),
                                         child: _isUpdatingImage
                                             ? const CircularProgressIndicator()
-                                            : Text(
-                                          'Update Image',
-                                          style: TextStyle(
-                                              color: Colors.white,  fontSize: deviceWidth * 0.05),
-                                        ),
+                                            : Center(
+                                                child: Text(
+                                                  'Update Image',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          deviceWidth * 0.05),
+                                                ),
+                                              ),
                                       )
 
-                                    else
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // Add your logic to add a new image
-                                        },
-                                        child: Text('Add Image'),
-                                      ),
+                                    // else
+                                    //   ElevatedButton(
+                                    //     onPressed: () {
+                                    //       // Add your logic to add a new image
+                                    //     },
+                                    //     child: Text('Add Image'),
+                                    //   ),
                                   ],
                                 ),
                               ),
@@ -226,25 +247,33 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.magnolia,
                         ),
-                        child:  Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.edit_note, size: deviceWidth * 0.07, color: AppColors.jet),
+                            Icon(Icons.edit_note,
+                                size: deviceWidth * 0.07, color: AppColors.jet),
                             SizedBox(width: deviceWidth * 0.02),
-                            Text('Edit', style: TextStyle(fontSize: deviceWidth * 0.04, color: AppColors.textColor)),
+                            Text('Edit',
+                                style: TextStyle(
+                                    fontSize: deviceWidth * 0.04,
+                                    color: AppColors.textColor)),
                           ],
                         ),
                         onPressed: () {
                           showModalBottomSheet(
                             context: context,
-                            isScrollControlled: true, // This makes the bottom sheet full screen
+                            isScrollControlled: true,
+                            // This makes the bottom sheet full screen
                             builder: (context) => DraggableScrollableSheet(
                               expand: false,
-                              builder: (context, scrollController) => SingleChildScrollView(
+                              builder: (context, scrollController) =>
+                                  SingleChildScrollView(
                                 controller: scrollController,
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom,
                                   ),
                                   child: const EditProfileForm(),
                                 ),
@@ -256,139 +285,205 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.05, vertical: deviceHeight * 0.02),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: deviceWidth * 0.05,
+                        vertical: deviceHeight * 0.02),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Specialization', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
+                        const Text(
+                          'Specialization',
+                          style: TextStyle(
+                              color: AppColors.textColor,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700),
+                        ),
                         SizedBox(height: deviceHeight * 0.01),
                         Container(
                           padding: EdgeInsets.all(deviceWidth * 0.03),
-                          decoration:  BoxDecoration(
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             border: Border.all(
                               width: 2,
                               color: Colors.grey.withOpacity(0.5),
                             ),
                           ),
-                          child: Text(specialization!, style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                          child: Text(
+                            specialization!,
+                            style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                         SizedBox(height: deviceHeight * 0.02),
-                        const Text('Degree', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        const Text('Degree',
+                            style: TextStyle(
+                                color: AppColors.textColor,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700)),
                         SizedBox(height: deviceHeight * 0.02),
                         SizedBox(
                           height: 50,
                           child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              separatorBuilder: (context, index) => SizedBox(width: deviceWidth * 0.02),
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(width: deviceWidth * 0.02),
                               itemCount: degrees!.length,
-                              itemBuilder: (context, index){
+                              itemBuilder: (context, index) {
                                 return Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: deviceWidth * 0.03),
                                   child: Container(
                                     padding: const EdgeInsets.all(10.0),
-                                    decoration:  BoxDecoration(
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12.0),
                                       border: Border.all(
                                         width: 2,
                                         color: Colors.grey.withOpacity(0.5),
                                       ),
                                     ),
-                                    child: Text(degrees[index], style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                                    child: Text(
+                                      degrees[index],
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                 );
-                              }
-                          ),
+                              }),
                         ),
                         SizedBox(height: deviceHeight * 0.02),
-                        const Text('Experience', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        const Text('Experience',
+                            style: TextStyle(
+                                color: AppColors.textColor,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700)),
                         SizedBox(height: deviceHeight * 0.02),
                         Container(
                           padding: const EdgeInsets.all(10.0),
-                          decoration:  BoxDecoration(
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             border: Border.all(
                               width: 2,
                               color: Colors.grey.withOpacity(0.5),
                             ),
                           ),
-                          child:  Text("$experience years", style: TextStyle(color: Colors.black87, fontSize: deviceWidth * 0.04, fontWeight: FontWeight.w500),),
+                          child: Text(
+                            "$experience years",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: deviceWidth * 0.04,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                         SizedBox(height: deviceHeight * 0.02),
-                        const Text('Achievements', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700)),
+                        const Text('Achievements',
+                            style: TextStyle(
+                                color: AppColors.textColor,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w700)),
                         SizedBox(height: deviceHeight * 0.02),
                         SizedBox(
                           height: 70,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: achievements!.length,
-                              itemBuilder: (context, index){
+                              itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                     padding: const EdgeInsets.all(10.0),
-                                    decoration:  BoxDecoration(
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12.0),
                                       border: Border.all(
                                         width: 2,
                                         color: Colors.grey.withOpacity(0.5),
                                       ),
                                     ),
-                                    child: Text(achievements[index], style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                                    child: Text(
+                                      achievements[index],
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                 );
-                              }
-                          ),
+                              }),
                         ),
                         const SizedBox(height: 10.0),
-                        const Text('Research Journal', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
+                        const Text(
+                          'Research Journal',
+                          style: TextStyle(
+                              color: AppColors.textColor,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700),
+                        ),
                         SizedBox(
                           height: 70,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: researchJournal!.length,
-                              itemBuilder: (context, index){
+                              itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                     padding: const EdgeInsets.all(10.0),
-                                    decoration:  BoxDecoration(
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12.0),
                                       border: Border.all(
                                         width: 2,
                                         color: Colors.grey.withOpacity(0.5),
                                       ),
                                     ),
-                                    child: Text(researchJournal[index], style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                                    child: Text(
+                                      researchJournal[index],
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                 );
-                              }
-                          ),
+                              }),
                         ),
                         const SizedBox(height: 10.0),
-                        const Text('Citations', style: TextStyle(color: AppColors.textColor, fontSize: 20.0, fontWeight: FontWeight.w700),),
+                        const Text(
+                          'Citations',
+                          style: TextStyle(
+                              color: AppColors.textColor,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700),
+                        ),
                         SizedBox(
                           height: 70,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: citations!.length,
-                              itemBuilder: (context, index){
+                              itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                     padding: const EdgeInsets.all(10.0),
-                                    decoration:  BoxDecoration(
+                                    decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12.0),
                                       border: Border.all(
                                         width: 2,
                                         color: Colors.grey.withOpacity(0.5),
                                       ),
                                     ),
-                                    child: Text(citations[index], style: const TextStyle(color: Colors.black87, fontSize: 18.0, fontWeight: FontWeight.w500),),
+                                    child: Text(
+                                      citations[index],
+                                      style: const TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
                                   ),
                                 );
-                              }
-                          ),
+                              }),
                         ),
                       ],
                     ),
@@ -403,24 +498,20 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-
         setState(() {
           _selectedFile = File(image.path);
         });
         if (_selectedFile != null) {
           // Replace 'your_token' with the actual token
-          await Provider.of<HomeGetProvider>(context, listen: false).updateDoctorImage(
-            _selectedFile!
-          );
+          await Provider.of<HomeGetProvider>(context, listen: false)
+              .updateDoctorImage(_selectedFile!);
         }
 
-
-        showToast(context, 'Image Updated Successfully', AppColors.verdigris, Colors.white);
-
+        showToast(context, 'Image Updated Successfully', AppColors.verdigris,
+            Colors.white);
       }
     } catch (e) {
       print('Error picking image from gallery: $e');
@@ -429,6 +520,4 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
       );
     }
   }
-
-
 }

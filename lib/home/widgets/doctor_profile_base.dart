@@ -33,7 +33,7 @@ class _DoctorProfileBaseState extends State<DoctorProfileBase> {
       } else if (homeProvider.doctorProfile != null) {
         return widget.builder(homeProvider);
       } else {
-        return const Center(child: Text('No data available', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0, color: AppColors.textColor),));
+        return const Center(child: Text('No data available', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0, color: AppColors.textColor),));
       }
     });
   }

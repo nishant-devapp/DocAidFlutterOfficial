@@ -28,4 +28,5 @@ class AppColors {
   static const Color accountDarkColor = Color(0xFFEBE6F0);
   static const Color helpDarkColor = Color(0xFFEBE6F0);
   static const Color darkGreenColor = Color(0xFF008000);
+  static const Color lightGreenColor = Color(0xFFC1FFBB);
 }

@@ -263,6 +263,28 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> deleteSchedule(int interfaceId) async{
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final isDeleted = await _homeGetService.deleteSchedule(interfaceId);
+
+      if(isDeleted){
+        _doctorProfile?.data?.docIntr?.removeWhere((intr) => intr.id == interfaceId);
+        notifyListeners(); // Notify listeners to update the UI
+      }
+
+    } catch (error) {
+      _errorMessage = 'Error deleting appointment: $error';
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // Get a list of clinics
   List<ClinicDtos> getClinics() {
     return doctorProfile?.data?.clinicDtos ?? [];
