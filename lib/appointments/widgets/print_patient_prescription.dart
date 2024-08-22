@@ -17,9 +17,10 @@ import '../providers/prescription_provider.dart';
 
 
 class PrintPatientPrescription extends StatefulWidget {
-  PrintPatientPrescription({super.key, required this.appointment});
+  PrintPatientPrescription({super.key, required this.appointment, required this.prescriptionImage});
 
   AppointmentData appointment;
+  Uint8List? prescriptionImage;
 
   @override
   State<PrintPatientPrescription> createState() =>
@@ -30,11 +31,94 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
   final GlobalKey _key = GlobalKey();
   bool _isSubmitting = false;
 
+
   @override
   Widget build(BuildContext context) {
     return DoctorProfileBase(builder: (HomeGetProvider homeProvider) {
       final doctorProfile = homeProvider.doctorProfile!;
       final speciality = homeProvider.doctorProfile!.data!.specialization!.first;
+      Widget headerWidget = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              '${doctorProfile.data?.firstName ?? ''} ${doctorProfile.data?.lastName ?? ''}',
+              style: const TextStyle(
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textColor),
+            ),
+          ),
+          const SizedBox(
+            height: 3.0,
+          ),
+          Text(
+            doctorProfile.data?.specialization!.first ?? '',
+            style: const TextStyle(
+                fontSize: 8.0,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textColor),
+          ),
+          const SizedBox(
+            height: 2.0,
+          ),
+          Text(
+            doctorProfile.data?.degree!.first ?? '',
+            style: const TextStyle(
+                fontSize: 8.0,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textColor),
+          ),
+          const SizedBox(
+            height: 2.0,
+          ),
+          Text(
+            doctorProfile.data?.licenceNumber ?? '',
+            style: const TextStyle(
+                fontSize: 8.0,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textColor),
+          ),
+          const SizedBox(
+            height: 2.0,
+          ),
+          Text(
+            "Location: ${widget.appointment.clinicLocation!}",
+            style: const TextStyle(
+                fontSize: 8.0,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textColor),
+          ),
+          const SizedBox(height: 8.0),
+          Container(
+            width: double.infinity,
+            height: 1.5,
+            color: AppColors.jet.withOpacity(0.6),
+          ),
+        ],
+      );
+
+      if (widget.prescriptionImage != null) {
+        print('Image data length: ${widget.prescriptionImage!.length}');
+        print(widget.prescriptionImage);
+      }
+
+      if (widget.prescriptionImage != null && widget.prescriptionImage!.isNotEmpty) {
+        try {
+          headerWidget = SizedBox(
+            width: double.infinity,
+            height: 80.0,
+            child: Image.memory(
+              widget.prescriptionImage!,
+              fit: BoxFit.cover,
+            ),
+          );
+        } catch (e) {
+          print('Error displaying image: $e');
+        }
+      }
+
       return SizedBox(
         width: double.infinity,
         child: Padding(
@@ -46,62 +130,7 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        '${doctorProfile.data?.firstName ?? ''} ${doctorProfile.data?.lastName ?? ''}',
-                        style: const TextStyle(
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textColor),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 3.0,
-                    ),
-                    Text(
-                      doctorProfile.data?.specialization!.first ?? '',
-                      style: const TextStyle(
-                          fontSize: 8.0,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textColor),
-                    ),
-                    const SizedBox(
-                      height: 2.0,
-                    ),
-                    Text(
-                      doctorProfile.data?.degree!.first ?? '',
-                      style: const TextStyle(
-                          fontSize: 8.0,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textColor),
-                    ),
-                    const SizedBox(
-                      height: 2.0,
-                    ),
-                    Text(
-                      doctorProfile.data?.licenceNumber ?? '',
-                      style: const TextStyle(
-                          fontSize: 8.0,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textColor),
-                    ),
-                    const SizedBox(
-                      height: 2.0,
-                    ),
-                    Text(
-                      "Location: ${widget.appointment.clinicLocation!}",
-                      style: const TextStyle(
-                          fontSize: 8.0,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textColor),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Container(
-                      width: double.infinity,
-                      height: 1.5,
-                      color: AppColors.jet.withOpacity(0.6),
-                    ),
+                    headerWidget,
                     const SizedBox(height: 8.0),
                     const Text(
                       'Patient Details',
@@ -307,6 +336,7 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
       );
     });
   }
+
 
   Future<Uint8List?> _capturePrescriptionImage() async {
     RenderRepaintBoundary boundary =

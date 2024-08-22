@@ -50,6 +50,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
           final researchJournal = doctorProfile.data?.researchJournal!;
           final citations = doctorProfile.data?.citations!;
           final specializations = doctorProfile.data?.specialization!;
+
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(

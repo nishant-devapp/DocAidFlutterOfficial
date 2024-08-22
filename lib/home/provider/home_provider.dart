@@ -8,7 +8,7 @@ import 'dart:typed_data';
 class HomeGetProvider extends ChangeNotifier {
   final HomeGetService _homeGetService = HomeGetService();
   HomeGetModel? _doctorProfile;
-  Uint8List? _profileImage;
+  Uint8List? _profileImage, _prescriptionImage;
   bool _isLoading = false;
   bool _isUpdatingProfile = false;
   bool _isAddingClinic = false;
@@ -20,6 +20,7 @@ class HomeGetProvider extends ChangeNotifier {
   HomeGetModel? get doctorProfile => _doctorProfile;
 
   Uint8List? get profileImage => _profileImage;
+  Uint8List? get prescriptionImage => _prescriptionImage;
 
   bool get isLoading => _isLoading;
 
@@ -68,9 +69,26 @@ class HomeGetProvider extends ChangeNotifier {
     } catch (error) {
       _errorMessage = 'Failed to load image: $error';
     } finally {
+      _isFetchingImage = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchPrescriptionImage(int clinicId) async{
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try{
+      _prescriptionImage = await _homeGetService.fetchClinicPrescriptionImage(clinicId);
+      notifyListeners();
+    }catch(error){
+      _errorMessage = 'Failed to load prescription image: $error';
+    }finally{
       _isLoading = false;
       notifyListeners();
     }
+
   }
 
   Future<void> updateDoctorImage(File imageFile) async {

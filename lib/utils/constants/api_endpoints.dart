@@ -15,6 +15,7 @@ class ApiEndpoints {
   static const String addNewClinicEndPoint = '/clinic/add';
   static const String updateClinicEndPoint = '/clinic/update';
   static const String additionalClinicPaymentEndPoint = '/subscriptionAmount/additionalClinic';
+  static const String fetchClinicPrescriptionImageEndPoint = '/clinicImage/getImage';
 
   // Appointments
   static const String fetchAllAppointmentsEndPoint = "/clinic/ClincsToAppointment";

@@ -430,4 +430,44 @@ class HomeGetService {
     }
   }
 
+  Future<Uint8List?> fetchClinicPrescriptionImage(int clinicId) async{
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      const String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.fetchClinicPrescriptionImageEndPoint;
+
+      final queryParameters = {
+        'clinicId': clinicId.toString()
+      };
+
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes; // Returns Uint8List
+      } else if (response.statusCode == 404){
+        return null;
+      } else {
+        throw Exception('Failed to load prescription image');
+      }
+
+    } catch (error) {
+      print('Error fetching prescription image: $error');
+      throw error;
+    }
+  }
+
 }
