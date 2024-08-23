@@ -83,7 +83,7 @@ class HomeGetProvider extends ChangeNotifier {
       _prescriptionImage = await _homeGetService.fetchClinicPrescriptionImage(clinicId);
       notifyListeners();
     }catch(error){
-      _errorMessage = 'Failed to load prescription image: $error';
+      _errorMessage = 'Failed to load prescription images: $error';
     }finally{
       _isLoading = false;
       notifyListeners();

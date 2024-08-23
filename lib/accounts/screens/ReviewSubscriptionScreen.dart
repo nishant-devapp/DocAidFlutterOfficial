@@ -73,76 +73,91 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
       return Consumer<AccountProvider>(
           builder: (context, accountProvider, child) {
-        return Scaffold(
-          body: Column(
-            children: [
-              Card(
-                elevation: 6.0,
-                color: AppColors.celeste.withOpacity(0.8),
-                shadowColor: AppColors.princetonOrange.withOpacity(0.3),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                margin: EdgeInsets.symmetric(
-                  vertical: deviceWidth * 0.03,
-                  horizontal: deviceWidth * 0.04,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 25.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Choose Subscription',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16.0),
-                      ),
-                      const SizedBox(height: 8.0),
-                      const Text(
-                        'Monthly Subscription amount is Rs. 1500/month',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 14.0),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            _openDurationSelectionSheet(context);
-                          },
-                          icon: const Icon(Icons.payment_outlined,
-                              color: AppColors.darkGreenColor),
-                          label: Text(
-                            "Pay Now",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.darkGreenColor.withOpacity(0.6),
+            return Scaffold(
+                body: Column(
+                  children: [
+                  Card(
+                  elevation: 6.0,
+                  color: AppColors.celeste.withOpacity(0.8),
+                  shadowColor: AppColors.princetonOrange.withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  margin: EdgeInsets.symmetric(
+                    vertical: deviceWidth * 0.03,
+                    horizontal: deviceWidth * 0.04,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Choose Subscription',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16.0),
+                        ),
+                        const SizedBox(height: 8.0),
+                        const Text(
+                          'Monthly Subscription amount is Rs. 1500/month',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 14.0),
+                        ),
+                        const SizedBox(height: 10.0),
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              _openDurationSelectionSheet(context);
+                            },
+                            icon: const Icon(Icons.payment_outlined,
+                                color: AppColors.darkGreenColor),
+                            label: Text(
+                              "Pay Now",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.darkGreenColor.withOpacity(
+                                    0.6),
+                              ),
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            elevation: 2.0,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 8.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                            style: ElevatedButton.styleFrom(
+                              elevation: 2.0,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 8.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 15.0),
-              Expanded(
-                  child: SubscriptionHistoryItem(
-                subscriptionHistory: accountProvider.subscriptionHistory!,
-              )),
+                const SizedBox(height: 15.0),
+                ////
+
+                //////
+                    if (accountProvider.isFetchingSubscriptionHistory)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    if (!accountProvider.isFetchingSubscriptionHistory &&
+                        (accountProvider.subscriptionHistory == null ))
+                      const Center(
+                        child: Text('No subscription history available'),
+                      )
+                    else
+                      Expanded(
+                        child: SubscriptionHistoryItem(
+                          subscriptionHistory: accountProvider.subscriptionHistory!,
+                        ),
+                      ),
             ],
-          ),
-        );
-      });
+            ),
+            );
+          });
     });
   }
 
@@ -157,7 +172,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
     try {
       final verificationModel =
-          await _accountService.getPaymentStatus(paymentId!);
+      await _accountService.getPaymentStatus(paymentId!);
       setState(() {
         paymentStatus = verificationModel.status;
       });
@@ -166,7 +181,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
         try {
           if (paymentOrderId != null && oneDayAdded != null && docId != null) {
             final result =
-                await _accountService.updateCurrentSubscriptionDetails(
+            await _accountService.updateCurrentSubscriptionDetails(
               paymentOrderId!,
               paymentId!,
               oneDayAdded!,
@@ -176,13 +191,13 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
             );
             if (result) {
               final isHistoryCreated =
-                  await _accountService.createPaymentHistory(
-                      paymentOrderId!,
-                      paymentId!,
-                      oneDayAdded!,
-                      duration!,
-                      totalAmountToBePaid!,
-                      docId!);
+              await _accountService.createPaymentHistory(
+                  paymentOrderId!,
+                  paymentId!,
+                  oneDayAdded!,
+                  duration!,
+                  totalAmountToBePaid!,
+                  docId!);
 
               if (isHistoryCreated) {
                 showToast(context, 'Payment Successful', AppColors.verdigris,
@@ -238,7 +253,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
   Future<void> _fetchSubscriptionAmount(int duration, int totalClinics) async {
     try {
       final subscriptionModel =
-          await _accountService.getTotalAmount(duration, totalClinics);
+      await _accountService.getTotalAmount(duration, totalClinics);
       totalAmountToBePaid = subscriptionModel.data;
 
       print('Total Amount: $totalAmountToBePaid');
@@ -287,31 +302,36 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        builder: (context, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: DurationSelectorBottomSheet(
-              onDurationSelected: (selectedDuration) {
-                if (mounted) {
-                  setState(() {
-                    duration = selectedDuration;
-                  });
-                }
-                print("Total Clinics: ${totalClinics.toString()}");
-                print("Duration: $duration");
-                _fetchSubscriptionAmount(duration!, totalClinics!);
+      builder: (context) =>
+          DraggableScrollableSheet(
+            expand: false,
+            builder: (context, scrollController) =>
+                SingleChildScrollView(
+                  controller: scrollController,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery
+                          .of(context)
+                          .viewInsets
+                          .bottom,
+                    ),
+                    child: DurationSelectorBottomSheet(
+                      onDurationSelected: (selectedDuration) {
+                        if (mounted) {
+                          setState(() {
+                            duration = selectedDuration;
+                          });
+                        }
+                        print("Total Clinics: ${totalClinics.toString()}");
+                        print("Duration: $duration");
+                        _fetchSubscriptionAmount(duration!, totalClinics!);
 
-                Navigator.pop(context);
-              },
-            ),
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
           ),
-        ),
-      ),
     );
   }
 }

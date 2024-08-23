@@ -41,33 +41,57 @@ class _DashboardScreenState extends State<DashboardScreen> {
           if (homeProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-
           final doctorIntr = homeProvider.doctorProfile?.data?.docIntr ?? [];
           final todaySchedules = doctorIntr.where((intr) {
             return DateFormat('yyyy-MM-dd').format(DateTime.now()) == intr.stDate;
           }).toList();
 
           if (todaySchedules.isEmpty) {
-            return Center(child: Lottie.asset('assets/lottie/no_schedule_lottie.json', repeat: true));
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Welcome', style: TextStyle(fontSize: 20.0, color: AppColors.textColor, fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 5.0),
+                  Text(homeProvider.doctorProfile!.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.verdigris, fontSize: 25.0),),
+                  const Spacer(),
+                  Center(child: Lottie.asset('assets/lottie/no_schedule_lottie.json', repeat: true)),
+                  const Spacer()
+                ],
+              ),
+            );
           }
 
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: AlignmentDirectional.topStart,
-                  child: Text(
-                    DateFormat('d MMM, yyyy').format(DateTime.now()),
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
-                  ),
-                ),
-                Align(
-                  alignment: AlignmentDirectional.topStart,
-                  child: Text(
-                    'Today',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[600]),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      const Text('Welcome', style: TextStyle(fontSize: 18.0, color: AppColors.textColor, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 5.0),
+                      Text(homeProvider.doctorProfile!.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.verdigris, fontSize: 22.0),),
+                    ],),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          DateFormat('d MMM, yyyy').format(DateTime.now()),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                        ),
+                        Text(
+                          'Today',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: SingleChildScrollView(

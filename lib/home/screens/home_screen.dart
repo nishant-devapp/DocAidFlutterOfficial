@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (homeProvider.errorMessage != null) {
         return Center(child: Text('Error: ${homeProvider.errorMessage}'));
       } else if (homeProvider.doctorProfile != null) {
-        final doctorProfile = homeProvider.doctorProfile!;
+        final docProfile = homeProvider.doctorProfile!;
         return  WillPopScope(
           onWillPop: _onWillPop,
           child: Scaffold(

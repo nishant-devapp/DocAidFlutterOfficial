@@ -49,8 +49,6 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
       final doctorProfile = homeProvider.doctorProfile!;
       final prescriptionImage = homeProvider.prescriptionImage;
 
-      print("Prescription Image: ");
-      print(prescriptionImage);
 
       return Scaffold(
         appBar: AppBar(

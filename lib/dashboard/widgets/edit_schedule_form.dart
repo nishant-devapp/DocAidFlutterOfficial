@@ -18,6 +18,7 @@ class EditScheduleForm extends StatefulWidget {
 class _EditScheduleFormState extends State<EditScheduleForm> {
   final _key = GlobalKey<FormState>();
   bool _isUpdating = false;
+  bool _isDeleting = false;
 
   TextEditingController _purposeController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
@@ -240,9 +241,9 @@ class _EditScheduleFormState extends State<EditScheduleForm> {
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed:  _isUpdating ? null :() async{
+                        onPressed:  _isDeleting ? null :() async{
                           setState(() {
-                            _isUpdating = true;
+                            _isDeleting = true;
                           });
 
                           await homeProvider.deleteSchedule(widget.schedule!.id!);
@@ -250,17 +251,17 @@ class _EditScheduleFormState extends State<EditScheduleForm> {
                           Navigator.pop(context);
 
                           setState(() {
-                            _isUpdating = false;
+                            _isDeleting = false;
                           });
                         },
-                        icon: _isUpdating
+                        icon: _isDeleting
                             ? const CircularProgressIndicator(
                           color: Colors.white,
                           strokeWidth: 2.0,
                         )
                             : const Icon(Icons.delete, color: Colors.white),
                         label: Text(
-                          _isUpdating ? "Deleting..." : "Delete",
+                          _isDeleting ? "Deleting..." : "Delete",
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.white,

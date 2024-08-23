@@ -457,7 +457,11 @@ class HomeGetService {
       print(response.body);
 
       if (response.statusCode == 200) {
-        return response.bodyBytes; // Returns Uint8List
+        final decodedResponse = json.decode(response.body);
+        String data = (decodedResponse['data']);
+        return base64.decode(data);
+
+        // return response.bodyBytes; // Returns Uint8List
       } else if (response.statusCode == 404){
         return null;
       } else {
