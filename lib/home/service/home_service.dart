@@ -112,7 +112,7 @@ class HomeGetService {
     }
   }
 
-  Future<void> addNewClinic(
+  Future<int?> addNewClinic(
       String clinicName,
       String location,
       String incharge,
@@ -156,8 +156,11 @@ class HomeGetService {
       print('Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
-      if (response.statusCode != 201) {
-        throw Exception('Failed to add clinic');
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        final int clinicId = responseBody['data']['id'];
+        print('Clinic Added with ID: $clinicId');
+        return clinicId;
       }
     } catch (error) {
       print('Error adding clinic: $error');
@@ -471,6 +474,50 @@ class HomeGetService {
     } catch (error) {
       print('Error fetching prescription image: $error');
       throw error;
+    }
+  }
+
+  Future<void> uploadClinicPrescription(File imageFile, int clinicId) async{
+    try {
+
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      final queryParameters = {
+        'clinicId': clinicId.toString()
+      };
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.uploadClinicPrescriptionImageEndPoint;
+
+      final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final request = http.MultipartRequest('PUT', uri)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..files.add(
+          http.MultipartFile(
+            'file',
+            imageFile.readAsBytes().asStream(),
+            imageFile.lengthSync(),
+            filename: imageFile.path.split('/').last,
+          ),
+        );
+
+      final response = await request.send();
+
+      print(response);
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        print('Prescription upload successful: $responseBody');
+      } else {
+        final responseBody = await response.stream.bytesToString();
+        print('Failed to update prescription: $responseBody');
+        throw Exception('Failed to upload prescription: $responseBody');
+      }
+    } catch (e) {
+      print('Error uploading file: $e');
     }
   }
 

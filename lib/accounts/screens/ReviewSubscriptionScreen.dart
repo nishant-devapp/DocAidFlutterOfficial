@@ -1,6 +1,8 @@
 import 'package:code/accounts/provider/account_provider.dart';
 import 'package:code/accounts/service/account_service.dart';
+import 'package:code/dashboard/screens/dashboard_screen.dart';
 import 'package:code/home/provider/home_provider.dart';
+import 'package:code/home/screens/home_screen.dart';
 import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/constants/razorpay_keys.dart';
@@ -25,16 +27,9 @@ class ReviewSubscriptionScreen extends StatefulWidget {
 class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
   static const platform = MethodChannel("razorpay_flutter");
 
-  Razorpay _razorpay = Razorpay();
-  AccountService _accountService = AccountService();
-  String? endDate,
-      oneDayAdded,
-      paymentOrderId,
-      docName,
-      docContact,
-      docEmail,
-      paymentId,
-      paymentStatus;
+  final Razorpay _razorpay = Razorpay();
+  final AccountService _accountService = AccountService();
+  String? endDate, oneDayAdded, paymentOrderId, docName, docContact, docEmail, paymentId, paymentStatus;
   int? docId, duration, totalClinics, totalAmountToBePaid;
 
   @override
@@ -42,14 +37,19 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     super.initState();
 
     final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
-    Provider.of<AccountProvider>(context, listen: false)
-        .fetchSubscriptionHistory(homeProvider.doctorProfile!.data!.id!);
 
     _fetchEndDate(homeProvider.doctorProfile!.data!.id!);
+
+    final accountProvider =
+        Provider.of<AccountProvider>(context, listen: false);
+
+    accountProvider.fetchSubscriptionHistory(homeProvider.doctorProfile!.data!.id!);
 
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
+
   }
 
   @override
@@ -73,95 +73,95 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
       return Consumer<AccountProvider>(
           builder: (context, accountProvider, child) {
-            return Scaffold(
-                body: Column(
-                  children: [
-                  Card(
-                  elevation: 6.0,
-                  color: AppColors.celeste.withOpacity(0.8),
-                  shadowColor: AppColors.princetonOrange.withOpacity(0.3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  margin: EdgeInsets.symmetric(
-                    vertical: deviceWidth * 0.03,
-                    horizontal: deviceWidth * 0.04,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 25.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Choose Subscription',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16.0),
-                        ),
-                        const SizedBox(height: 8.0),
-                        const Text(
-                          'Monthly Subscription amount is Rs. 1500/month',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 14.0),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Align(
-                          alignment: AlignmentDirectional.centerEnd,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              _openDurationSelectionSheet(context);
-                            },
-                            icon: const Icon(Icons.payment_outlined,
-                                color: AppColors.darkGreenColor),
-                            label: Text(
-                              "Pay Now",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.darkGreenColor.withOpacity(
-                                    0.6),
-                              ),
+        final history = accountProvider.subscriptionHistory;
+        final isLoading = accountProvider.isFetchingSubscriptionHistory;
+
+        return Scaffold(
+          body: Column(
+            children: [
+              Card(
+                elevation: 6.0,
+                color: AppColors.celeste.withOpacity(0.8),
+                shadowColor: AppColors.princetonOrange.withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                margin: EdgeInsets.symmetric(
+                  vertical: deviceWidth * 0.03,
+                  horizontal: deviceWidth * 0.04,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 25.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Choose Subscription',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16.0),
+                      ),
+                      const SizedBox(height: 8.0),
+                      const Text(
+                        'Monthly Subscription amount is Rs. 1500/month',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 14.0),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _openDurationSelectionSheet(context);
+                          },
+                          icon: const Icon(Icons.payment_outlined,
+                              color: AppColors.darkGreenColor),
+                          label: Text(
+                            "Pay Now",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.darkGreenColor.withOpacity(0.6),
                             ),
-                            style: ElevatedButton.styleFrom(
-                              elevation: 2.0,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0, vertical: 8.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2.0,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 15.0),
-                ////
-
-                //////
-                    if (accountProvider.isFetchingSubscriptionHistory)
-                      const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    if (!accountProvider.isFetchingSubscriptionHistory &&
-                        (accountProvider.subscriptionHistory == null ))
-                      const Center(
-                        child: Text('No subscription history available'),
-                      )
-                    else
-                      Expanded(
-                        child: SubscriptionHistoryItem(
-                          subscriptionHistory: accountProvider.subscriptionHistory!,
-                        ),
-                      ),
+              ),
+              const SizedBox(height: 15.0),
+              if (isLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              if (history == null || history.data!.isEmpty)
+                const Center(
+                  child: Text('No subscription history available'),
+                )
+              else
+                Expanded(
+                  child: SubscriptionHistoryItem(
+                    subscriptionHistory: history,
+                  ),
+                ),
             ],
-            ),
-            );
-          });
+          ),
+        );
+      });
     });
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+
+    print("Payment Success Response: $response");
     print("Signature: ${response.signature}");
     print("Order ID: ${response.orderId}");
     print("Payment ID: ${response.paymentId}");
@@ -171,17 +171,17 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     print("PaymentId: $paymentId");
 
     try {
-      final verificationModel =
-      await _accountService.getPaymentStatus(paymentId!);
+      final verificationModel = await _accountService.getPaymentStatus(paymentId!);
+      if (!mounted) return;
       setState(() {
         paymentStatus = verificationModel.status;
+        print(paymentStatus);
       });
-
       if (paymentStatus == "captured" || paymentStatus == "authorised") {
-        try {
+        try{
           if (paymentOrderId != null && oneDayAdded != null && docId != null) {
-            final result =
-            await _accountService.updateCurrentSubscriptionDetails(
+
+            final result = await _accountService.updateCurrentSubscriptionDetails(
               paymentOrderId!,
               paymentId!,
               oneDayAdded!,
@@ -189,49 +189,55 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
               totalAmountToBePaid!,
               docId!,
             );
+
             if (result) {
-              final isHistoryCreated =
-              await _accountService.createPaymentHistory(
-                  paymentOrderId!,
-                  paymentId!,
-                  oneDayAdded!,
-                  duration!,
-                  totalAmountToBePaid!,
-                  docId!);
+              final isHistoryCreated = await _accountService.createPaymentHistory(
+                paymentOrderId!,
+                paymentId!,
+                oneDayAdded!,
+                duration!,
+                totalAmountToBePaid!,
+                docId!,
+              );
 
               if (isHistoryCreated) {
-                showToast(context, 'Payment Successful', AppColors.verdigris,
-                    Colors.white);
+                showToast(context, 'Payment Successful', AppColors.verdigris, Colors.white);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      (route) => false, // Removes all previous routes
+                );
+              } else {
+                showToast(
+                    context, 'Payment Failed', AppColors.vermilion, Colors.white);
               }
             } else {
               showToast(
                   context, 'Payment Failed', AppColors.vermilion, Colors.white);
             }
-          } else {
-            print('Error: Required data is missing');
           }
-        } catch (error) {
+          else {
+            showToast(
+                context, 'Payment Failed', AppColors.vermilion, Colors.white);
+          }
+        }catch (error) {
           print('Error updating subscription details: $error');
         }
       }
     } catch (error) {
-      print('Error fetching payment status: $error');
+      showToast(context, 'Payment Failed', AppColors.vermilion, Colors.white);
+      print('Error handling payment success: $error');
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    // Do something when payment fails
-    print(response.error);
+    showToast(context, 'Payment Failed!', AppColors.vermilion, Colors.white);
+    print('Error: ${response.error}');
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
-  }
-
-  String _addOneDay(String endDate) {
-    DateTime date = DateTime.parse(endDate);
-    DateTime newDate = date.add(Duration(days: 1));
-    return DateFormat('yyyy-MM-dd').format(newDate);
+    print('External Wallet: ${response.walletName}');
   }
 
   Future<void> _fetchEndDate(int id) async {
@@ -250,14 +256,20 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     }
   }
 
+  String _addOneDay(String endDate) {
+    DateTime date = DateTime.parse(endDate);
+    DateTime newDate = date.add(const Duration(days: 1));
+    return DateFormat('yyyy-MM-dd').format(newDate);
+  }
+
   Future<void> _fetchSubscriptionAmount(int duration, int totalClinics) async {
     try {
       final subscriptionModel =
-      await _accountService.getTotalAmount(duration, totalClinics);
-      totalAmountToBePaid = subscriptionModel.data;
-
-      print('Total Amount: $totalAmountToBePaid');
-
+          await _accountService.getTotalAmount(duration, totalClinics);
+      setState(() {
+        totalAmountToBePaid = subscriptionModel.data;
+        print("Total amount to be paid: $totalAmountToBePaid");
+      });
       if (totalAmountToBePaid != null) {
         await _fetchSubscriptionOrderId(totalAmountToBePaid!);
       }
@@ -265,13 +277,16 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
       print('Error fetching Subscription Amount: $error');
     }
   }
-
   Future<void> _fetchSubscriptionOrderId(int paymentAmount) async {
+
     try {
       final orderModel = await _accountService.getPaymentOrderId(paymentAmount);
-      paymentOrderId = orderModel.id;
 
+      setState(() {
+        paymentOrderId = orderModel.id;
       print('Payment Order Id: $paymentOrderId');
+      });
+
 
       var options = {
         'key': RazorpayKeys.testKey,
@@ -298,40 +313,36 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
     }
   }
 
+
   void _openDurationSelectionSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen
-      builder: (context) =>
-          DraggableScrollableSheet(
-            expand: false,
-            builder: (context, scrollController) =>
-                SingleChildScrollView(
-                  controller: scrollController,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery
-                          .of(context)
-                          .viewInsets
-                          .bottom,
-                    ),
-                    child: DurationSelectorBottomSheet(
-                      onDurationSelected: (selectedDuration) {
-                        if (mounted) {
-                          setState(() {
-                            duration = selectedDuration;
-                          });
-                        }
-                        print("Total Clinics: ${totalClinics.toString()}");
-                        print("Duration: $duration");
-                        _fetchSubscriptionAmount(duration!, totalClinics!);
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: DurationSelectorBottomSheet(
+              onDurationSelected: (selectedDuration) {
+                if (mounted) {
+                  setState(() {
+                    duration = selectedDuration;
+                  });
+                }
+                print("Total Clinics: ${totalClinics.toString()}");
+                print("Duration: $duration");
 
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ),
+                _fetchSubscriptionAmount(duration!, totalClinics!);
+
+              },
+            ),
           ),
+        ),
+      ),
     );
   }
 }

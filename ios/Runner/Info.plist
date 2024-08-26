@@ -8,6 +8,11 @@
       <string>phonepe</string>
       <string>paytmmp</string>
   </array>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>We need access to your photo library to select a picture.</string>
+  <key>NSCameraUsageDescription</key>
+  <string>We need access to your camera to take pictures.</string>
+
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>

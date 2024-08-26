@@ -463,7 +463,6 @@ class AppointmentService {
         throw Exception('Failed to load appointment counts');
       }
 
-
     }
     catch (error) {
     print('Error fetching clinic appointment: $error');

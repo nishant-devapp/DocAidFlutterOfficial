@@ -90,14 +90,11 @@ class _ClinicScreenState extends State<ClinicScreen> {
                             builder: (BuildContext context) {
                               return ClinicChargeDialog(
                                 title: "Additional Clinic Charges",
-                                description: "After you add additional clinic, Rs. 500 will be added to your monthly subscription",
+                                description: "",
                                 onAccept: () {
                                   Navigator.of(context).pop();
-                                  // durationSelectionHere
-                                  // _openDurationSelectionSheet(context);
                                   calculateAdditionalClinicCharge(daysDifference!);
-
-
+                                  // _openAddClinicBottomSheet(context);
                                 },
                                 onCancel: () {
                                   Navigator.of(context).pop();
@@ -168,6 +165,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
 
   void _handlePaymentError(PaymentFailureResponse response) {
     // Do something when payment fails
+    showToast(context, 'Payment Failed!', AppColors.vermilion, Colors.white);
     print(response.error);
   }
 
@@ -253,7 +251,6 @@ class _ClinicScreenState extends State<ClinicScreen> {
       final orderModel = await _accountService.getPaymentOrderId(totalAmountToBePaid);
       setState(() {
         paymentOrderId = orderModel.id;
-        // print("orderId"+paymentOrderId!);
       });
 
       var options = {

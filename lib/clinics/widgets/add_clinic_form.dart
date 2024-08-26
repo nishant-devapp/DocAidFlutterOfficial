@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/helpers/Toaster.dart';
 import 'package:code/utils/helpers/time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
@@ -32,6 +37,8 @@ class _AddClinicFormState extends State<AddClinicForm> {
   final _formKey = GlobalKey<FormState>();
 
   List<String> _selectedDays = [];
+  File? _selectedPrescriptionImage;
+  int? addedClinicId;
 
   void _onDaysChanged(List<String> days) {
     setState(() {
@@ -60,9 +67,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
               key: _formKey,
               child: Column(
                 children: [
-                  SizedBox(
-                      height: verticalSpacing * 2
-                  ),
+                  SizedBox(height: verticalSpacing * 2),
                   const Text(
                     'Clinic Details',
                     style:
@@ -70,6 +75,32 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   ),
                   const SizedBox(
                     height: 20.0,
+                  ),
+                InkWell(
+                  onTap: _pickAndCropImage,
+                  child: Card(
+                    elevation: 5,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      width: double.infinity,
+                      height: 100.0,
+                      child: _selectedPrescriptionImage != null
+                          ? Image.file(
+                        _selectedPrescriptionImage!,
+                        fit: BoxFit.cover,
+                      ) : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image_search, color: AppColors.verdigris, size: 30.0,),
+                          SizedBox(width: 10.0,),
+                          Center(child: Text("Select prescription image", style: TextStyle(fontSize: 14.0, color: AppColors.textColor, fontWeight: FontWeight.w500),))
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                  const SizedBox(
+                    height: 15.0,
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
@@ -217,7 +248,9 @@ class _AddClinicFormState extends State<AddClinicForm> {
                           controller: _clinicNewPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                              label: const Text('New Patient Fee',),
+                              label: const Text(
+                                'New Patient Fee',
+                              ),
                               prefixIcon: const Icon(Icons.currency_rupee),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -236,7 +269,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
                           controller: _clinicOldPatientFeeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.currency_rupee),
+                              prefixIcon: const Icon(Icons.currency_rupee),
                               label: const Text('Old Patient Fee'),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
@@ -267,16 +300,19 @@ class _AddClinicFormState extends State<AddClinicForm> {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  DaysSelector(onSelectionChanged: _onDaysChanged, selectedDays: [],),
+                  DaysSelector(
+                    onSelectionChanged: _onDaysChanged,
+                    selectedDays: [],
+                  ),
                   const SizedBox(
                     height: 25.0,
                   ),
                   SizedBox(
                       width: double.infinity,
-
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                          minimumSize:
+                              Size(double.infinity, deviceHeight * 0.06),
                           backgroundColor: AppColors.verdigris,
                         ),
                         onPressed: () async {
@@ -290,7 +326,18 @@ class _AddClinicFormState extends State<AddClinicForm> {
                             return;
                           }
 
-                          await homeProvider.addClinic(
+                          /*print("Clinic Name ${_clinicNameController.text.trim()}");
+                          print("Clinic Address ${_clinicAddressController.text.trim()}");
+                          print("Clinic Incharge ${_clinicInchargeNameController.text.trim()}");
+                          print("Start Time ${_startTimeController.text.trim()}");
+                          print("End Time ${_endTimeController.text.trim()}");
+                          print("Mobile ${_clinicMobileNumberController.text.trim()}");
+                          print("New Fees ${_clinicNewPatientFeeController.text.trim()}");
+                          print("Old Fees ${_clinicOldPatientFeeController.text.trim()}");
+                          print(_selectedDays);
+                          print(_selectedPrescriptionImage);*/
+
+                          addedClinicId = await homeProvider.addClinic(
                               _clinicNameController.text.trim(),
                               _clinicAddressController.text.trim(),
                               _clinicInchargeNameController.text.trim(),
@@ -301,13 +348,25 @@ class _AddClinicFormState extends State<AddClinicForm> {
                               _clinicOldPatientFeeController.text.trim(),
                               _selectedDays);
 
+                          if(addedClinicId != null && _selectedPrescriptionImage != null){
+                            await Future.delayed(const Duration(milliseconds: 1500));
+                            await Provider.of<HomeGetProvider>(context,
+                                listen: false)
+                                .uploadPrescriptionImage(
+                                _selectedPrescriptionImage!, addedClinicId!);
+                          }
+
+
+
                           Navigator.pop(context);
-
-
                         },
                         child: homeProvider.isAddingClinic
                             ? const CircularProgressIndicator()
-                            : const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18.0),),
+                            : const Text(
+                                'Submit',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18.0),
+                              ),
                       )),
                 ],
               ),
@@ -318,8 +377,45 @@ class _AddClinicFormState extends State<AddClinicForm> {
     );
   }
 
+  Future<void> _pickAndCropImage() async {
+    try {
+      // Pick an image from the gallery
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
 
+      if (pickedFile != null) {
+        CroppedFile? croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 32, ratioY: 9),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: AppColors.verdigris.withOpacity(0.8),
+              toolbarWidgetColor: Colors.white,
+              lockAspectRatio: true,
+            ),
+            IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            ),
+          ],
+        );
 
+        if (croppedFile != null) {
+          // Convert CroppedFile to File
+          File imageFile = File(croppedFile.path);
+
+          setState(() {
+            _selectedPrescriptionImage = imageFile;
+          });
+        }
+      }
+    } catch (e) {
+      print("Image picking/cropping failed: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Image selection failed!')),
+      );
+    }
+  }
 
   Future<void> _selectStartTime() async {
     final String selectedStartTime = await selectTime(context);
@@ -338,5 +434,4 @@ class _AddClinicFormState extends State<AddClinicForm> {
       });
     }
   }
-
 }

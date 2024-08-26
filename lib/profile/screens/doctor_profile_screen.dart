@@ -106,26 +106,24 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                     SizedBox(height: deviceHeight * 0.02),
                                     // if (hasProfileImage)
                                     ElevatedButton(
-                                        onPressed: _isUpdatingImage
-                                            ? null
-                                            : _pickImageFromGallery,
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(double.infinity,
-                                              deviceHeight * 0.05),
-                                          backgroundColor: AppColors.verdigris,
-                                        ),
-                                        child: _isUpdatingImage
-                                            ? const CircularProgressIndicator()
-                                            : Center(
-                                                child: Text(
-                                                  'Update Image',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          deviceWidth * 0.05),
-                                                ),
-                                              ),
-                                      )
+                                      onPressed: _isUpdatingImage
+                                          ? null
+                                          : _pickImageFromGallery,
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: Size(double.infinity,
+                                            deviceHeight * 0.05),
+                                        backgroundColor: AppColors.verdigris,
+                                      ),
+                                      child: _isUpdatingImage
+                                          ? const CircularProgressIndicator()
+                                          : Text(
+                                              'Update Image',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: deviceWidth * 0.05),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                    )
 
                                     // else
                                     //   ElevatedButton(

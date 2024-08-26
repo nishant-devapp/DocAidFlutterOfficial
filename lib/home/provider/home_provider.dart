@@ -91,6 +91,23 @@ class HomeGetProvider extends ChangeNotifier {
 
   }
 
+  Future<void> uploadPrescriptionImage(File file, int clinicId) async{
+    _isUpdatingImage = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _homeGetService.uploadClinicPrescription(file, clinicId);
+      _prescriptionImage = await file.readAsBytes();
+      notifyListeners();
+    } catch (error) {
+      _errorMessage = error.toString();
+    } finally {
+      _isUpdatingImage = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateDoctorImage(File imageFile) async {
     _isUpdatingImage = true;
     _errorMessage = null;
@@ -151,7 +168,7 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addClinic(
+  Future<int?> addClinic(
       String clinicName,
       String location,
       String incharge,
@@ -166,11 +183,11 @@ class HomeGetProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _homeGetService.addNewClinic(clinicName, location, incharge,
+      final int? clinicId = await _homeGetService.addNewClinic(clinicName, location, incharge,
           startTime, endTime, clinicContact, clinicNewFee, clinicOldFees, days);
 
-      // Fetch updated doctor profile to reflect the new clinic
       _doctorProfile = await _homeGetService.fetchDoctorProfile();
+      return clinicId;
     } catch (error) {
       _errorMessage = 'Error adding clinic: $error';
     } finally {

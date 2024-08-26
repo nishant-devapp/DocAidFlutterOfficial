@@ -26,7 +26,7 @@ class DocAid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       title: 'Doc-Aid',
       themeMode: ThemeMode.light,
       home: LoginScreen(),

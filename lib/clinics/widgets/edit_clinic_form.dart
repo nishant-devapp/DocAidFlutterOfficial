@@ -7,6 +7,7 @@ import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/helpers/time_picker.dart';
 import 'days_selector.dart';
+import 'edit_prescription_img_sheet.dart';
 
 class EditClinicForm extends StatefulWidget {
   const EditClinicForm({super.key, this.clinicToEdit});
@@ -89,6 +90,46 @@ class _EditClinicFormState extends State<EditClinicForm> {
                     'Edit Clinic',
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional.topEnd,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: false,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+                          ),
+                          builder: (BuildContext context) {
+                            return Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: EditPrescriptionImgSheet(clinicId: widget.clinicToEdit!.id!),
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.image_outlined, color: AppColors.verdigris),
+                      label: Text(
+                        "Edit Prescription Image",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.verdigris.withOpacity(0.8),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 3.0,
+                        shadowColor: AppColors.princetonOrange.withOpacity(0.6),
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20.0,

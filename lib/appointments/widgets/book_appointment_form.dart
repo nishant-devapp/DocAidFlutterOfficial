@@ -272,9 +272,10 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                               },
                               hint: const Text('Select Clinic'),
                               items: _filteredClinics.map((clinic) {
+                                final count = _clinicAppointmentCounts?[clinic.id.toString()] ?? 0;
                                 return DropdownMenuItem<ClinicDtos>(
                                   value: clinic,
-                                  child: Text(clinic.location!),
+                                  child: Text("${clinic.location!} - $count"),
                                 );
                               }).toList(),
                               isExpanded: true,

@@ -60,9 +60,9 @@ class ClinicChargeDialog extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-            height: 15.0,
-          ),
+          // const SizedBox(
+          //   height: 15.0,
+          // ),
           Text(
             description,
             style: const TextStyle(
@@ -70,9 +70,9 @@ class ClinicChargeDialog extends StatelessWidget {
                 color: AppColors.textColor,
                 fontSize: 15.0),
           ),
-          const SizedBox(
-            height: 25.0,
-          ),
+          // const SizedBox(
+          //   height: 25.0,
+          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
