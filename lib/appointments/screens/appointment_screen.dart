@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import '../../accounts/service/account_service.dart';
 import '../../home/models/home_get_model.dart';
+import '../../home/screens/home_screen.dart';
 import '../../utils/constants/colors.dart';
 import '../../home/provider/home_provider.dart';
 import '../../home/widgets/doctor_profile_base.dart';
@@ -29,7 +31,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String dropDownValue = 'All Clinics';
   String searchValue = '';
 
-  String? _selectedClinicName;
+  String? _selectedClinicName, endDate;
   int? _selectedClinicId;
   ClinicDtos? selectedClinic;
   bool allClinicsSelected = true;
@@ -37,6 +39,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
+  final AccountService _accountService = AccountService();
 
   @override
   void initState() {
@@ -54,8 +57,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       _selectedClinicName = null;
       allClinicsSelected = true;
     }
-
     _fetchAppointments();
+    final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
+
+    _fetchEndDate(homeProvider.doctorProfile!.data!.id!);
   }
 
   @override
@@ -86,21 +91,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     const AppointmentShimmer(); // Show shimmer effect when loading
               } else if (appointmentProvider.errorMessage != null ||
                   appointmentProvider.appointments?.data == null) {
-                content = Center(
-                  child: Column(
-                    children: [
-                      Expanded(child: Lottie.asset('assets/lottie/no_data_lottie.json')),
-                      const SizedBox(height: 15.0),
-                      const Expanded(
-                        child: Text(
-                          'No appointments available on this date..',
-                          style: TextStyle(
-                              color: AppColors.verdigris,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      )
-                    ],
+                content = const Center(
+                  child:  Text(
+                    'No appointments available on this date..!!',
+                    style: TextStyle(
+                        color: AppColors.verdigris,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
                   ),
                 ); // Show error message if there is an error
               } else {
@@ -167,8 +165,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                               (ClinicDtos? clinic) {
                                         return DropdownMenuItem<ClinicDtos?>(
                                           value: clinic,
-                                          child: Text(
-                                              clinic?.location ?? 'All Clinics'),
+                                          child: Text(clinic?.location ??
+                                              'All Clinics'),
                                         );
                                       }).toList(),
                                     ),
@@ -199,7 +197,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: deviceWidth * 0.03),
                           child: TextField(
                             controller: _searchController,
                             decoration: InputDecoration(
@@ -257,6 +256,80 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       ),
     );
   }
+
+  Future<void> _fetchEndDate(int id) async {
+    try {
+      final endDateModel = await _accountService.getEndDate(id);
+      setState(() {
+        endDate = endDateModel.data;
+        print("End Date: " + endDate.toString());
+        // Parse the endDate if it's a string
+        DateTime parsedEndDate = DateTime.parse(endDate!);
+
+        // Add 7 days to the endDate
+        DateTime newDate = parsedEndDate.add(const Duration(days: 7));
+        print("New Date (End Date + 7): $newDate");
+
+        // Get today's date without time
+        DateTime todayDate = DateTime.now();
+        print("Today's Date: $todayDate");
+
+        if (newDate.year == todayDate.year &&
+            newDate.month == todayDate.month &&
+            newDate.day == todayDate.day ||
+            newDate.isBefore(todayDate)) {
+          _showPaymentWarningDialog();
+        }
+      });
+    } catch (error) {
+      print('Error fetching End Date: $error');
+    }
+  }
+
+  void _showPaymentWarningDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async {
+            // When the back button is pressed, navigate to the HomeScreen
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  (route) => false, // Removes all previous routes
+            );
+            return false; // Prevent the dialog from being dismissed
+          },
+          child: AlertDialog(
+            title: const Text(
+              'Subscription Ended',
+              style: TextStyle(
+                color: AppColors.vermilion,
+                fontWeight: FontWeight.w500,
+                fontSize: 16.0,
+              ),
+            ),
+            content: const Text('Make Payment to proceed'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // When OK is pressed, navigate to the HomeScreen
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        (route) => false, // Removes all previous routes
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime now = DateTime.now();

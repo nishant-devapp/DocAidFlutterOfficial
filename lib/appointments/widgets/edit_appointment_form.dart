@@ -35,6 +35,8 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
   final TextEditingController _editAbhaController = TextEditingController();
   final TextEditingController _editAgeController = TextEditingController();
   final TextEditingController _editContactController = TextEditingController();
+  final TextEditingController _editAddressController = TextEditingController();
+  final TextEditingController _editGuardianController = TextEditingController();
   final TextEditingController _editDateController = TextEditingController();
 
 
@@ -42,10 +44,12 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
   void initState() {
     super.initState();
     if(widget.appointment != null){
-      _editAppointmentNameController.text = widget.appointment!.name!;
-      _editAbhaController.text = widget.appointment!.abhaNumber!;
+      _editAppointmentNameController.text = widget.appointment!.name ?? '';
+      _editAbhaController.text = widget.appointment!.abhaNumber ?? '';
       _editAgeController.text = widget.appointment!.age.toString();
-      _editContactController.text = widget.appointment!.contact!;
+      _editContactController.text = widget.appointment!.contact ?? '';
+      _editAddressController.text = widget.appointment!.address ?? '';
+      _editGuardianController.text = widget.appointment!.guardianName ?? '';
       _selectedGender = widget.appointment!.gender!;
 
       // Initialize _selectedClinic
@@ -156,6 +160,40 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter mobile number';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: _editAddressController,
+                    textCapitalization: TextCapitalization.sentences,
+                    keyboardType: TextInputType.streetAddress,
+                    decoration: InputDecoration(
+                        label: const Text('Patient Address'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        )),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter address';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: _editGuardianController,
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        label: const Text('Guardian Name'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        )),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter guardian name';
                       }
                       return null;
                     },
@@ -489,6 +527,8 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
             widget.appointment!.abhaNumber!,
             int.parse(_editAgeController.text.trim()),
             widget.appointment!.contact!,
+            _editAddressController.text.trim(),
+            _editGuardianController.text.trim(),
             _selectedGender!,
             bookingDate,
             bookingTime,

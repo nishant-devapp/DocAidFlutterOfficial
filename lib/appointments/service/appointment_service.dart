@@ -1,9 +1,6 @@
 import 'dart:convert';
 
 import 'package:code/appointments/models/payment_info_model.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
-
 import '../../utils/constants/api_endpoints.dart';
 import '../../utils/constants/app_urls.dart';
 import '../../utils/helpers/TokenManager.dart';
@@ -94,6 +91,8 @@ class AppointmentService {
       String abha,
       int age,
       String contact,
+      String address,
+      String guardianName,
       String gender,
       String appointmentDate,
       String appointmentTime,
@@ -105,6 +104,7 @@ class AppointmentService {
       }
 
       String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateAppointmentEndPoint;
+
 
       final queryParameters = {
         'id': appointmentId.toString(),
@@ -126,7 +126,9 @@ class AppointmentService {
           "gender": gender,
           "appointmentDate": appointmentDate,
           "appointmentTime": appointmentTime,
-          "clinicLocation": clinicLocation
+          "clinicLocation": clinicLocation,
+          "address": address,
+          "guardianName": guardianName
         }),
       );
 
@@ -179,6 +181,8 @@ class AppointmentService {
       String abha,
       String age,
       String contact,
+      String address,
+      String guardianName,
       String gender,
       String appointmentDate,
       String appointmentTime,
@@ -209,6 +213,8 @@ class AppointmentService {
           "abhaNumber": abha,
           "age": age,
           "contact": contact,
+          "address": address,
+          "guardianName": guardianName,
           "gender": gender,
           "appointmentDate": appointmentDate,
           "appointmentTime": appointmentTime,

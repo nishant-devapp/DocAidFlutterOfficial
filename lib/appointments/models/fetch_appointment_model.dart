@@ -58,7 +58,8 @@ class AppointmentData {
   String? appointmentDate;
   String? appointmentTime;
   String? clinicLocation;
-  Null clinic;
+  String? address;
+  String? guardianName;
 
   AppointmentData(
       {this.id,
@@ -73,7 +74,9 @@ class AppointmentData {
         this.appointmentDate,
         this.appointmentTime,
         this.clinicLocation,
-        this.clinic});
+        this.address,
+        this.guardianName,
+      });
 
   AppointmentData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -88,7 +91,8 @@ class AppointmentData {
     appointmentDate = json['appointmentDate'];
     appointmentTime = json['appointmentTime'];
     clinicLocation = json['clinicLocation'];
-    clinic = json['clinic'];
+    address = json['address'];
+    guardianName = json['guardianName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -105,7 +109,8 @@ class AppointmentData {
     data['appointmentDate'] = this.appointmentDate;
     data['appointmentTime'] = this.appointmentTime;
     data['clinicLocation'] = this.clinicLocation;
-    data['clinic'] = this.clinic;
+    data['address'] = this.address;
+    data['guardianName'] = this.guardianName;
     return data;
   }
 }

@@ -26,6 +26,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
       _abhaController,
       _ageController,
       _phoneController,
+      _addressController,
+      _guardianNameController,
       _dateController;
   final _key = GlobalKey<FormState>();
   String? _selectedGender;
@@ -51,11 +53,11 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         TextEditingController(text: widget.patientInfo?.name ?? '');
     _abhaController =
         TextEditingController(text: widget.patientInfo?.abhaNumber ?? '');
-    _ageController =
-        TextEditingController(text: widget.patientInfo?.age?.toString() ?? '');
+    _ageController = TextEditingController(text: widget.patientInfo?.age?.toString() ?? '');
+    _addressController = TextEditingController(text: widget.patientInfo?.address ?? '');
+    _guardianNameController = TextEditingController(text: widget.patientInfo?.guardianName ?? '');
     _phoneController = TextEditingController(text: widget.phone ?? '');
     _dateController = TextEditingController();
-    // Set initial gender value if available
     _selectedGender = widget.patientInfo?.gender ?? 'Select Gender';
 
     // Initialize _selectedClinic
@@ -83,6 +85,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     _nameController.dispose();
     _ageController.dispose();
     _phoneController.dispose();
+    _addressController.dispose();
+    _guardianNameController.dispose();
     _abhaController.dispose();
     _dateController.dispose();
     super.dispose();
@@ -173,7 +177,42 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 10.0),
+                      TextFormField(
+                        controller: _addressController,
+                        textCapitalization: TextCapitalization.sentences,
+                        keyboardType: TextInputType.streetAddress,
+                        decoration: InputDecoration(
+                            label: const Text('Patient Address'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter address';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 15.0),
+                      TextFormField(
+                        controller: _guardianNameController,
+                        textCapitalization: TextCapitalization.words,
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                            label: const Text('Guardian Name'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter guardian name';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 18.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -339,29 +378,6 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime now = DateTime.now();
-    final DateTime firstDate = DateTime(now.year - 100);
-    final DateTime lastDate = DateTime(now.year + 100);
-
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: firstDate,
-      lastDate: lastDate,
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-        _dateController.text = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _filterClinicsByDate(_allClinics);
-        });
-      });
-    }
-  }
-
   void _filterClinicsByDate(List<ClinicDtos> clinics) {
     if (_selectedDay == null) {
       _filteredClinics = [];
@@ -418,7 +434,19 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime!));
     final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDay);
 
-    showDialog(
+        // print(_selectedClinicId!);
+        // print(_nameController.text.trim());
+        // print(_abhaController.text.trim());
+        // print(_ageController.text.trim());
+        // print(_phoneController.text.trim());
+        // print(_addressController.text.trim());
+        // print(_guardianNameController.text.trim());
+        // print(_selectedGender!);
+        // print(bookingDate);
+        // print(bookingTime);
+        // print(_selectedClinicLocation!);
+
+   showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -429,6 +457,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
             _abhaController.text.trim(),
             _ageController.text.trim(),
             _phoneController.text.trim(),
+            _addressController.text.trim(),
+            _guardianNameController.text.trim(),
             _selectedGender!,
             bookingDate,
             bookingTime,

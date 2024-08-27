@@ -354,9 +354,9 @@ class _AddClinicFormState extends State<AddClinicForm> {
                                 listen: false)
                                 .uploadPrescriptionImage(
                                 _selectedPrescriptionImage!, addedClinicId!);
+                          }else{
+                            showToast(context, 'New Clinic Added!', AppColors.verdigris, Colors.white);
                           }
-
-
 
                           Navigator.pop(context);
                         },

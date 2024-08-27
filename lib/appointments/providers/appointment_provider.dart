@@ -126,6 +126,8 @@ class AppointmentProvider with ChangeNotifier {
       String abha,
       String age,
       String contact,
+      String address,
+      String guardian,
       String gender,
       String appointmentDate,
       String appointmentTime,
@@ -137,7 +139,7 @@ class AppointmentProvider with ChangeNotifier {
 
     try{
 
-      await _service.addNewAppointment(clinicId, name, abha, age, contact, gender, appointmentDate, appointmentTime, "UNPAID", clinicLocation);
+      await _service.addNewAppointment(clinicId, name, abha, age, contact, address, guardian, gender, appointmentDate, appointmentTime, "UNPAID", clinicLocation);
 
       _appointmentList = await _service.fetchAllAppointments(appointmentDate);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);
@@ -158,6 +160,8 @@ class AppointmentProvider with ChangeNotifier {
       String abha,
       int age,
       String contact,
+      String address,
+      String guardianName,
       String gender,
       String appointmentDate,
       String appointmentTime,
@@ -168,7 +172,7 @@ class AppointmentProvider with ChangeNotifier {
 
     try {
       await _service.updateAppointmentInfo(appointmentId, name, abha, age,
-          contact, gender, appointmentDate, appointmentTime, clinicLocation);
+          contact, address, guardianName, gender, appointmentDate, appointmentTime, clinicLocation);
       // Update the payment status in the local list
       _appointmentList?.data?.forEach((appointment) {
         if (appointment.id == appointmentId) {
@@ -176,6 +180,8 @@ class AppointmentProvider with ChangeNotifier {
           appointment.abhaNumber = abha;
           appointment.age = age;
           appointment.contact = contact;
+          appointment.address = address;
+          appointment.guardianName = guardianName;
           appointment.gender = gender;
           appointment.appointmentDate = appointmentDate;
           appointment.appointmentTime = appointmentTime;
