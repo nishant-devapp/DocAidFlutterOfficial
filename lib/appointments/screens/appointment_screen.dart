@@ -131,16 +131,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         Padding(
                           padding: EdgeInsets.all(deviceWidth * 0.02),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Expanded(
+                                flex: 1,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth * 0.02),
+                                  padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.02),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: AppColors.princetonOrange,
-                                        width: 1),
+                                      color: AppColors.princetonOrange,
+                                      width: 1,
+                                    ),
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   child: DropdownButtonHideUnderline(
@@ -148,25 +148,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       hint: const Text('Select Clinic'),
                                       value: _selectedClinicId == null
                                           ? null
-                                          : clinics.firstWhere((clinic) =>
-                                              clinic.id == _selectedClinicId),
+                                          : clinics.firstWhere((clinic) => clinic.id == _selectedClinicId),
                                       onChanged: (ClinicDtos? newValue) {
                                         setState(() {
                                           selectedClinic = newValue;
                                           _selectedClinicId = newValue?.id;
-                                          _selectedClinicName =
-                                              newValue?.location;
+                                          _selectedClinicName = newValue?.location;
                                           allClinicsSelected = newValue == null;
                                           _fetchAppointments();
                                         });
                                       },
+                                      isExpanded: true, // This allows the dropdown to use the full width
                                       items: clinicsWithAll
-                                          .map<DropdownMenuItem<ClinicDtos?>>(
-                                              (ClinicDtos? clinic) {
+                                          .map<DropdownMenuItem<ClinicDtos?>>((ClinicDtos? clinic) {
                                         return DropdownMenuItem<ClinicDtos?>(
                                           value: clinic,
-                                          child: Text(clinic?.location ??
-                                              'All Clinics'),
+                                          child: Text(clinic?.location ?? 'All Clinics'),
                                         );
                                       }).toList(),
                                     ),
@@ -175,11 +172,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ),
                               SizedBox(width: deviceWidth * 0.03),
                               Expanded(
+                                flex: 1,
                                 child: TextFormField(
                                   controller: _dateController,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     labelText: 'Select Date',
                                     prefixIcon: IconButton(

@@ -289,7 +289,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
 
       var options = {
-        'key': RazorpayKeys.testKey,
+        'key': RazorpayKeys.productionKey,
         'amount': paymentAmount,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
