@@ -7,7 +7,7 @@ class ActiveSubscriptionText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical:3.0, horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(vertical:3.0, horizontal: 19.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),
         color: AppColors.darkGreenColor.withOpacity(0.2),
