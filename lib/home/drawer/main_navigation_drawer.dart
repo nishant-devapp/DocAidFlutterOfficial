@@ -42,15 +42,15 @@ class MainNavigationDrawer extends StatelessWidget {
                     backgroundColor: Colors.white,
                     backgroundImage: homeProvider.profileImage != null
                         ? MemoryImage(homeProvider.profileImage!)
-                        : null,
+                        : null, // Show image if available
                     child: homeProvider.profileImage == null
-                        ? Text(
-                      doctorProfile.data?.firstName?.isNotEmpty ?? false
-                          ? doctorProfile.data!.firstName![4].toUpperCase()
-                          : 'X',
-                      style: const TextStyle(fontSize: 25, color: Colors.black),
-                    ): null,
+                        ? const Text(
+                      'X',
+                      style: TextStyle(fontSize: 25, color: Colors.black),
+                    )
+                        : null, // Show 'X' if no image
                   ),
+
                 ),
               ),
               ListTile(

@@ -108,7 +108,6 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
         try {
           headerWidget = SizedBox(
             width: double.infinity,
-            height: 80.0,
             child: Image.memory(
               widget.prescriptionImage!,
               fit: BoxFit.cover,

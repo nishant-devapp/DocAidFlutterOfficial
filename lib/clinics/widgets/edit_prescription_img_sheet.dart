@@ -50,7 +50,6 @@ class _EditPrescriptionImgSheetState extends State<EditPrescriptionImgSheet> {
                 child: Container(
                   padding: const EdgeInsets.all(8.0),
                   width: double.infinity,
-                  height: 100.0,
                   child: homeProvider.prescriptionImage == null
                       ? const Center(child: Text("No image available"))
                       : Image.memory(
@@ -75,13 +74,13 @@ class _EditPrescriptionImgSheetState extends State<EditPrescriptionImgSheet> {
       if (pickedFile != null) {
         CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
-          aspectRatio: const CropAspectRatio(ratioX: 32, ratioY: 9),
+          // aspectRatio: const CropAspectRatio(ratioX: 32, ratioY: 9),
           uiSettings: [
             AndroidUiSettings(
               toolbarTitle: 'Crop Image',
               toolbarColor: AppColors.verdigris.withOpacity(0.8),
               toolbarWidgetColor: Colors.white,
-              lockAspectRatio: true,
+              lockAspectRatio: false,
             ),
             IOSUiSettings(
               minimumAspectRatio: 1.0,
