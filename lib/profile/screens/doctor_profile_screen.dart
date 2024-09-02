@@ -83,25 +83,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                     CircleAvatar(
                                       radius: deviceWidth * 0.2,
                                       backgroundColor: Colors.white,
-                                      backgroundImage:
-                                          homeProvider.profileImage != null
-                                              ? MemoryImage(
-                                                  homeProvider.profileImage!)
-                                              : null,
+                                      backgroundImage: homeProvider.profileImage != null
+                                          ? MemoryImage(homeProvider.profileImage!)
+                                          : null, // Show image if available
                                       child: homeProvider.profileImage == null
-                                          ? Text(
-                                              doctorProfile.data?.firstName
-                                                          ?.isNotEmpty ??
-                                                      false
-                                                  ? doctorProfile
-                                                      .data!.firstName![4]
-                                                      .toUpperCase()
-                                                  : 'X',
-                                              style: TextStyle(
-                                                  fontSize: deviceWidth * 0.1,
-                                                  color: Colors.black),
-                                            )
-                                          : null,
+                                          ? const Text(
+                                        'X',
+                                        style: TextStyle(fontSize: 25, color: Colors.black),
+                                      )
+                                          : null, // Show 'X' if no image
                                     ),
                                     SizedBox(height: deviceHeight * 0.02),
                                     // if (hasProfileImage)
@@ -120,7 +110,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                               'Update Image',
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: deviceWidth * 0.05),
+                                                  fontSize: deviceWidth * 0.04),
                                               textAlign: TextAlign.center,
                                             ),
                                     )

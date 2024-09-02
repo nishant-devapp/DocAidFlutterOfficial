@@ -2,7 +2,6 @@ import 'package:code/appointments/widgets/appointment_loading_shimmer.dart';
 import 'package:code/appointments/widgets/book_appointment_abha_phone_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../../accounts/service/account_service.dart';
 import '../../home/models/home_get_model.dart';

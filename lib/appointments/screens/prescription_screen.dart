@@ -3,6 +3,7 @@ import 'package:code/appointments/providers/prescription_provider.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
@@ -101,27 +102,19 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     );
   }
 
-  Widget _buildPrescriptionPreview(Uint8List bytes) {
-    if (bytes.isEmpty) return Offstage(); // Handle empty bytes
+  bool _isPDF(Uint8List bytes) {
+    if (bytes.length < 5) return false;
+    return bytes[0] == 0x25 && // %
+        bytes[1] == 0x50 && // P
+        bytes[2] == 0x44 && // D
+        bytes[3] == 0x46 && // F
+        bytes[4] == 0x2D; // -
+  }
 
-    try {
-      // Attempt to decode the bytes as an image
-      final image = Image.memory(bytes);
-      return Card(
-        elevation: 3,
-        shadowColor: AppColors.princetonOrange.withOpacity(0.5),
-        color: Colors.white,
-        child: SizedBox(
-          height: 300.0,
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: image, // Render as image
-          ),
-        ),
-      );
-    } catch (e) {
-      // If decoding fails, assume it's a PDF
+  Widget _buildPrescriptionPreview(Uint8List bytes) {
+    if (bytes.isEmpty) return const Offstage(); // Handle empty bytes
+
+    if (_isPDF(bytes)) {
       return Card(
         elevation: 3,
         shadowColor: AppColors.princetonOrange.withOpacity(0.5),
@@ -135,8 +128,23 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
           ),
         ),
       );
+    } else {
+      // Assume it's an image
+      final image = Image.memory(bytes, fit: BoxFit.contain);
+      return Card(
+        elevation: 3,
+        shadowColor: AppColors.princetonOrange.withOpacity(0.5),
+        color: Colors.white,
+        child: SizedBox(
+          height: 300.0,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: image, // Render as image
+          ),
+        ),
+      );
     }
-
   }
 
   void _showMediaOptions(BuildContext context) {
@@ -179,8 +187,9 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {
+        File? compressedFile = await _compressImage(File(image.path));
         setState(() {
-          _selectedFile = File(image.path);
+          _selectedFile = compressedFile;
         });
         _showSelectedMedia(_selectedFile!);
       }
@@ -196,8 +205,9 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
+        File? compressedFile = await _compressImage(File(image.path));
         setState(() {
-          _selectedFile = File(image.path);
+          _selectedFile = compressedFile;
         });
         _showSelectedMedia(_selectedFile!);
       }
@@ -225,7 +235,6 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
       );
     }
   }
-
 
   void _showSelectedMedia(File file) {
     showModalBottomSheet(
@@ -273,6 +282,21 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
         file,
       );
     }
+  }
+
+  Future<File?> _compressImage(File file) async {
+    final compressedBytes = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      // minWidth: 800,
+      // minHeight: 800,
+      quality: 80,
+    );
+    if (compressedBytes == null) return null;
+
+    // Create a new file with the compressed image data
+    final compressedFile = File(file.path);
+    await compressedFile.writeAsBytes(compressedBytes);
+    return compressedFile;
   }
 
 }

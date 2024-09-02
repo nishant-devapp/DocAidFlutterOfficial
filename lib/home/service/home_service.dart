@@ -60,8 +60,10 @@ class HomeGetService {
 
       if (response.statusCode == 200) {
         return response.bodyBytes; // Returns Uint8List
-      } else {
-        throw Exception('Failed to load image');
+      }
+      else {
+        // throw Exception('Failed to load image');
+        return null;
       }
 
     } catch (error) {
