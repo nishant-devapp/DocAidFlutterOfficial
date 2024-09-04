@@ -169,19 +169,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               SizedBox(height: deviceHeight * 0.02),
-                              ElevatedButton(
+                              ElevatedButton.icon(
                                 onPressed: _isLoading ? null : _login,
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                                  backgroundColor: AppColors.verdigris,
-                                ),
-                                child: _isLoading
-                                    ? const CircularProgressIndicator()
+                                icon: const Icon(Icons.person_add_outlined,
+                                    color: Colors.white),
+                                label:  _isLoading
+                                    ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2.0,)
                                     : const Text(
                                   'Login',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 6.0,
+                                  backgroundColor: AppColors.verdigris,
+                                  minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 8.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
                               ),

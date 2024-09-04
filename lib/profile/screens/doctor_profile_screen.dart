@@ -3,6 +3,7 @@ import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/helpers/Toaster.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -98,7 +99,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                     ElevatedButton(
                                       onPressed: _isUpdatingImage
                                           ? null
-                                          : _pickImageFromGallery,
+                                          // : _pickImageFromGallery,
+                                          : _pickAndCropImage,
                                       style: ElevatedButton.styleFrom(
                                         minimumSize: Size(double.infinity,
                                             deviceHeight * 0.05),
@@ -509,4 +511,49 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
       );
     }
   }
+
+  Future<void> _pickAndCropImage() async {
+    try {
+      // Pick an image from the gallery
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        CroppedFile? croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: AppColors.verdigris.withOpacity(0.8),
+              toolbarWidgetColor: Colors.white,
+              lockAspectRatio: false,
+            ),
+            IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            ),
+          ],
+        );
+
+        if (croppedFile != null) {
+          // Convert CroppedFile to File
+          File imageFile = File(croppedFile.path);
+
+          setState(() {
+            _selectedFile = imageFile;
+          });
+
+          // Automatically upload the image after picking and cropping
+          await Provider.of<HomeGetProvider>(context, listen: false)
+              .updateDoctorImage(_selectedFile!);
+        }
+      }
+    } catch (e) {
+      print("Image picking/cropping failed: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Image selection failed!')),
+      );
+    }
+  }
+
+
 }
