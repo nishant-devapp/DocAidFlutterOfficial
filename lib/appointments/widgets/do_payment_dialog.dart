@@ -9,10 +9,11 @@ class DoPaymentDialog extends StatefulWidget {
     required this.appointmentId,
     required this.clinicNewFee,
     required this.clinicOldFee,
+    required this.visitStatus,
   });
 
   final int appointmentId;
-  final String clinicNewFee, clinicOldFee;
+  final String clinicNewFee, clinicOldFee, visitStatus;
 
   @override
   State<DoPaymentDialog> createState() => _DoPaymentDialogState();
@@ -43,7 +44,8 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
           backgroundColor: Colors.white,
           elevation: 3.0,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -130,7 +132,8 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                             _submit('UPI', widget.appointmentId);
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                            minimumSize:
+                                Size(double.infinity, deviceHeight * 0.06),
                             backgroundColor: AppColors.princetonOrange,
                           ),
                           child: const Text(
@@ -149,7 +152,8 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                             _submit('CASH', widget.appointmentId);
                           },
                           style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                            minimumSize:
+                                Size(double.infinity, deviceHeight * 0.06),
                             backgroundColor: AppColors.princetonOrange,
                           ),
                           child: const Text(
@@ -190,19 +194,20 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
       return;
     }
 
-    final selectedFee = _selectedFee == 'Custom'
-        ? _customFeeController.text
-        : _selectedFee;
+    final selectedFee =
+        _selectedFee == 'Custom' ? _customFeeController.text : _selectedFee;
 
     // Print the selected fee (for demonstration purposes)
-    print('Selected Fee: $selectedFee, Payment Method: $paymentMethod');
+    // print('Selected Fee: $selectedFee, Payment Method: $paymentMethod');
 
     // Call the doPayment method of the provider
-    final appointmentProvider =
-    Provider.of<AppointmentProvider>(context, listen: false);
+    final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
     appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!);
 
-    Navigator.pop(context);
+    if (widget.visitStatus == 'NOT_VISITED') {
+      appointmentProvider.updateAppointmentVisitStatus(appointmentId, true);
+    }
 
+    Navigator.pop(context);
   }
 }

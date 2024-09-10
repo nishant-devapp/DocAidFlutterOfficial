@@ -7,10 +7,10 @@ import '../../utils/constants/colors.dart';
 
 class UnpaidTextDesign extends StatelessWidget {
   const UnpaidTextDesign(
-      {super.key, required this.appointmentId, required this.clinicLocation});
+      {super.key, required this.appointmentId, required this.clinicLocation, required this.visitStatus});
 
   final int appointmentId;
-  final String clinicLocation;
+  final String clinicLocation, visitStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +36,7 @@ class UnpaidTextDesign extends StatelessWidget {
                 appointmentId: appointmentId,
                 clinicNewFee: clinicNewPatientFee,
                 clinicOldFee: clinicOldPatientFee,
+                visitStatus: visitStatus,
               );
             },
           );

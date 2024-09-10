@@ -74,6 +74,8 @@ class AppointmentItem extends StatelessWidget {
                                           appointmentId: appointment.id!,
                                           clinicLocation:
                                               appointment.clinicLocation!,
+                                          visitStatus: appointment
+                                              .appointmentvisitStatus!,
                                         ),
                                 ],
                               ),
@@ -82,16 +84,23 @@ class AppointmentItem extends StatelessWidget {
                               onPressed: () {
                                 showModalBottomSheet(
                                   context: context,
-                                  isScrollControlled: true, // This makes the bottom sheet full screen
-                                  builder: (context) => DraggableScrollableSheet(
+                                  isScrollControlled: true,
+                                  // This makes the bottom sheet full screen
+                                  builder: (context) =>
+                                      DraggableScrollableSheet(
                                     expand: false,
-                                    builder: (context, scrollController) => SingleChildScrollView(
+                                    builder: (context, scrollController) =>
+                                        SingleChildScrollView(
                                       controller: scrollController,
                                       child: Padding(
                                         padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom,
                                         ),
-                                        child: EditAppointmentForm(appointment: appointment,),
+                                        child: EditAppointmentForm(
+                                          appointment: appointment,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -145,7 +154,8 @@ class AppointmentItem extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Visited: ',
-                                    style: TextStyle(fontSize: screenWidth * 0.045),
+                                    style: TextStyle(
+                                        fontSize: screenWidth * 0.045),
                                   ),
                                   Checkbox(
                                     checkColor: Colors.white,
