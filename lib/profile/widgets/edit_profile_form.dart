@@ -3,6 +3,7 @@ import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/constants/colors.dart';
+import '../../utils/constants/doctor_specialities.dart';
 
 class EditProfileForm extends StatefulWidget {
   const EditProfileForm({super.key});
@@ -289,7 +290,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                       },
                     ),
                     const SizedBox(height: 12.0),
-                    TextFormField(
+                    /*TextFormField(
                       controller: _specializationController,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
@@ -302,6 +303,38 @@ class _EditProfileFormState extends State<EditProfileForm> {
                           return 'Please enter specialization';
                         }
                         return null;
+                      },
+                    ),*/
+                    Autocomplete<String>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<String>.empty();
+                        }
+                        // Make the search case-insensitive by converting both the input and specialities to lowercase.
+                        return DoctorSpecialities.specialities.where((speciality) =>
+                            speciality.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                      },
+                      onSelected: (String selection) {
+                        _specializationController.text = selection;
+                      },
+                      fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController, FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
+                        fieldTextEditingController.text = _specializationController.text;
+                        return TextFormField(
+                          controller: fieldTextEditingController,
+                          focusNode: fieldFocusNode,
+                          decoration: InputDecoration(
+                            label: const Text('Specialization'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter specialization';
+                            }
+                            return null;
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 22.0),
