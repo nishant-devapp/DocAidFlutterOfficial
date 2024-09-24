@@ -246,6 +246,28 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> deleteClinic(int clinicId) async{
+    _isUpdatingClinic = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final isDeleted = await _homeGetService.deleteClinic(clinicId);
+
+      if(isDeleted){
+        doctorProfile?.data?.clinicDtos?.removeWhere((clinic) => clinic.id == clinicId);
+        notifyListeners();
+      }
+
+    } catch (error) {
+      _errorMessage = 'Error deleting clinic: $error';
+      notifyListeners();
+    } finally {
+      _isUpdatingClinic = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> addDoctorSchedule(String startTime, String endTime,
       String location, String purpose, String startDate, String endDate) async {
     _isLoading = true;
@@ -322,6 +344,9 @@ class HomeGetProvider extends ChangeNotifier {
 
   // Get a list of clinics
   List<ClinicDtos> getClinics() {
-    return doctorProfile?.data?.clinicDtos ?? [];
+    // return doctorProfile?.data?.clinicDtos ?? [];
+    return doctorProfile?.data?.clinicDtos
+        ?.where((clinic) => clinic.clinicStatus == "Active")
+        .toList() ?? [];
   }
 }

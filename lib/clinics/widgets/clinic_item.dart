@@ -116,7 +116,9 @@ class ClinicItem extends StatelessWidget {
                         SizedBox(width: deviceWidth * 0.01),
                         Text(
                           clinic.incharge!,
-                          style: TextStyle(fontSize: deviceWidth * 0.04,),
+                          style: TextStyle(
+                            fontSize: deviceWidth * 0.04,
+                          ),
                         ),
                       ],
                     ),
@@ -133,7 +135,9 @@ class ClinicItem extends StatelessWidget {
                         SizedBox(width: deviceWidth * 0.01),
                         Text(
                           clinic.clinicContact!,
-                          style: TextStyle(fontSize: deviceWidth * 0.038,),
+                          style: TextStyle(
+                            fontSize: deviceWidth * 0.038,
+                          ),
                         ),
                       ],
                     ),
@@ -153,7 +157,9 @@ class ClinicItem extends StatelessWidget {
                             SizedBox(width: deviceWidth * 0.01),
                             Text(
                               "${formatTime(clinic.startTime!)} - ${formatTime(clinic.endTime!)}",
-                              style: TextStyle(fontSize: deviceWidth * 0.036,),
+                              style: TextStyle(
+                                fontSize: deviceWidth * 0.036,
+                              ),
                             ),
                           ],
                         ),
@@ -175,18 +181,49 @@ class ClinicItem extends StatelessWidget {
                     SizedBox(height: deviceHeight * 0.02),
                     Row(
                       children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          color: Colors.red,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return  AlertDialog(
+                                    title: const Text('Delete Clinic'),
+                                    content: const Text('Are you sure you want to delete this clinic ?'),
+                                    actions: [
+                                      TextButton(onPressed: (){Navigator.pop(context);}, child: const Text('Cancel', style: TextStyle(color: Colors.blue, fontSize: 16.0))),
+                                      TextButton(onPressed: (){
+                                        Provider.of<HomeGetProvider>(context, listen: false)
+                                            .deleteClinic(clinic.id!);
+                                        Navigator.pop(context);
+                                      }, child: const Text('Delete', style: TextStyle(color: Colors.red, fontSize: 16.0),)),
+                                    ],
+                                  );
+                                });
+                          },
+                          padding: EdgeInsets.symmetric(
+                              vertical: deviceHeight * 0.02),
+                        ),
+                        SizedBox(width: deviceWidth * 0.02),
+                        // Add some space between buttons
+
                         TextButton(
                           onPressed: () {
                             showModalBottomSheet(
                               context: context,
-                              isScrollControlled: true, // This makes the bottom sheet full screen
+                              isScrollControlled: true,
+                              // This makes the bottom sheet full screen
                               builder: (context) => DraggableScrollableSheet(
                                 expand: false,
-                                builder: (context, scrollController) => SingleChildScrollView(
+                                builder: (context, scrollController) =>
+                                    SingleChildScrollView(
                                   controller: scrollController,
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                                      bottom: MediaQuery.of(context)
+                                          .viewInsets
+                                          .bottom,
                                     ),
                                     child: EditClinicForm(clinicToEdit: clinic),
                                   ),
@@ -195,7 +232,8 @@ class ClinicItem extends StatelessWidget {
                             );
                           },
                           style: TextButton.styleFrom(
-                            padding:  EdgeInsets.symmetric(vertical: deviceHeight * 0.02),
+                            padding: EdgeInsets.symmetric(
+                                vertical: deviceHeight * 0.02),
                             backgroundColor: AppColors.lightGrey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -204,8 +242,9 @@ class ClinicItem extends StatelessWidget {
                           child: Text(
                             'Edit',
                             style: TextStyle(
-                                color: Colors.black54,
-                              fontSize: deviceWidth * 0.04,),
+                              color: Colors.black54,
+                              fontSize: deviceWidth * 0.04,
+                            ),
                           ),
                         ),
                         SizedBox(width: deviceWidth * 0.02),
@@ -223,7 +262,8 @@ class ClinicItem extends StatelessWidget {
                               );
                             },
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: deviceHeight * 0.02),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: deviceHeight * 0.02),
                               backgroundColor: AppColors.verdigris,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -232,8 +272,9 @@ class ClinicItem extends StatelessWidget {
                             child: Text(
                               'Check Appointments',
                               style: TextStyle(
-                                  color: Colors.white,
-                                fontSize: deviceWidth * 0.04,),
+                                color: Colors.white,
+                                fontSize: deviceWidth * 0.04,
+                              ),
                             ),
                           ),
                         ),

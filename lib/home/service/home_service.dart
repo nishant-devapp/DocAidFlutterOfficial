@@ -232,6 +232,26 @@ class HomeGetService {
 
   }
 
+  Future<bool> deleteClinic(int clinicId) async{
+    String baseUrl = '${AppUrls.baseUrl}${ApiEndpoints.deleteClinicEndPoint}/$clinicId';
+    // print(baseUrl);
+
+    final url = Uri.parse(baseUrl);
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    // print(response.statusCode);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<void> updateDoctorProfile(
       String firstName,
       String lastName,

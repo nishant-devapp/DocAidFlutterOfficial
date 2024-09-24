@@ -129,7 +129,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            _submit('UPI', widget.appointmentId);
+                            // _submit('UPI', widget.appointmentId,);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
@@ -149,7 +149,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            _submit('CASH', widget.appointmentId);
+                            // _submit('CASH', widget.appointmentId);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
@@ -177,7 +177,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
     );
   }
 
-  void _submit(String paymentMethod, int appointmentId) {
+  void _submit(String paymentMethod, int appointmentId, String appointmentDate, int clinicId, int doctorId) {
     if (_selectedFee == null) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -202,7 +202,11 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
 
     // Call the doPayment method of the provider
     final appointmentProvider = Provider.of<AppointmentProvider>(context, listen: false);
-    appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!);
+
+
+    // Changes to be done below and the submit method
+
+    // appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!);
 
     if (widget.visitStatus == 'NOT_VISITED') {
       appointmentProvider.updateAppointmentVisitStatus(appointmentId, true);

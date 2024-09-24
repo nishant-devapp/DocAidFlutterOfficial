@@ -178,6 +178,7 @@ class ClinicDtos {
   String? startTime;
   String? endTime;
   String? clinicContact;
+  String? clinicStatus;
 
   DateTime get parsedStartTime => DateFormat('HH:mm:ss').parse(startTime!);
   DateTime get parsedEndTime => DateFormat('HH:mm:ss').parse(endTime!);
@@ -193,7 +194,9 @@ class ClinicDtos {
       // this.pincode,
       this.startTime,
       this.endTime,
-      this.clinicContact});
+      this.clinicContact,
+      this.clinicStatus
+      });
 
   ClinicDtos.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -207,6 +210,7 @@ class ClinicDtos {
     startTime = json['startTime'];
     endTime = json['endTime'];
     clinicContact = json['clinicContact'];
+    clinicStatus = json['clinicStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -222,6 +226,7 @@ class ClinicDtos {
     data['startTime'] = this.startTime;
     data['endTime'] = this.endTime;
     data['clinicContact'] = this.clinicContact;
+    data['clinicStatus'] = this.clinicStatus;
     return data;
   }
 }

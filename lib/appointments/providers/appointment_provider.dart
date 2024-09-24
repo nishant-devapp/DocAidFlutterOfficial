@@ -221,14 +221,14 @@ class AppointmentProvider with ChangeNotifier {
   }
 
   Future<void> makeAppointmentPayment(
-      int appointmentId, String modeOfPayment, String amount) async {
+      int appointmentId, String modeOfPayment, String amount, String appointmentDate, int clinicId, int doctorId) async {
     _isMakingAppointmentPayment = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
       await _service.createAppointmentPayment(
-          appointmentId, modeOfPayment, amount);
+          appointmentId, modeOfPayment, amount, appointmentDate, clinicId, doctorId);
       // Update the payment status in the local list
       _appointmentList?.data?.forEach((appointment) {
         if (appointment.id == appointmentId) {

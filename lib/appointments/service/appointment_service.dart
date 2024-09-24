@@ -308,7 +308,7 @@ class AppointmentService {
   }
 
   Future<void> createAppointmentPayment(
-      int appointmentId, String modeOfPayment, String amount) async {
+      int appointmentId, String modeOfPayment, String amount, String appointmentDate, int clinicId, int doctorId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
@@ -325,7 +325,7 @@ class AppointmentService {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount}),
+        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount, "appointmentDate": appointmentDate, "clinicId": clinicId, "doctorId": doctorId}),
       );
 
       if (response.statusCode == 200) {
