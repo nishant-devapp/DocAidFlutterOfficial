@@ -7,10 +7,10 @@ import '../../utils/constants/colors.dart';
 
 class UnpaidTextDesign extends StatelessWidget {
   const UnpaidTextDesign(
-      {super.key, required this.appointmentId, required this.clinicLocation, required this.visitStatus});
+      {super.key, required this.appointmentId, required this.clinicId, required this.docId, required this.appointmentDate, required this.clinicLocation, required this.visitStatus});
 
-  final int appointmentId;
-  final String clinicLocation, visitStatus;
+  final int appointmentId, clinicId, docId;
+  final String appointmentDate, clinicLocation, visitStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +34,9 @@ class UnpaidTextDesign extends StatelessWidget {
             builder: (BuildContext context) {
               return DoPaymentDialog(
                 appointmentId: appointmentId,
+                clinicId: clinicId,
+                docId: docId,
+                appointmentDate: appointmentDate,
                 clinicNewFee: clinicNewPatientFee,
                 clinicOldFee: clinicOldPatientFee,
                 visitStatus: visitStatus,

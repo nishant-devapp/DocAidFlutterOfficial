@@ -7,13 +7,16 @@ class DoPaymentDialog extends StatefulWidget {
   const DoPaymentDialog({
     super.key,
     required this.appointmentId,
+    required this.clinicId,
+    required this.docId,
+    required this.appointmentDate,
     required this.clinicNewFee,
     required this.clinicOldFee,
     required this.visitStatus,
   });
 
-  final int appointmentId;
-  final String clinicNewFee, clinicOldFee, visitStatus;
+  final int appointmentId, clinicId, docId;
+  final String appointmentDate, clinicNewFee, clinicOldFee, visitStatus;
 
   @override
   State<DoPaymentDialog> createState() => _DoPaymentDialogState();
@@ -129,7 +132,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            // _submit('UPI', widget.appointmentId,);
+                            _submit('UPI', widget.appointmentId, widget.appointmentDate, widget.clinicId, widget.docId);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
@@ -149,7 +152,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            // _submit('CASH', widget.appointmentId);
+                            _submit('CASH', widget.appointmentId, widget.appointmentDate, widget.clinicId, widget.docId);
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
@@ -206,7 +209,7 @@ class _DoPaymentDialogState extends State<DoPaymentDialog> {
 
     // Changes to be done below and the submit method
 
-    // appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!);
+    appointmentProvider.makeAppointmentPayment(appointmentId, paymentMethod, selectedFee!, appointmentDate, clinicId, doctorId);
 
     if (widget.visitStatus == 'NOT_VISITED') {
       appointmentProvider.updateAppointmentVisitStatus(appointmentId, true);

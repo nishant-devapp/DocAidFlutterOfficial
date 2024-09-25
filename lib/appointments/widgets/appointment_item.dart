@@ -1,4 +1,5 @@
 import 'package:code/appointments/widgets/edit_appointment_form.dart';
+import 'package:code/home/provider/home_provider.dart';
 import 'package:code/utils/helpers/time_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:code/appointments/widgets/paid_text_design.dart';
@@ -10,16 +11,23 @@ import '../models/fetch_appointment_model.dart';
 import '../providers/appointment_provider.dart';
 import '../screens/appointment_detail_screen.dart';
 
-class AppointmentItem extends StatelessWidget {
+class AppointmentItem extends StatefulWidget {
   final AppointmentList? appointmentList;
 
   const AppointmentItem(
       {super.key, this.appointmentList, AppointmentList? appointments});
 
   @override
+  State<AppointmentItem> createState() => _AppointmentItemState();
+}
+
+class _AppointmentItemState extends State<AppointmentItem> {
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final appointments = appointmentList?.data ?? [];
+    final appointments = widget.appointmentList?.data ?? [];
+    final clinics = context.read<HomeGetProvider>().getClinics();
+    int? docId = context.read<HomeGetProvider>().getDoctorId();
 
     return Consumer<AppointmentProvider>(
       builder: (context, appointmentProvider, child) {
@@ -28,6 +36,10 @@ class AppointmentItem extends StatelessWidget {
             itemCount: appointments.length,
             itemBuilder: (context, index) {
               final appointment = appointments[index];
+              final clinicLocation = appointment.clinicLocation;
+              final clinic = clinics
+                  .firstWhere((clinic) => clinic.location == clinicLocation);
+              final clinicId = clinic.id!;
               return InkWell(
                 onTap: () {
                   Navigator.push(
@@ -72,6 +84,10 @@ class AppointmentItem extends StatelessWidget {
                                         )
                                       : UnpaidTextDesign(
                                           appointmentId: appointment.id!,
+                                          appointmentDate:
+                                              appointment.appointmentDate!,
+                                          clinicId: clinicId,
+                                          docId: docId!,
                                           clinicLocation:
                                               appointment.clinicLocation!,
                                           visitStatus: appointment

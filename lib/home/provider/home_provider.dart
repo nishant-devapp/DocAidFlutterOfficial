@@ -349,4 +349,10 @@ class HomeGetProvider extends ChangeNotifier {
         ?.where((clinic) => clinic.clinicStatus == "Active")
         .toList() ?? [];
   }
+
+  int? getDoctorId(){
+    return doctorProfile?.data?.id;
+
+  }
+
 }

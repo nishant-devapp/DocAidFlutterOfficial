@@ -325,12 +325,14 @@ class AppointmentService {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount, "appointmentDate": appointmentDate, "clinicId": clinicId, "doctorId": doctorId}),
+        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount, "appointmentDate": appointmentDate, "clinicId": clinicId.toString(), "doctorId": doctorId.toString()}),
       );
+
+      // print("modeOfPayment"+ modeOfPayment + "amount" + amount +  "appointmentDate" + appointmentDate + "clinicId"+ clinicId.toString() + "doctorId"+ doctorId.toString());
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
+        // print(data);
       } else {
         print('Failed to make payment: ${response.body}');
         throw Exception('Failed to make payment');

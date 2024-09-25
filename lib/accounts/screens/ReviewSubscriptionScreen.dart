@@ -69,7 +69,11 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
       docName = doctorProfile.data!.firstName! + doctorProfile.data!.lastName!;
       docContact = doctorProfile.data!.contact!;
       docEmail = doctorProfile.data!.email!;
-      totalClinics = doctorProfile.data!.clinicDtos!.length;
+      totalClinics = doctorProfile.data!.clinicDtos!
+          .where((clinic) => clinic.clinicStatus == "Active")
+          .length;
+
+      // totalClinics = doctorProfile.data!.clinicDtos!.length;
 
       return Consumer<AccountProvider>(
           builder: (context, accountProvider, child) {
