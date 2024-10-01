@@ -36,11 +36,11 @@ class _DurationSelectorBottomSheetState extends State<DurationSelectorBottomShee
 
             _buildDurationCard(1, 'Monthly', 'Rs. 1500 + 500/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
-            _buildDurationCard(3, 'Quarterly', 'Rs. 4500 + 1500/ Additional Clinics', '+18% GST'),
+            _buildDurationCard(3, 'Quarterly', 'Rs. 4000 + 1500/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
-            _buildDurationCard(6, 'Half Yearly', 'Rs. 9000 + 3000/ Additional Clinics', '+18% GST'),
+            _buildDurationCard(6, 'Half Yearly', 'Rs. 8000 + 3000/ Additional Clinics', '+18% GST'),
             const SizedBox(height: 5.0),
-            _buildDurationCard(12, 'Yearly', 'Rs. 18000 + 6000/ Additional Clinics', '+18% GST'),
+            _buildDurationCard(12, 'Yearly', 'Rs. 15000 + 6000/ Additional Clinics', '+18% GST'),
 
             const SizedBox(height: 20),
 

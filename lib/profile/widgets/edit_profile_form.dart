@@ -334,6 +334,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
                             }
                             return null;
                           },
+                          onChanged: (value) {
+                            // Allow the user to type freely, and keep the controller in sync
+                            _specializationController.text = value;
+                          },
                         );
                       },
                     ),
