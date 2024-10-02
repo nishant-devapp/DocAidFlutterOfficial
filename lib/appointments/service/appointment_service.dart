@@ -27,6 +27,8 @@ class AppointmentService {
 
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
+      print(url);
+
       final response = await http.get(
         url,
         headers: {
@@ -329,6 +331,8 @@ class AppointmentService {
       );
 
       print("modeOfPayment  ${modeOfPayment}amount  ${amount}appointmentDate  ${appointmentDate}clinicId  ${clinicId}doctorId  $doctorId");
+
+      print(response.body);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
