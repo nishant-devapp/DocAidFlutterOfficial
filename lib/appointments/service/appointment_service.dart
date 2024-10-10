@@ -155,7 +155,7 @@ class AppointmentService {
       }
 
       if (paymentStatus == "PAID") {
-        appointmentUnpaid(appointmentId);
+        unpayAppointment(appointmentId);
       }
 
       String baseUrl =
