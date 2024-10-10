@@ -107,7 +107,6 @@ class AppointmentService {
 
       String baseUrl = AppUrls.baseUrl + ApiEndpoints.updateAppointmentEndPoint;
 
-
       final queryParameters = {
         'id': appointmentId.toString(),
       };
@@ -147,11 +146,16 @@ class AppointmentService {
     }
   }
 
-  Future<bool> deleteAppointment(int appointmentId) async {
+  Future<bool> deleteAppointment(
+      int appointmentId, String paymentStatus) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
+      }
+
+      if (paymentStatus == "PAID") {
+        appointmentUnpaid(appointmentId);
       }
 
       String baseUrl =
@@ -278,27 +282,27 @@ class AppointmentService {
 
   Future<void> unpayAppointment(int appointmentId) async {
     try {
-      final token = await _tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
       String baseUrl =
-          '${AppUrls.baseUrl}${ApiEndpoints.unpayAppointmentEndPoint}/$appointmentId';
+          '${AppUrls.baseUrl}${ApiEndpoints.unpayAppointmentEndPoint}';
 
-      final url = Uri.parse(baseUrl);
+      final queryParameters = {
+        'appointmentId': appointmentId.toString(),
+      };
 
-      final response = await http.patch(
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+      final response = await http.delete(
         url,
         headers: {
-          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
+        body: json.encode({"appointmentId": appointmentId.toString()}),
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print(data);
+        appointmentUnpaid(appointmentId);
+        // final data = json.decode(response.body);
+        // print(data);
       } else {
         print('Failed to unpay appointment: ${response.body}');
         throw Exception('Failed to unpay appointment');
@@ -309,40 +313,88 @@ class AppointmentService {
     }
   }
 
-  Future<void> createAppointmentPayment(
-      int appointmentId, String modeOfPayment, String amount, String appointmentDate, int clinicId, int doctorId) async {
+  Future<void> createAppointmentPayment(int appointmentId, String modeOfPayment,
+      String amount, String appointmentDate, int clinicId, int doctorId) async {
     try {
-      final token = await _tokenManager.getToken();
-      if (token == null) {
-        throw Exception('Token not found');
-      }
-
       String baseUrl =
-          '${AppUrls.baseUrl}${ApiEndpoints.createAppointmentPaymentEndPoint}/$appointmentId';
+          '${AppUrls.baseUrl}${ApiEndpoints.createAppointmentPaymentEndPoint}';
+
       final url = Uri.parse(baseUrl);
 
       final response = await http.post(
         url,
         headers: {
-          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount, "appointmentDate": appointmentDate, "clinicId": clinicId.toString(), "doctorId": doctorId.toString()}),
+        body: json.encode({
+          "modeOfPayment": modeOfPayment,
+          "amount": amount,
+          "appointmentDate": appointmentDate,
+          "appointmentId": appointmentId.toString(),
+          "clinicId": clinicId.toString(),
+          "doctorId": doctorId.toString()
+        }),
       );
 
-      print("modeOfPayment  ${modeOfPayment}amount  ${amount}appointmentDate  ${appointmentDate}clinicId  ${clinicId}doctorId  $doctorId");
+      print(
+          "modeOfPayment  $modeOfPayment amount  $amount appointmentDate  $appointmentDate clinicId  $clinicId doctorId  $doctorId");
 
       print(response.body);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print(data);
+      if (response.statusCode == 201) {
+        appointmentPaid(appointmentId);
+        // final data = json.decode(response.body);
+        // print(data);
       } else {
         print('Failed to make payment: ${response.body}');
         throw Exception('Failed to make payment');
       }
     } catch (error) {
       print('Error updating payment status: $error');
+      throw error;
+    }
+  }
+
+  Future<void> appointmentPaid(int appointmentId) async {
+    try {
+      String baseUrl =
+          '${AppUrls.baseUrl}${ApiEndpoints.appointmentPaidEndPoint}/$appointmentId';
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.patch(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed appointment payment: ${response.body}');
+        throw Exception('Failed appointment payment');
+      }
+    } catch (error) {
+      print('Error fetching payment info: $error');
+      throw error;
+    }
+  }
+
+  Future<void> appointmentUnpaid(int appointmentId) async {
+    try {
+      String baseUrl =
+          '${AppUrls.baseUrl}${ApiEndpoints.appointmentUnpaidEndPoint}/$appointmentId';
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.patch(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+      } else {
+        print('Failed appointment payment: ${response.body}');
+        throw Exception('Failed appointment payment');
+      }
+    } catch (error) {
+      print('Error fetching payment info: $error');
       throw error;
     }
   }
@@ -380,8 +432,8 @@ class AppointmentService {
     }
   }
 
-  Future<void> updateAppointmentPayment(
-      int appointmentId, String modeOfPayment, String amount) async {
+  Future<void> updateAppointmentPayment(int appointmentId, String modeOfPayment,
+      String amount, String appointmentDate, int clinicId, int doctorId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
@@ -389,16 +441,23 @@ class AppointmentService {
       }
 
       String baseUrl =
-          '${AppUrls.baseUrl}${ApiEndpoints.updateAppointmentPaymentEndPoint}/$appointmentId';
+          '${AppUrls.baseUrl}${ApiEndpoints.updateAppointmentPaymentEndPoint}';
       final url = Uri.parse(baseUrl);
 
-      final response = await http.put(
+      final response = await http.patch(
         url,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: json.encode({"modeOfPayment": modeOfPayment, "amount": amount}),
+        body: json.encode({
+          "modeOfPayment": modeOfPayment,
+          "amount": amount,
+          "appointmentDate": appointmentDate,
+          "appointmentId": appointmentId.toString(),
+          "clinicId": clinicId.toString(),
+          "doctorId": doctorId.toString()
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -443,8 +502,9 @@ class AppointmentService {
     }
   }
 
-  Future<Map<String, int>> fetchClinicWiseAppointmentCount(String localDate) async{
-    try{
+  Future<Map<String, int>> fetchClinicWiseAppointmentCount(
+      String localDate) async {
+    try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -453,19 +513,14 @@ class AppointmentService {
       String baseUrl =
           AppUrls.baseUrl + ApiEndpoints.clinicWiseAppointmentCountEndPoint;
 
-      final queryParameters = {
-        'localDate': localDate
-      };
+      final queryParameters = {'localDate': localDate};
 
-     final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+      final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        }
-        );
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['data'] as Map<String, dynamic>;
@@ -474,12 +529,9 @@ class AppointmentService {
       } else {
         throw Exception('Failed to load appointment counts');
       }
-
-    }
-    catch (error) {
-    print('Error fetching clinic appointment: $error');
-    throw error;
+    } catch (error) {
+      print('Error fetching clinic appointment: $error');
+      throw error;
     }
   }
-
 }

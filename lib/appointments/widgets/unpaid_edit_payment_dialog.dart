@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UnpaidEditPaymentDialog extends StatefulWidget {
-  const UnpaidEditPaymentDialog({super.key, required this.appointmentId});
+  const UnpaidEditPaymentDialog({super.key, required this.appointmentId, required this.clinicId, required this.docId, required this.appointmentDate});
 
-  final int appointmentId;
+  final int appointmentId, clinicId, docId;
+  final String appointmentDate;
 
   @override
   State<UnpaidEditPaymentDialog> createState() =>
@@ -183,7 +184,7 @@ class _UnpaidEditPaymentDialogState extends State<UnpaidEditPaymentDialog> {
                                       final amount = _feeController.text;
                                       // print('Amount: $amount, Payment Method: $_selectedMethod');
 
-                                      appointmentProvider.updateAppointmentPayment(widget.appointmentId, _selectedMethod, amount);
+                                      appointmentProvider.updateAppointmentPayment(widget.appointmentId, _selectedMethod, amount, widget.appointmentDate, widget.clinicId, widget.docId);
                                       Navigator.pop(context);
 
                                     }

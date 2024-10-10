@@ -198,13 +198,13 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteAppointment(int appointmentId) async{
+  Future<void> deleteAppointment(int appointmentId, String paymentStatus) async{
     _isDeletingAppointment = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final isDeleted = await _service.deleteAppointment(appointmentId);
+      final isDeleted = await _service.deleteAppointment(appointmentId, paymentStatus);
 
       if(isDeleted){
         _appointmentList?.data?.removeWhere((appointment) => appointment.id == appointmentId);
@@ -235,13 +235,13 @@ class AppointmentProvider with ChangeNotifier {
           appointment.paymentStatus = 'PAID';
         }
       });
-      notifyListeners(); // Notify listeners to update the UI
+      // notifyListeners();
     } catch (error) {
       _errorMessage = 'Error making payment: $error';
-      notifyListeners();
+      // notifyListeners();
     } finally {
       _isMakingAppointmentPayment = false;
-      notifyListeners();
+      notifyListeners(); // Notify listeners to update the UI
     }
   }
 
@@ -284,14 +284,14 @@ class AppointmentProvider with ChangeNotifier {
   }
 
   Future<void> updateAppointmentPayment(
-      int appointmentId, String modeOfPayment, String amount) async {
+      int appointmentId, String modeOfPayment, String amount, String appointmentDate, int clinicId, int doctorId) async {
     _isInProcess = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
       await _service.updateAppointmentPayment(
-          appointmentId, modeOfPayment, amount);
+           appointmentId, modeOfPayment, amount, appointmentDate, clinicId, doctorId);
 
       _paymentInfoModel = await _service.getAppointmentPayment(appointmentId);
       notifyListeners(); // Notify listeners to update the UI

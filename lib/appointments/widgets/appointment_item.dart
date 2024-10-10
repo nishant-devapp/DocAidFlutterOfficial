@@ -81,6 +81,10 @@ class _AppointmentItemState extends State<AppointmentItem> {
                                   appointment.paymentStatus == 'PAID'
                                       ? PaidTextDesign(
                                           appointmentId: appointment.id!,
+                                          appointmentDate:
+                                              appointment.appointmentDate!,
+                                          clinicId: clinicId,
+                                          docId: docId!,
                                         )
                                       : UnpaidTextDesign(
                                           appointmentId: appointment.id!,

@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import '../providers/appointment_provider.dart';
 
 class PaidTextDesign extends StatelessWidget {
-  const PaidTextDesign({super.key, required this.appointmentId});
+  const PaidTextDesign({super.key, required this.appointmentId, required this.clinicId, required this.docId, required this.appointmentDate});
 
-  final int appointmentId;
+  final int appointmentId, clinicId, docId;
+  final String appointmentDate;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +51,9 @@ class PaidTextDesign extends StatelessWidget {
             builder: (BuildContext context) {
               return UnpaidEditPaymentDialog(
                 appointmentId: appointmentId,
+                clinicId: clinicId,
+                docId: docId,
+                appointmentDate: appointmentDate,
               );
             },
           );

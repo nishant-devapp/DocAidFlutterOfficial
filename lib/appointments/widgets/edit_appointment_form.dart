@@ -460,7 +460,8 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
         builder: (BuildContext context) {
           return FutureBuilder(
             future: Provider.of<AppointmentProvider>(context, listen: false)
-                .deleteAppointment(widget.appointment!.id!),
+                .deleteAppointment(widget.appointment!.id!, widget.appointment!.paymentStatus!),
+
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const AlertDialog(

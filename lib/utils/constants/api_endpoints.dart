@@ -28,8 +28,10 @@ class ApiEndpoints {
   static const String deleteAppointmentEndPoint = '/clinic/deleteAppointment';
   static const String getAppointmentPaymentEndPoint = '/payment/getAppointmentPayment';
   static const String createAppointmentPaymentEndPoint = '/payment/createAppointmentPayment';
+  static const String appointmentPaidEndPoint = '/payment/appointmentPaid';
+  static const String appointmentUnpaidEndPoint = '/payment/appointmentUnpaid';
   static const String updateAppointmentPaymentEndPoint = '/payment/updateAppointmentPayment';
-  static const String unpayAppointmentEndPoint = '/payment/appointmentUnpaid/';
+  static const String unpayAppointmentEndPoint = '/payment/deleteAppointmentPayment';
 
   static const String fetchPrescriptionEndPoint = '/prescriptionUpload/getImage';
   static const String uploadPrescriptionEndPoint = '/prescriptionUpload';

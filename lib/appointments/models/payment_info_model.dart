@@ -40,9 +40,13 @@ class Data {
   int? id;
   String? modeOfPayment;
   double? amount;
-  Null createdAt;
-  Null updatedAt;
-  Null appointment;
+  String? createdAt;
+  String? updatedAt;
+  String? appointmentDate;
+  int? clinicId;
+  int? doctorId;
+  int? appointmentId;
+
 
   Data(
       {this.id,
@@ -50,7 +54,11 @@ class Data {
         this.amount,
         this.createdAt,
         this.updatedAt,
-        this.appointment});
+        this.appointmentDate,
+        this.clinicId,
+        this.doctorId,
+        this.appointmentId,
+      });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -58,7 +66,10 @@ class Data {
     amount = json['amount'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    appointment = json['appointment'];
+    appointmentDate = json['appointmentDate'];
+    clinicId = json['clinicId'];
+    doctorId = json['doctorId'];
+    appointmentId = json['appointmentId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -68,7 +79,10 @@ class Data {
     data['amount'] = this.amount;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
-    data['appointment'] = this.appointment;
+    data['appointmentDate'] = this.appointmentDate;
+    data['clinicId'] = this.clinicId;
+    data['doctorId'] = this.doctorId;
+    data['appointmentId'] = this.appointmentId;
     return data;
   }
 }
