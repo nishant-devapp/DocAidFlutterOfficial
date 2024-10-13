@@ -53,6 +53,9 @@ class ApiEndpoints {
   static const String updatingNewEndDateEndPoint = '/currentSubscription/updateCurrentSubscriptionDetails';
   static const String createPaymentHistoryEndPoint = '/subscriptionPaymentHistory/create';
   static const String fetchSubscriptionHistoryEndPoint = '/subscriptionPaymentHistory/allSubscriptionPaymentHistory';
+  static const String fetchWeeklyGraphByClinicIdEndPoint = '/payment/weeklyGraphByClinicId';
+  static const String fetchYearlyGraphByClinicIdEndPoint = '/payment/yearlyGraphByClinicId';
+  static const String fetchCustomGraphByClinicIdEndPoint = '/payment/customGraphByClinicId';
 
   // Help
   static const String sendHelpMsgEndPoint = '/feedback';

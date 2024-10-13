@@ -187,12 +187,12 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             )),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter address';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter address';
+                        //   }
+                        //   return null;
+                        // },
                       ),
                       const SizedBox(height: 15.0),
                       TextFormField(
@@ -204,12 +204,12 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             )),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter guardian name';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == null || value.isEmpty) {
+                        //     return 'Please enter guardian name';
+                        //   }
+                        //   return null;
+                        // },
                       ),
 
                       const SizedBox(height: 18.0),

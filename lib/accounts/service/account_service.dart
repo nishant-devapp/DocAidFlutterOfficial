@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:code/accounts/model/account_model.dart';
 import 'package:code/accounts/model/subscription_amout_model.dart';
 import 'package:code/accounts/model/visit_model.dart';
+import 'package:code/home/models/home_get_model.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/constants/api_endpoints.dart';
@@ -16,17 +17,15 @@ import '../model/subscription_history_model.dart';
 import '../model/subscription_order_model.dart';
 
 class AccountService {
-
   final TokenManager _tokenManager = TokenManager();
   final String todayDate = getTodayDate();
   final String firstDateOfMonth = getFirstDayOfCurrentMonth();
 
-  Future<VisitModel> countTodayVisit() async{
-
+  Future<VisitModel> countTodayVisit() async {
     print(todayDate);
     print(firstDateOfMonth);
 
-    try{
+    try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -41,31 +40,25 @@ class AccountService {
 
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      final response = await http.get(
-          url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          }
-      );
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return VisitModel.fromJson(data);
-      }else{
+      } else {
         throw Exception('Failed to load visits');
       }
-
-    }catch(error){
+    } catch (error) {
       print('Error fetching visits: $error');
       throw error;
     }
-
   }
 
-  Future<VisitModel> countThisMonthVisit() async{
-
-    try{
+  Future<VisitModel> countThisMonthVisit() async {
+    try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -80,32 +73,25 @@ class AccountService {
 
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      final response = await http.get(
-          url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          }
-      );
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return VisitModel.fromJson(data);
-      }else{
+      } else {
         throw Exception('Failed to load visits');
       }
-
-    }catch(error){
+    } catch (error) {
       print('Error fetching visits: $error');
       throw error;
     }
-
   }
 
-  Future<AmountModel> countTodayEarning() async{
-
-    try{
-
+  Future<AmountModel> countTodayEarning() async {
+    try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -120,32 +106,25 @@ class AccountService {
 
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      final response = await http.get(
-          url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          }
-      );
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return AmountModel.fromJson(data);
-      }else{
+      } else {
         throw Exception('Failed to load visits');
       }
-
-    }catch(error){
+    } catch (error) {
       print('Error fetching visits: $error');
       throw error;
     }
-
   }
 
-  Future<AmountModel> countThisMonthEarning() async{
-
-    try{
-
+  Future<AmountModel> countThisMonthEarning() async {
+    try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
@@ -160,26 +139,21 @@ class AccountService {
 
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      final response = await http.get(
-          url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          }
-      );
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      });
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return AmountModel.fromJson(data);
-      }else{
+      } else {
         throw Exception('Failed to load visits');
       }
-
-    }catch(error){
+    } catch (error) {
       print('Error fetching visits: $error');
       throw error;
     }
-
   }
 
   Future<EndDateModel> getEndDate(int docId) async {
@@ -217,7 +191,8 @@ class AccountService {
     }
   }
 
-  Future<SubscriptionAmountModel> getTotalAmount(int duration, numberOfClinics) async {
+  Future<SubscriptionAmountModel> getTotalAmount(
+      int duration, numberOfClinics) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
@@ -262,7 +237,8 @@ class AccountService {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.getSubscriptionOrderIdEndPoint;
+      String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.getSubscriptionOrderIdEndPoint;
 
       final queryParameters = {
         'amount': amount.toString(),
@@ -283,8 +259,6 @@ class AccountService {
       if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
         return SubscriptionOrderModel.fromJson(data);
-
-
       } else {
         throw Exception('Failed to get orderId');
       }
@@ -294,14 +268,16 @@ class AccountService {
     }
   }
 
-  Future<RazorpayPaymentVerificationModel> getPaymentStatus(String paymentId) async{
+  Future<RazorpayPaymentVerificationModel> getPaymentStatus(
+      String paymentId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.getPaymentVerificationEndPoint;
+      String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.getPaymentVerificationEndPoint;
 
       final queryParameters = {
         'paymentId': paymentId,
@@ -322,7 +298,6 @@ class AccountService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return RazorpayPaymentVerificationModel.fromJson(data);
-
       } else {
         throw Exception('Failed to get verification status');
       }
@@ -332,14 +307,21 @@ class AccountService {
     }
   }
 
-  Future<bool> updateCurrentSubscriptionDetails(String orderId, String paymentId, String startDate, int duration, int amount, int doctorId) async{
+  Future<bool> updateCurrentSubscriptionDetails(
+      String orderId,
+      String paymentId,
+      String startDate,
+      int duration,
+      int amount,
+      int doctorId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updatingNewEndDateEndPoint;
+      String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.updatingNewEndDateEndPoint;
 
       final url = Uri.parse(baseUrl);
 
@@ -374,14 +356,21 @@ class AccountService {
     }
   }
 
-  Future<bool> createPaymentHistory(String orderId, String paymentId, String subscriptionStartDate, int duration, int amount, int doctorId) async{
+  Future<bool> createPaymentHistory(
+      String orderId,
+      String paymentId,
+      String subscriptionStartDate,
+      int duration,
+      int amount,
+      int doctorId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.createPaymentHistoryEndPoint;
+      String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.createPaymentHistoryEndPoint;
 
       final url = Uri.parse(baseUrl);
 
@@ -417,15 +406,16 @@ class AccountService {
     }
   }
 
-  Future<SubscriptionHistoryModel> fetchSubscriptionHistory(int doctorId) async{
-
+  Future<SubscriptionHistoryModel> fetchSubscriptionHistory(
+      int doctorId) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchSubscriptionHistoryEndPoint;
+      String baseUrl =
+          AppUrls.baseUrl + ApiEndpoints.fetchSubscriptionHistoryEndPoint;
 
       final queryParameters = {'doctorId': doctorId.toString()};
 
@@ -451,8 +441,57 @@ class AccountService {
       print('Error fetching endDate: $error');
       throw error;
     }
+  }
 
+  Future<Map<String, Map<String, double>>> fetchWeeklyGraphForAllClinics(List<ClinicDtos> clinics) async {
+    Map<String, Map<String, double>> clinicIncome = {};
 
+    String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchWeeklyGraphByClinicIdEndPoint;
+    try {
+      for (var clinic in clinics) {
+        final queryParameters = {'clinicId': clinic.id.toString()};
+        final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+
+        print("Fetching data from URL: $url");
+
+        final response = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body)['data'];
+
+          // Initialize the clinic entry if not exists
+          if (!clinicIncome.containsKey(clinic.id)) {
+            clinicIncome[clinic.id.toString()] = {
+              "SUNDAY": 0.0,
+              "MONDAY": 0.0,
+              "TUESDAY": 0.0,
+              "WEDNESDAY": 0.0,
+              "THURSDAY": 0.0,
+              "FRIDAY": 0.0,
+              "SATURDAY": 0.0,
+            };
+          }
+
+          // Add each day's income to the specific clinic
+          data.forEach((day, income) {
+            clinicIncome[clinic.id.toString()]![day] = income['totalAmount'] ?? 0.0;
+          });
+        } else {
+          print("Failed to fetch data: ${response.reasonPhrase}");
+        }
+      }
+
+      return clinicIncome; // Return income data per clinic
+
+    } catch (error) {
+      print('Error fetching weekly info: $error');
+      throw error;
+    }
   }
 
 }

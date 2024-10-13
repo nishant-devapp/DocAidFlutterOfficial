@@ -342,17 +342,22 @@ class HomeGetProvider extends ChangeNotifier {
     }
   }
 
-  // Get a list of clinics
+  // Get a list of active clinics
   List<ClinicDtos> getClinics() {
-    // return doctorProfile?.data?.clinicDtos ?? [];
     return doctorProfile?.data?.clinicDtos
         ?.where((clinic) => clinic.clinicStatus == "Active")
         .toList() ?? [];
   }
 
+  // Get list of all clinics
+  List<ClinicDtos> getAllClinics(){
+    print("Doctor clinics: ${doctorProfile?.data?.clinicDtos}");
+    return doctorProfile?.data?.clinicDtos ?? [];
+  }
+
+
   int? getDoctorId(){
     return doctorProfile?.data?.id;
-
   }
 
 }

@@ -5,5 +5,5 @@ class AppUrls {
 
   static const devBaseUrl = 'https://dev.doc-aid.in/main-backend-api-gateway';
 
-  static const baseUrl = mainBaseUrl;
+  static const baseUrl = devBaseUrl;
 }
