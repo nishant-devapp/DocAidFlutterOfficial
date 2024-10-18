@@ -132,10 +132,10 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                       ],
                     ),
                     SizedBox(height: deviceHeight * 0.03),
-                    SizedBox(
-                      height: 400, // Adjust height as needed
-                      child: WeeklyIncomeChart(weeklyIncome),
-                    ),
+                    // SizedBox(
+                    //   height: 400, // Adjust height as needed
+                    //   child: WeeklyIncomeChart(weeklyIncome),
+                    // ),
 
                   ],
                 ),
