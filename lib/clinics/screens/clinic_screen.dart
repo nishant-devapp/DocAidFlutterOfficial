@@ -254,7 +254,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
       });
 
       var options = {
-        'key': RazorpayKeys.testKey,
+        'key': RazorpayKeys.productionKey,
         'amount': totalAmountToBePaid,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
