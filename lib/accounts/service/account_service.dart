@@ -449,9 +449,9 @@ class AccountService {
     String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchWeeklyGraphByClinicIdEndPoint;
     try {
       for (var clinic in clinics) {
+        print(clinic.id);
         final queryParameters = {'clinicId': clinic.id.toString()};
         final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-
         print("Fetching data from URL: $url");
 
         final response = await http.get(
@@ -493,6 +493,128 @@ class AccountService {
       throw error;
     }
   }
+
+  Future<Map<String, Map<String, double>>> fetchYearlyGraphForAllClinics(List<ClinicDtos> clinics) async {
+    Map<String, Map<String, double>> clinicIncome = {};
+    var now = DateTime.now();
+    String currentYear = now.year.toString();
+
+    String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchYearlyGraphByClinicIdEndPoint;
+    try {
+      for (var clinic in clinics) {
+
+        print(clinic.id);
+        final queryParameters = {'year': currentYear,'clinicId': clinic.id.toString()};
+
+        final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+        print("Fetching data from URL: $url");
+
+        final response = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body)['data'];
+
+          // Initialize the clinic entry if not exists
+          if (!clinicIncome.containsKey(clinic.id)) {
+            clinicIncome[clinic.id.toString()] = {
+              "JANUARY": 0.0,
+              "FEBRUARY": 0.0,
+              "MARCH": 0.0,
+              "APRIL": 0.0,
+              "MAY": 0.0,
+              "JUNE": 0.0,
+              "JULY": 0.0,
+              "AUGUST": 0.0,
+              "SEPTEMBER": 0.0,
+              "OCTOBER": 0.0,
+              "NOVEMBER": 0.0,
+              "DECEMBER": 0.0,
+            };
+          }
+
+          // Add each day's income to the specific clinic
+          data.forEach((day, income) {
+            clinicIncome[clinic.id.toString()]![day] = income['totalAmount'] ?? 0.0;
+          });
+        } else {
+          print("Failed to fetch data: ${response.reasonPhrase}");
+        }
+      }
+
+      return clinicIncome; // Return income data per clinic
+
+    } catch (error) {
+      print('Error fetching weekly info: $error');
+      throw error;
+    }
+  }
+
+  /*Future<Map<String, Map<String, Map<String, double>>>> fetchWeeklyGraphForAllClinics(List<ClinicDtos> clinics) async {
+    Map<String, Map<String, Map<String, double>>> clinicIncome = {};
+
+    String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchWeeklyGraphByClinicIdEndPoint;
+    try {
+      for (var clinic in clinics) {
+        print(clinic.id);
+        final queryParameters = {'clinicId': clinic.id.toString()};
+        final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+        print("Fetching data from URL: $url");
+
+        final response = await http.get(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body)['data'];
+
+          // Initialize the clinic entry if it does not exist
+          if (!clinicIncome.containsKey(clinic.id)) {
+            clinicIncome[clinic.id.toString()] = {
+              "SUNDAY": {},
+              "MONDAY": {},
+              "TUESDAY": {},
+              "WEDNESDAY": {},
+              "THURSDAY": {},
+              "FRIDAY": {},
+              "SATURDAY": {},
+            };
+          }
+
+          // Add income and appointments data for each day
+          data.forEach((day, income) {
+            // print("Processing $day for clinic ID ${clinic.id}");
+            double totalAmount = income['totalAmount'] ?? 0.0;
+            double totalAppointments = income['totalAppointments'] ?? 0.0;
+
+            // print("For $day: totalAmount = $totalAmount, totalAppointments = $totalAppointments");
+
+            clinicIncome[clinic.id.toString()]![day] = {
+              'totalAmount': totalAmount,
+              'totalAppointments': totalAppointments,
+            };
+          });
+        } else {
+          print("Failed to fetch data: ${response.reasonPhrase}");
+        }
+      }
+
+      return clinicIncome; // Return the updated data structure
+
+    } catch (error) {
+      print('Error fetching weekly info: $error');
+      throw error;
+    }
+  }*/
+
+
 
 }
 

@@ -1,13 +1,14 @@
-import 'package:code/home/models/home_get_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../../home/models/home_get_model.dart';
 import '../../utils/constants/colors.dart';
 
-class WeeklyIncomeChart extends StatelessWidget {
-  final Map<String, Map<String, double>> weeklyIncome; // Adjusted to hold both income and appointments
+class YearlyIncomeChart extends StatelessWidget {
+  final Map<String, Map<String, double>> yearlyIncome; // Adjusted to hold both income and appointments
   final List<ClinicDtos> clinics;
 
-  const WeeklyIncomeChart(this.weeklyIncome, this.clinics, {super.key});
+  const YearlyIncomeChart(this.yearlyIncome, this.clinics, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,8 @@ class WeeklyIncomeChart extends StatelessWidget {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: _getLeftTitles,
-                    reservedSize: 40,
-                    interval: 500, // range on the Y-axis
+                    reservedSize: 60,
+                    interval: 1500, // range on the Y-axis
                   ),
                 ),
                 rightTitles: const AxisTitles(
@@ -45,11 +46,11 @@ class WeeklyIncomeChart extends StatelessWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     // Get the current day of the week
-                    List<String> daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                    List<String> daysOfWeek = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                     String day = daysOfWeek[groupIndex]; // Fetch the corresponding day
 
                     // Match clinic ID and get clinic name
-                    String clinicId = weeklyIncome.keys.elementAt(rodIndex);
+                    String clinicId = yearlyIncome.keys.elementAt(rodIndex);
                     String? clinicLocation = _getClinicLocationById(clinicId);
 
                     double income = rod.toY;
@@ -71,12 +72,12 @@ class WeeklyIncomeChart extends StatelessWidget {
       ],
     );
   }
-
   // Build bar groups for each day and clinic
   List<BarChartGroupData> _buildBarGroups() {
     List<BarChartGroupData> barGroups = [];
 
-    List<String> daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    List<String> daysOfWeek = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
 
     for (int i = 0; i < daysOfWeek.length; i++) {
       final String day = daysOfWeek[i];
@@ -85,7 +86,7 @@ class WeeklyIncomeChart extends StatelessWidget {
       int clinicIndex = 0;
 
       // For each clinic, create a bar for the current day
-      weeklyIncome.forEach((clinicId, income) {
+      yearlyIncome.forEach((clinicId, income) {
         rods.add(
           BarChartRodData(
             toY: income[day] ?? 0.0, // Update to get totalAmount for each bar
@@ -129,10 +130,10 @@ class WeeklyIncomeChart extends StatelessWidget {
 
   // Customize the bottom titles for days of the week
   Widget _getBottomTitles(double value, TitleMeta meta) {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 10,
+      space: 5,
       child: Text(
         days[value.toInt()],
         style: TextStyle(fontSize: 12),
@@ -180,4 +181,3 @@ class WeeklyIncomeChart extends StatelessWidget {
     );
   }
 }
-
