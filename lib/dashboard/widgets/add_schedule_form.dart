@@ -16,6 +16,8 @@ class AddScheduleForm extends StatefulWidget {
 class _AddScheduleFormState extends State<AddScheduleForm> {
   TextEditingController _purposeController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
+  TextEditingController _startTimeController = TextEditingController();
+  TextEditingController _endTimeController = TextEditingController();
   final List<String> _timeOptions = _generateTimeOptions();
   String? _selectedStartTime;
   String? _selectedEndTime;
@@ -93,6 +95,65 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: _startTimeController,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            label: const Text('Start Time'),
+                            prefixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.access_time_outlined,
+                                color: AppColors.princetonOrange,
+                              ),
+                              onPressed: _selectStartTime,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter start time';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      SizedBox(width: deviceWidth * 0.04),
+                      Expanded(
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: _endTimeController,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            label: const Text('End Time'),
+                            prefixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.access_time_outlined,
+                                color: AppColors.princetonOrange,
+                              ),
+                              onPressed: _selectEndTime,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter end time';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: deviceHeight * 0.02),
+                  /*Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: deviceWidth * 0.03,
@@ -160,8 +221,8 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
                         ),
                       ),
                     ],
-                  ),
-                  SizedBox(height: deviceHeight * 0.02),
+                  ),*/
+                  // SizedBox(height: deviceHeight * 0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -235,36 +296,29 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
                       }
 
                       setState(() {
-                        _isStartTimeValid = _selectedStartTime != null;
-                        _isEndTimeValid = _selectedEndTime != null;
                         _isStartDateValid = _selectedStartDate != null;
                         _isEndDateValid = _selectedEndDate != null;
                       });
 
-                      if (_isStartTimeValid &&
-                          _isEndTimeValid &&
+                      if (
                           _isStartDateValid &&
                           _isEndDateValid) {
-                        final finalStartTime =
-                            _convertTo24HourFormat(_selectedStartTime!);
-                        final finalEndTime =
-                            _convertTo24HourFormat(_selectedEndTime!);
 
                         final finalStartDate = DateFormat('yyyy-MM-dd')
                             .format(_selectedStartDate!);
                         final finalEndDate =
                             DateFormat('yyyy-MM-dd').format(_selectedEndDate!);
 
-                        /*print(_purposeController.text.trim());
-                        print(_locationController.text.trim());
-                        print('Start Time: $finalStartTime');
-                        print('End Time: $finalEndTime');
-                        print('Start Date: $finalStartDate');
-                        print('End Date: $finalEndDate');*/
+                        // print(_purposeController.text.trim());
+                        // print(_locationController.text.trim());
+                        // print('Start Time: ${_startTimeController.text.trim()}');
+                        // print('End Time: ${_endTimeController.text.trim()}');
+                        // print('Start Date: $finalStartDate');
+                        // print('End Date: $finalEndDate');
 
                         await homeProvider.addDoctorSchedule(
-                            finalStartTime,
-                            finalEndTime,
+                            _startTimeController.text.trim(),
+                            _endTimeController.text.trim(),
                             _locationController.text.trim(),
                             _purposeController.text.trim(),
                             finalStartDate,
@@ -295,6 +349,33 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
     );
   }
 
+  Future<void> _selectStartTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      final String formattedTime = _convertTo24HourFormat(selectedTime);
+      setState(() {
+        _startTimeController.text = formattedTime;
+      });
+    }
+  }
+
+  Future<void> _selectEndTime() async {
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime != null) {
+      final String formattedTime = _convertTo24HourFormat(selectedTime);
+      setState(() {
+        _endTimeController.text = formattedTime;
+      });
+    }
+  }
 
   static List<String> _generateTimeOptions() {
     final List<String> options = [];
@@ -310,10 +391,11 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
     return options;
   }
 
-  String _convertTo24HourFormat(String time) {
-    final format = DateFormat('h:mm a');
-    final parsedTime = format.parse(time);
-    return DateFormat('HH:mm:ss').format(parsedTime);
+  String _convertTo24HourFormat(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final DateTime dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final DateFormat outputFormat = DateFormat('HH:mm:ss');
+    return outputFormat.format(dateTime);
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {

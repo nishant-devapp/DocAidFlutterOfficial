@@ -19,6 +19,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  DateTime selectedDate = DateTime.now();
   @override
   void initState() {
     super.initState();
@@ -43,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
           final doctorIntr = homeProvider.doctorProfile?.data?.docIntr ?? [];
           final todaySchedules = doctorIntr.where((intr) {
-            return DateFormat('yyyy-MM-dd').format(DateTime.now()) == intr.stDate;
+            return DateFormat('yyyy-MM-dd').format(selectedDate) == intr.stDate;
           }).toList();
 
           if (todaySchedules.isEmpty) {
@@ -52,9 +53,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Welcome', style: TextStyle(fontSize: 20.0, color: AppColors.textColor, fontWeight: FontWeight.w500)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Welcome', style: TextStyle(fontSize: 18.0, color: AppColors.textColor, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 5.0),
+                          Text(homeProvider.doctorProfile!.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.verdigris, fontSize: 22.0),),
+                        ],),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            DateFormat('d MMM, yyyy').format(selectedDate),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(icon: const Icon(Icons.keyboard_arrow_left_rounded,size: 30.0),  onPressed: () {
+                                setState(() {
+                                  selectedDate = selectedDate.subtract(const Duration(days: 1));
+                                });},),
+
+                              IconButton(icon: const Icon(Icons.circle_outlined,size: 25.0),  onPressed: () {setState(() {
+                                selectedDate = DateTime.now();
+                              });},),
+
+                              IconButton(icon: const Icon(Icons.keyboard_arrow_right_rounded,size: 30.0),  onPressed: () {setState(() {
+                                selectedDate = selectedDate.add(const Duration(days: 1));
+                              });},),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 5.0),
-                  Text(homeProvider.doctorProfile!.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.verdigris, fontSize: 25.0),),
+                  // Text(homeProvider.doctorProfile!.data!.firstName!, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.verdigris, fontSize: 25.0),),
                   const Spacer(),
                   Center(child: Lottie.asset('assets/lottie/no_schedule_lottie.json', repeat: true)),
                   const Spacer()
@@ -82,13 +121,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          DateFormat('d MMM, yyyy').format(DateTime.now()),
+                          DateFormat('d MMM, yyyy').format(selectedDate),
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[700]),
                         ),
-                        Text(
-                          'Today',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.grey[600]),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(icon: const Icon(Icons.keyboard_arrow_left,size: 30.0),  onPressed: () {
+                              setState(() {
+                              selectedDate = selectedDate.subtract(const Duration(days: 1));
+                            });},),
+
+                            IconButton(icon: const Icon(Icons.circle_outlined,size: 25.0),  onPressed: () {setState(() {
+                              selectedDate = DateTime.now();
+                            });},),
+                            // Text(
+                            //   'Today',
+                            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.grey[800]),
+                            // ),
+                            IconButton(icon: const Icon(Icons.keyboard_arrow_right,size: 30.0),  onPressed: () {setState(() {
+                              selectedDate = selectedDate.add(const Duration(days: 1));
+                            });},),
+                          ],
                         ),
+
                       ],
                     ),
                   ],
