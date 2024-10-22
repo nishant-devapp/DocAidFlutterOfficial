@@ -18,6 +18,10 @@ class AppColors {
 
   static const Color dashboardColor = Color(0xFF2E2E2E);
   static const Color clinicColor = Color(0xFFEC963F);
+  static const Color graphColor1 = Color(0xFFEC963F);
+  static const Color graphColor2 = Color(0xFFFAD042);
+  static const Color graphColor3 = Color(0xFFFF95A4);
+  static const Color graphColor4 = Color(0xFFFFA54F);
   static const Color appointmentColor = Color(0xFF489DA2);
   static const Color accountColor = Color(0xFFD8453C);
   static const Color helpColor = Color(0xFF494D6B);

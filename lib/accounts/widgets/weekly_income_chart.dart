@@ -119,10 +119,10 @@ class WeeklyIncomeChart extends StatelessWidget {
   // Assign custom colors to the clinic bars
   Color _getClinicColor(int index) {
     List<Color> colors = [
-      AppColors.clinicColor,
-      AppColors.appointmentColor,
-      AppColors.accountColor,
-      AppColors.helpColor,
+      AppColors.graphColor1,
+      AppColors.graphColor2,
+      AppColors.graphColor3,
+      AppColors.graphColor4,
     ];
     return colors[index % colors.length];
   }
