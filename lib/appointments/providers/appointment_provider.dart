@@ -50,7 +50,6 @@ class AppointmentProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // _appointmentList = await _service.fetchAllAppointments(date);
       _appointmentList = await _service.fetchAllAppointments(date);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);
     } catch (error) {
@@ -67,7 +66,6 @@ class AppointmentProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // _appointmentList = await _service.fetchClinicAppointments(clinicId, date);
       _appointmentList = await _service.fetchClinicAppointments(clinicId, date);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);
     } catch (error) {

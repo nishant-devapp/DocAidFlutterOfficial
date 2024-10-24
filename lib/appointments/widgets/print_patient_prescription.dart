@@ -179,55 +179,118 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
                           ),
                         ),
                         // SizedBox(width: 20),
-                        Row(
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text(
-                              'Height:-',
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                            const SizedBox(width: 3),
-                            const SizedBox(
-                              width: 30,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
+                            Row(
+                              children: [
+                                Text(
+                                  'Height:-',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    color: Colors.grey[800],
+                                  ),
                                 ),
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                showCursor: false,
+                                const SizedBox(width: 3),
+                                const SizedBox(
+                                  width: 30,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    showCursor: false,
 
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Weight:-',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[800],
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            const SizedBox(
-                              width: 30,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 5),
+                                  ),
                                 ),
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                showCursor: false,
-                              ),
+                                Text(
+                                  'Weight:-',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                const SizedBox(width: 5.0),
+                                const SizedBox(
+                                  width: 30,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    showCursor: false,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 3),
+                            Row(
+                              children: [
+                                Text(
+                                  'BP:-',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                const SizedBox(width: 3),
+                                const SizedBox(
+                                  width: 30,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    showCursor: false,
+                                  ),
+                                ),
+                                const Text('/',style: TextStyle(
+                                  fontSize: 15
+                                ),),
+                                const SizedBox(
+                                  width: 30,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    showCursor: false,
+                                  ),
+                                ),
+                                Text(
+                                  'Sugar:-',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                const SizedBox(width: 5.0),
+                                const SizedBox(
+                                  width: 30,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      contentPadding:
+                                      EdgeInsets.symmetric(vertical: 5),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    showCursor: false,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

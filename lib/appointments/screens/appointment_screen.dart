@@ -74,7 +74,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         builder: (context, appointmentProvider, child) {
           return DoctorProfileBase(
             builder: (HomeGetProvider homeProvider) {
-              final doctorProfile = homeProvider.doctorProfile!;
+              // final doctorProfile = homeProvider.doctorProfile!;
               final clinics = homeProvider.getClinics();
               final clinicsWithAll = [
                 null,
@@ -89,15 +89,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 content =
                     const AppointmentShimmer(); // Show shimmer effect when loading
               } else if (appointmentProvider.errorMessage != null ||
-                  appointmentProvider.appointments?.data == null) {
+                  appointmentProvider.appointments?.data == null ||
+                  appointmentProvider.appointments!.data!.isEmpty) {
                 content = const Center(
-                  child:  Text(
-                    'No appointments available on this date..!!',
-                    style: TextStyle(
-                        color: AppColors.verdigris,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'No appointments available on this date !!',
+                      style: TextStyle(
+                          color: AppColors.verdigris,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ); // Show error message if there is an error
               } else {
@@ -122,111 +126,110 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               }
 
               return SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.all(deviceWidth * 0.03),
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(deviceWidth * 0.02),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.02),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: AppColors.princetonOrange,
-                                      width: 1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<ClinicDtos?>(
-                                      hint: const Text('Select Clinic'),
-                                      value: _selectedClinicId == null
-                                          ? null
-                                          : clinics.firstWhere((clinic) => clinic.id == _selectedClinicId),
-                                      onChanged: (ClinicDtos? newValue) {
-                                        setState(() {
-                                          selectedClinic = newValue;
-                                          _selectedClinicId = newValue?.id;
-                                          _selectedClinicName = newValue?.location;
-                                          allClinicsSelected = newValue == null;
-                                          _fetchAppointments();
-                                        });
-                                      },
-                                      isExpanded: true, // This allows the dropdown to use the full width
-                                      items: clinicsWithAll
-                                          .map<DropdownMenuItem<ClinicDtos?>>((ClinicDtos? clinic) {
-                                        return DropdownMenuItem<ClinicDtos?>(
-                                          value: clinic,
-                                          child: Text(clinic?.location ?? 'All Clinics'),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(deviceWidth * 0.02),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: deviceWidth * 0.02),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.princetonOrange,
+                                  width: 1,
                                 ),
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                              SizedBox(width: deviceWidth * 0.03),
-                              Expanded(
-                                flex: 1,
-                                child: TextFormField(
-                                  controller: _dateController,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    labelText: 'Select Date',
-                                    prefixIcon: IconButton(
-                                      icon: const Icon(
-                                        Icons.calendar_today_outlined,
-                                        color: AppColors.verdigris,
-                                      ),
-                                      onPressed: () => _selectDate(context),
-                                    ),
-                                  ),
-                                  readOnly: true,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<ClinicDtos?>(
+                                  hint: const Text('Select Clinic'),
+                                  value: _selectedClinicId == null
+                                      ? null
+                                      : clinics.firstWhere((clinic) =>
+                                          clinic.id == _selectedClinicId),
+                                  onChanged: (ClinicDtos? newValue) {
+                                    setState(() {
+                                      selectedClinic = newValue;
+                                      _selectedClinicId = newValue?.id;
+                                      _selectedClinicName = newValue?.location;
+                                      allClinicsSelected = newValue == null;
+                                      _fetchAppointments();
+                                    });
+                                  },
+                                  isExpanded: true,
+                                  // This allows the dropdown to use the full width
+                                  items: clinicsWithAll
+                                      .map<DropdownMenuItem<ClinicDtos?>>(
+                                          (ClinicDtos? clinic) {
+                                    return DropdownMenuItem<ClinicDtos?>(
+                                      value: clinic,
+                                      child: Text(
+                                          clinic?.location ?? 'All Clinics'),
+                                    );
+                                  }).toList(),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: deviceWidth * 0.03),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: InputDecoration(
-                              labelText: 'Search by Name or Phone',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              prefixIcon: const Icon(Icons.search),
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _searchController.clear();
-                                    searchValue = ''; // Clear the search value
-                                  });
-                                },
-                                icon: const Icon(Icons.highlight_remove),
                               ),
                             ),
-                            onChanged: (value) {
+                          ),
+                          SizedBox(width: deviceWidth * 0.03),
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                              controller: _dateController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                labelText: 'Select Date',
+                                prefixIcon: IconButton(
+                                  icon: const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: AppColors.verdigris,
+                                  ),
+                                  onPressed: () => _selectDate(context),
+                                ),
+                              ),
+                              readOnly: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search by Name or Phone',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: IconButton(
+                            onPressed: () {
                               setState(() {
-                                searchValue = value;
+                                _searchController.clear();
+                                searchValue = ''; // Clear the search value
                               });
                             },
+                            icon: const Icon(Icons.highlight_remove),
                           ),
                         ),
-                        SizedBox(height: deviceHeight * 0.02),
-                        // I want search button here
-                        Flexible(child: content),
-                      ],
+                        onChanged: (value) {
+                          setState(() {
+                            searchValue = value;
+                          });
+                        },
+                      ),
                     ),
-                  ),
+                    SizedBox(height: deviceHeight * 0.02),
+                   Expanded(child: content),
+                  ],
                 ),
               );
             },
@@ -272,8 +275,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         print("Today's Date: $todayDate");
 
         if (newDate.year == todayDate.year &&
-            newDate.month == todayDate.month &&
-            newDate.day == todayDate.day ||
+                newDate.month == todayDate.month &&
+                newDate.day == todayDate.day ||
             newDate.isBefore(todayDate)) {
           _showPaymentWarningDialog();
         }
@@ -294,7 +297,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  (route) => false, // Removes all previous routes
+              (route) => false, // Removes all previous routes
             );
             return false; // Prevent the dialog from being dismissed
           },
@@ -315,7 +318,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const HomeScreen()),
-                        (route) => false, // Removes all previous routes
+                    (route) => false, // Removes all previous routes
                   );
                 },
                 child: const Text('OK'),
@@ -326,7 +329,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       },
     );
   }
-
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime now = DateTime.now();

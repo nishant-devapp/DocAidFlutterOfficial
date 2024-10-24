@@ -160,7 +160,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                 //       : WeeklyIncomeChart(weeklyIncome, clinics),
                 // ),
                 SizedBox(height: deviceHeight * 0.03),
-                const Center(child: Text('Yearly Graph', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: AppColors.textColor),)),
+                const Center(child: Text('Yearly Income Graph', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: AppColors.textColor),)),
                 SizedBox(height: deviceHeight * 0.03),
                 SizedBox(
                   height: 400, // Adjust height as needed
@@ -169,30 +169,30 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                       : YearlyIncomeChart(yearlyIncome, clinics),
                 ),
                 SizedBox(height: deviceHeight * 0.05),
-                Center(child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Here I need the logic to download the pdf
-                    },
-                  icon: const Icon(Icons.file_copy_rounded,
-                      color: Colors.white, size: 22.0,),
-                  label: const Text(
-                    "Get Custom Report",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 2.0,
-                    backgroundColor: AppColors.vermilion,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                  ),
-                )),
+                // Center(child: ElevatedButton.icon(
+                //   onPressed: () {
+                //     // Here I need the logic to download the pdf
+                //     },
+                //   icon: const Icon(Icons.file_copy_rounded,
+                //       color: Colors.white, size: 22.0,),
+                //   label: const Text(
+                //     "Get Custom Report",
+                //     style: TextStyle(
+                //       fontWeight: FontWeight.w600,
+                //       fontSize: 16.0,
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                //   style: ElevatedButton.styleFrom(
+                //     elevation: 2.0,
+                //     backgroundColor: AppColors.vermilion,
+                //     padding: const EdgeInsets.symmetric(
+                //         horizontal: 12.0, vertical: 8.0),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(12.0),
+                //     ),
+                //   ),
+                // )),
               ],
             ),
           ),
