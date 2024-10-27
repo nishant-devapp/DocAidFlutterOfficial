@@ -56,10 +56,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       _selectedClinicName = null;
       allClinicsSelected = true;
     }
-    _fetchAppointments();
     final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
-
     _fetchEndDate(homeProvider.doctorProfile!.data!.id!);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAppointments();
+    });
   }
 
   @override
@@ -86,11 +87,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               }
 
               if (appointmentProvider.isLoading) {
-                content =
-                    const AppointmentShimmer(); // Show shimmer effect when loading
+                content = const AppointmentShimmer(); // Show shimmer effect when loading
+                // content = const CircularProgressIndicator();
               } else if (appointmentProvider.errorMessage != null ||
-                  appointmentProvider.appointments?.data == null ||
-                  appointmentProvider.appointments!.data!.isEmpty) {
+                  appointmentProvider.appointments?.data == null) {
                 content = const Center(
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
@@ -105,22 +105,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ); // Show error message if there is an error
               } else {
-                List<appointment_data.AppointmentData> filteredAppointments =
-                    appointmentProvider.appointments!.data!;
+                List<appointment_data.AppointmentData> filteredAppointments = appointmentProvider.appointments!.data!;
                 if (searchValue.isNotEmpty) {
                   filteredAppointments =
                       filteredAppointments.where((appointment) {
-                    return appointment.name!
+                        return appointment.name!
                             .toLowerCase()
                             .contains(searchValue.toLowerCase()) ||
-                        appointment.contact!
-                            .toLowerCase()
-                            .contains(searchValue.toLowerCase());
-                  }).toList();
+                            appointment.contact!
+                                .toLowerCase()
+                                .contains(searchValue.toLowerCase());
+                      }).toList();
                 }
                 content = AppointmentItem(
                     appointmentList:
-                        AppointmentList(data: filteredAppointments));
+                    AppointmentList(data: filteredAppointments));
 
                 // content = AppointmentItem(appointmentList: appointmentProvider.appointments!);
               }
@@ -150,7 +149,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   value: _selectedClinicId == null
                                       ? null
                                       : clinics.firstWhere((clinic) =>
-                                          clinic.id == _selectedClinicId),
+                                  clinic.id == _selectedClinicId),
                                   onChanged: (ClinicDtos? newValue) {
                                     setState(() {
                                       selectedClinic = newValue;
@@ -165,12 +164,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   items: clinicsWithAll
                                       .map<DropdownMenuItem<ClinicDtos?>>(
                                           (ClinicDtos? clinic) {
-                                    return DropdownMenuItem<ClinicDtos?>(
-                                      value: clinic,
-                                      child: Text(
-                                          clinic?.location ?? 'All Clinics'),
-                                    );
-                                  }).toList(),
+                                        return DropdownMenuItem<ClinicDtos?>(
+                                          value: clinic,
+                                          child: Text(
+                                              clinic?.location ?? 'All Clinics'),
+                                        );
+                                      }).toList(),
                                 ),
                               ),
                             ),
@@ -201,7 +200,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
+                      EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
                       child: TextField(
                         controller: _searchController,
                         decoration: InputDecoration(
@@ -213,8 +212,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
-                                _searchController.clear();
                                 searchValue = ''; // Clear the search value
+                                _searchController.clear();
                               });
                             },
                             icon: const Icon(Icons.highlight_remove),
@@ -228,7 +227,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       ),
                     ),
                     SizedBox(height: deviceHeight * 0.02),
-                   Expanded(child: content),
+                    Flexible(child: content),
                   ],
                 ),
               );
@@ -275,8 +274,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         print("Today's Date: $todayDate");
 
         if (newDate.year == todayDate.year &&
-                newDate.month == todayDate.month &&
-                newDate.day == todayDate.day ||
+            newDate.month == todayDate.month &&
+            newDate.day == todayDate.day ||
             newDate.isBefore(todayDate)) {
           _showPaymentWarningDialog();
         }
@@ -297,7 +296,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false, // Removes all previous routes
+                  (route) => false, // Removes all previous routes
             );
             return false; // Prevent the dialog from being dismissed
           },
@@ -318,7 +317,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    (route) => false, // Removes all previous routes
+                        (route) => false, // Removes all previous routes
                   );
                 },
                 child: const Text('OK'),
@@ -353,7 +352,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> _fetchAppointments() async {
     final appointmentProvider =
-        Provider.of<AppointmentProvider>(context, listen: false);
+    Provider.of<AppointmentProvider>(context, listen: false);
     if (_selectedDate != null) {
       if (allClinicsSelected) {
         await appointmentProvider.fetchAllAppointments(

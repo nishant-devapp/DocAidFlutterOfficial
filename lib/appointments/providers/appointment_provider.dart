@@ -52,8 +52,10 @@ class AppointmentProvider with ChangeNotifier {
     try {
       _appointmentList = await _service.fetchAllAppointments(date);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);
+      notifyListeners();
     } catch (error) {
       _errorMessage = 'Error fetching appointments: $error';
+      notifyListeners();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -68,8 +70,10 @@ class AppointmentProvider with ChangeNotifier {
     try {
       _appointmentList = await _service.fetchClinicAppointments(clinicId, date);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);
+      notifyListeners();
     } catch (error) {
       _errorMessage = 'Error fetching appointments: $error';
+      notifyListeners();
     } finally {
       _isLoading = false;
       notifyListeners();

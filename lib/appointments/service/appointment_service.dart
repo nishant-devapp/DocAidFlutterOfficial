@@ -41,7 +41,6 @@ class AppointmentService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
         return AppointmentList.fromJson(data);
       } else {
         print('Failed to load appointments: ${response.body}');
@@ -73,6 +72,8 @@ class AppointmentService {
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
       final response = await http.get(url);
+
+      print(response.body);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
