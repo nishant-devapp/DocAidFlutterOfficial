@@ -19,14 +19,9 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
   final List<String> _timeOptions = _generateTimeOptions();
-  String? _selectedStartTime;
-  String? _selectedEndTime;
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   final _key = GlobalKey<FormState>();
-
-  bool _isStartTimeValid = true;
-  bool _isEndTimeValid = true;
   bool _isStartDateValid = true;
   bool _isEndDateValid = true;
 
@@ -300,8 +295,7 @@ class _AddScheduleFormState extends State<AddScheduleForm> {
                         _isEndDateValid = _selectedEndDate != null;
                       });
 
-                      if (
-                          _isStartDateValid &&
+                      if (_isStartDateValid &&
                           _isEndDateValid) {
 
                         final finalStartDate = DateFormat('yyyy-MM-dd')

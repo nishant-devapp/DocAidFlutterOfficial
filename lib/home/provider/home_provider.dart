@@ -351,7 +351,6 @@ class HomeGetProvider extends ChangeNotifier {
 
   // Get list of all clinics
   List<ClinicDtos> getAllClinics(){
-    print("Doctor clinics: ${doctorProfile?.data?.clinicDtos}");
     return doctorProfile?.data?.clinicDtos ?? [];
   }
 

@@ -20,6 +20,8 @@ class AccountService {
   final TokenManager _tokenManager = TokenManager();
   final String todayDate = getTodayDate();
   final String firstDateOfMonth = getFirstDayOfCurrentMonth();
+  final String lastDateOfMonth = getLastDayOfCurrentMonth();
+  final int currentYear = getCurrentYear();
 
   Future<VisitModel> countTodayVisit() async {
     print(todayDate);
@@ -443,6 +445,7 @@ class AccountService {
     }
   }
 
+  // For Graph Purpose
   Future<Map<String, Map<String, double>>> fetchWeeklyGraphForAllClinics(List<ClinicDtos> clinics) async {
     Map<String, Map<String, double>> clinicIncome = {};
 
@@ -494,6 +497,7 @@ class AccountService {
     }
   }
 
+  // For Graph Purpose
   Future<Map<String, Map<String, double>>> fetchYearlyGraphForAllClinics(List<ClinicDtos> clinics) async {
     Map<String, Map<String, double>> clinicIncome = {};
     var now = DateTime.now();
@@ -554,65 +558,27 @@ class AccountService {
     }
   }
 
-  /*Future<Map<String, Map<String, Map<String, double>>>> fetchWeeklyGraphForAllClinics(List<ClinicDtos> clinics) async {
-    Map<String, Map<String, Map<String, double>>> clinicIncome = {};
-
-    String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchWeeklyGraphByClinicIdEndPoint;
-    try {
-      for (var clinic in clinics) {
-        print(clinic.id);
-        final queryParameters = {'clinicId': clinic.id.toString()};
-        final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-        print("Fetching data from URL: $url");
-
-        final response = await http.get(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        );
-
-        if (response.statusCode == 200) {
-          final data = json.decode(response.body)['data'];
-
-          // Initialize the clinic entry if it does not exist
-          if (!clinicIncome.containsKey(clinic.id)) {
-            clinicIncome[clinic.id.toString()] = {
-              "SUNDAY": {},
-              "MONDAY": {},
-              "TUESDAY": {},
-              "WEDNESDAY": {},
-              "THURSDAY": {},
-              "FRIDAY": {},
-              "SATURDAY": {},
-            };
-          }
-
-          // Add income and appointments data for each day
-          data.forEach((day, income) {
-            // print("Processing $day for clinic ID ${clinic.id}");
-            double totalAmount = income['totalAmount'] ?? 0.0;
-            double totalAppointments = income['totalAppointments'] ?? 0.0;
-
-            // print("For $day: totalAmount = $totalAmount, totalAppointments = $totalAppointments");
-
-            clinicIncome[clinic.id.toString()]![day] = {
-              'totalAmount': totalAmount,
-              'totalAppointments': totalAppointments,
-            };
-          });
-        } else {
-          print("Failed to fetch data: ${response.reasonPhrase}");
-        }
-      }
-
-      return clinicIncome; // Return the updated data structure
-
-    } catch (error) {
-      print('Error fetching weekly info: $error');
-      throw error;
+  Future<Map<String, dynamic>> fetchYearlyReport(int clinicId, int year) async {
+    const baseUrl = AppUrls.baseUrl;
+    final url = Uri.parse('$baseUrl/payment/yearlyGraphByClinicId?year=$year&clinicId=$clinicId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load yearly report');
     }
-  }*/
+  }
+
+  Future<Map<String, dynamic>> fetchCustomReport(int clinicId, String startDate, String endDate) async {
+    const baseUrl = AppUrls.baseUrl;
+    final url = Uri.parse('$baseUrl/payment/customGraphByClinicId?startDate=$startDate&endDate=$endDate&clinicId=$clinicId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load custom report');
+    }
+  }
 
 
 
@@ -632,3 +598,18 @@ String getFirstDayOfCurrentMonth() {
   final String formatted = formatter.format(firstDayOfMonth);
   return formatted;
 }
+
+String getLastDayOfCurrentMonth() {
+  final DateTime now = DateTime.now();
+  final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final String formatted = formatter.format(lastDayOfMonth);
+  return formatted;
+}
+
+int getCurrentYear() {
+  final DateTime now = DateTime.now();
+  return now.year;
+}
+
+
