@@ -5,13 +5,13 @@ import 'package:code/accounts/widgets/report_pdf_generator.dart';
 import 'package:code/home/provider/home_provider.dart';
 import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:external_path/external_path.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../home/models/home_get_model.dart';
 import '../../utils/constants/colors.dart';
 import 'package:pdf/widgets.dart' as pw;
-
 
 class CustomReportDialog extends StatefulWidget {
   const CustomReportDialog({super.key});
@@ -34,7 +34,6 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
   bool _isEndDateValid = true;
   final pdfGenerator = ReportPdfGenerator(reportService: AccountService());
   final _formKey = GlobalKey<FormState>();
-
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +218,6 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
             ),
             ElevatedButton.icon(
               onPressed: () async {
-
                 await requestStoragePermission();
                 if (!await Permission.storage.isGranted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -228,38 +226,43 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
                   return;
                 }
 
-                if (_selectedRange == 'Custom' && (_startDate == null || _endDate == null)) {
+                if (_selectedRange == 'Custom' &&
+                    (_startDate == null || _endDate == null)) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please select a valid date range")),
+                    const SnackBar(
+                        content: Text("Please select a valid date range")),
                   );
                   return;
                 }
 
-                if(_startDate != null){
-                  finalStartDate = DateFormat('yyyy-MM-dd')
-                      .format(_startDate!);
+                if (_startDate != null) {
+                  finalStartDate = DateFormat('yyyy-MM-dd').format(_startDate!);
                 }
-                if(_endDate != null){
-                  finalEndDate =
-                      DateFormat('yyyy-MM-dd').format(_endDate!);
+                if (_endDate != null) {
+                  finalEndDate = DateFormat('yyyy-MM-dd').format(_endDate!);
                 }
 
                 final clinicIds = allClinicsSelected
-                    ? homeProvider.getAllClinics().map((clinic) => clinic.id).toList()
+                    ? homeProvider
+                        .getAllClinics()
+                        .map((clinic) => clinic.id)
+                        .toList()
                     : [_selectedClinicId!];
                 final clinicLocations = allClinicsSelected
-                    ? homeProvider.getAllClinics().map((clinic) => clinic.location).toList()
+                    ? homeProvider
+                        .getAllClinics()
+                        .map((clinic) => clinic.location)
+                        .toList()
                     : [_selectedClinicLocation!];
-
 
                 // Show progress indicator
                 showDialog(
                   context: context,
                   barrierDismissible: false,
                   builder: (BuildContext context) {
-                    return Dialog(
+                    return const Dialog(
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(16.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -289,7 +292,8 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
 
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("PDF saved to Downloads: $filePath")),
+                    SnackBar(
+                        content: Text("PDF saved to Downloads: $filePath")),
                   );
                 } catch (e) {
                   Navigator.pop(context);
@@ -297,7 +301,6 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Failed to download report")),
                   );
-
                 }
                 // code for downloading report
               },
@@ -350,21 +353,48 @@ class _CustomReportDialogState extends State<CustomReportDialog> {
   }
 
   Future<void> requestStoragePermission() async {
-    if (!await Permission.storage.isGranted) {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
       await Permission.storage.request();
     }
   }
 
   Future<String?> savePdfToDownloads(pw.Document pdf) async {
-    final downloadsPath = await ExternalPath.getExternalStoragePublicDirectory(
-      ExternalPath.DIRECTORY_DOWNLOADS,
-    );
-    final filePath = '$downloadsPath/report_${DateTime.now().toIso8601String()}.pdf';
-    final file = File(filePath);
+    try {
+      // Open a directory picker and allow the user to choose where to save the file
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
-    await file.writeAsBytes(await pdf.save());
-    print("PDF saved to Downloads: $filePath");
-    return filePath;
+      if (selectedDirectory != null) {
+        // Prepare the file path with the chosen directory and a file name
+        final filePath =
+            '$selectedDirectory/report_${DateTime.now().toIso8601String()}.pdf';
+        final file = File(filePath);
+
+        // Write the PDF bytes to the file
+        await file.writeAsBytes(await pdf.save());
+        print("PDF saved to Downloads: $filePath");
+
+        return filePath;
+      } else {
+        print("User did not select a directory.");
+        return null;
+      }
+    } catch (e) {
+      print("Error saving PDF: $e");
+      return null;
+    }
   }
 
+// Future<String?> savePdfToDownloads(pw.Document pdf) async {
+//   final downloadsPath = await ExternalPath.getExternalStoragePublicDirectory(
+//     ExternalPath.DIRECTORY_DOCUMENTS,
+//   );
+//   final filePath = '$downloadsPath/report_${DateTime.now().toIso8601String()}.pdf';
+//
+//   final file = File(filePath);
+//
+//   await file.writeAsBytes(await pdf.save());
+//   print("PDF saved to Downloads: $filePath");
+//   return filePath;
+// }
 }
