@@ -177,7 +177,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                       : YearlyIncomeChart(yearlyIncome, clinics),
                 ),
                 SizedBox(height: deviceHeight * 0.05),
-                /*Center(
+                Center(
                     child: ElevatedButton.icon(
                   onPressed: () {
                     showModalBottomSheet(
@@ -214,7 +214,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-                )),*/
+                )),
               ],
             ),
           ),
