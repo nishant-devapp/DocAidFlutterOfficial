@@ -13,12 +13,12 @@ if (keystorePropertiesFile.exists()) {
 
 def flutterVersionCode = keystoreProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
-    flutterVersionCode = "8"
+    flutterVersionCode = "9"
 }
 
 def flutterVersionName = keystoreProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
-    flutterVersionName = "1.7"
+    flutterVersionName = "1.8"
 }
 
 android {
