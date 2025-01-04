@@ -177,44 +177,44 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
                       : YearlyIncomeChart(yearlyIncome, clinics),
                 ),
                 SizedBox(height: deviceHeight * 0.05),
-                Center(
-                    child: ElevatedButton.icon(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(25.0)),
-                      ),
-                      builder: (BuildContext context) {
-                        return const CustomReportDialog();
-                      },
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.file_copy_rounded,
-                    color: Colors.white,
-                    size: 22.0,
-                  ),
-                  label: const Text(
-                    "Get Custom Report",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 2.0,
-                    backgroundColor: AppColors.vermilion,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0, vertical: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                  ),
-                )),
+                // Center(
+                //     child: ElevatedButton.icon(
+                //   onPressed: () {
+                //     showModalBottomSheet(
+                //       context: context,
+                //       isScrollControlled: true,
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius:
+                //             BorderRadius.vertical(top: Radius.circular(25.0)),
+                //       ),
+                //       builder: (BuildContext context) {
+                //         return const CustomReportDialog();
+                //       },
+                //     );
+                //   },
+                //   icon: const Icon(
+                //     Icons.file_copy_rounded,
+                //     color: Colors.white,
+                //     size: 22.0,
+                //   ),
+                //   label: const Text(
+                //     "Get Custom Report",
+                //     style: TextStyle(
+                //       fontWeight: FontWeight.w600,
+                //       fontSize: 16.0,
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                //   style: ElevatedButton.styleFrom(
+                //     elevation: 2.0,
+                //     backgroundColor: AppColors.vermilion,
+                //     padding: const EdgeInsets.symmetric(
+                //         horizontal: 12.0, vertical: 8.0),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(12.0),
+                //     ),
+                //   ),
+                // )),
               ],
             ),
           ),
