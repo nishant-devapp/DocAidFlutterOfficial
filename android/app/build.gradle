@@ -13,12 +13,12 @@ if (keystorePropertiesFile.exists()) {
 
 def flutterVersionCode = keystoreProperties.getProperty("flutter.versionCode")
 if (flutterVersionCode == null) {
-    flutterVersionCode = "9"
+    flutterVersionCode = "10"
 }
 
 def flutterVersionName = keystoreProperties.getProperty("flutter.versionName")
 if (flutterVersionName == null) {
-    flutterVersionName = "1.8"
+    flutterVersionName = "1.9"
 }
 
 android {
@@ -57,6 +57,11 @@ android {
             // so `flutter run --release` works.
 //            signingConfig = signingConfigs.debug
             signingConfig = signingConfigs.release
+
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
 }
