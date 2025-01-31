@@ -2,6 +2,7 @@ import 'package:code/clinics/services/clinic_service.dart';
 import 'package:code/clinics/widgets/add_clinic_form.dart';
 import 'package:code/clinics/widgets/clinic_charge_dialog.dart';
 import 'package:code/clinics/widgets/clinic_item.dart';
+import 'package:code/clinics/widgets/dental_clinic_item.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
   Razorpay _razorpay = Razorpay();
   AccountService _accountService = AccountService();
   ClinicService _clinicService = ClinicService();
-  String? endDate, oneDayAdded, paymentOrderId, docName, docContact, docEmail, paymentId, paymentStatus;
+  String? endDate, oneDayAdded, paymentOrderId, docName, docContact, docEmail, docSpecialization, paymentId, paymentStatus;
   int? docId, duration, totalAmountToBePaid, daysDifference;
 
   @override
@@ -68,6 +69,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
           docName = doctorProfile.data!.firstName! + doctorProfile.data!.lastName!;
           docContact = doctorProfile.data!.contact!;
           docEmail = doctorProfile.data!.email!;
+          docSpecialization = doctorProfile.data!.specialization!.first;
           return SafeArea(
             child: Column(
               children: [
@@ -77,11 +79,11 @@ class _ClinicScreenState extends State<ClinicScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Location',
+                        'Your Clinics',
                         style: TextStyle(
-                            color: AppColors.textColor,
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w400),
+                            color: AppColors.verdigris,
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.w500),
                       ),
                       IconButton(
                         onPressed: () {
@@ -110,7 +112,15 @@ class _ClinicScreenState extends State<ClinicScreen> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                const Expanded(child: ClinicItem()),
+                // const Expanded(child: ClinicItem()),
+                Expanded(
+                  child: (docSpecialization == 'Dentist' ||
+                      docSpecialization == 'dentist' ||
+                      docSpecialization == 'DENTIST')
+                      ? const DentalClinicItem()
+                      : const ClinicItem(),
+                )
+
               ],
             ),
           );
@@ -254,7 +264,7 @@ class _ClinicScreenState extends State<ClinicScreen> {
       });
 
       var options = {
-        'key': RazorpayKeys.productionKey,
+        'key': RazorpayKeys.testKey,
         'amount': totalAmountToBePaid,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API

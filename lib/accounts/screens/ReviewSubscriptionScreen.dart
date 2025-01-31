@@ -165,14 +165,14 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
 
-    print("Payment Success Response: $response");
-    print("Signature: ${response.signature}");
-    print("Order ID: ${response.orderId}");
-    print("Payment ID: ${response.paymentId}");
+    // print("Payment Success Response: $response");
+    // print("Signature: ${response.signature}");
+    // print("Order ID: ${response.orderId}");
+    // print("Payment ID: ${response.paymentId}");
 
     paymentId = response.paymentId;
 
-    print("PaymentId: $paymentId");
+    // print("PaymentId: $paymentId");
 
     try {
       final verificationModel = await _accountService.getPaymentStatus(paymentId!);
@@ -293,7 +293,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
 
 
       var options = {
-        'key': RazorpayKeys.productionKey,
+        'key': RazorpayKeys.testKey,
         'amount': paymentAmount,
         'name': 'Doc-Aid',
         'order_id': paymentOrderId, // Generate order_id using Orders API
@@ -337,8 +337,8 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                     duration = selectedDuration;
                   });
                 }
-                print("Total Clinics: ${totalClinics.toString()}");
-                print("Duration: $duration");
+                // print("Total Clinics: ${totalClinics.toString()}");
+                // print("Duration: $duration");
 
                 _fetchSubscriptionAmount(duration!, totalClinics!);
 

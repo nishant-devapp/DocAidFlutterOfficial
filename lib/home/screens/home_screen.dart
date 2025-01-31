@@ -7,6 +7,7 @@ import '../../clinics/screens/clinic_screen.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../help/screens/help_screen.dart';
 import '../../home/drawer/main_navigation_drawer.dart';
+import '../../utils/constants/colors.dart';
 import '../provider/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -81,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(_titles[_selectedIndex]),
+              // backgroundColor: AppColors.appBackgroundColor,
             ),
             drawer: MainNavigationDrawer(onItemTapped: _onItemTapped),
             body: _screens[_selectedIndex],

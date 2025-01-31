@@ -2,6 +2,7 @@ import 'package:code/accounts/provider/account_provider.dart';
 import 'package:code/appointments/providers/appointment_provider.dart';
 import 'package:code/appointments/providers/prescription_provider.dart';
 import 'package:code/auth/screens/LoginScreen.dart';
+import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'home/provider/home_provider.dart';
@@ -25,11 +26,14 @@ class DocAid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Doc-Aid',
       themeMode: ThemeMode.light,
-      home: LoginScreen(),
+      // theme: ThemeData(
+      //   scaffoldBackgroundColor: AppColors.appBackgroundColor,
+      // ),
+      home: const LoginScreen(),
     );
   }
 }
