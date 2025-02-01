@@ -29,14 +29,14 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     final deviceWidth = mediaQuery.size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.magnolia,
-        title: const Text(
-          'Your Profile',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
-        ),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: AppColors.magnolia,
+      //   title: const Text(
+      //     'Your Profile',
+      //     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20.0),
+      //   ),
+      //   centerTitle: true,
+      // ),
       body: DoctorProfileBase(
         builder: (HomeGetProvider homeProvider) {
           final doctorProfile = homeProvider.doctorProfile!;
@@ -63,7 +63,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     width: deviceWidth,
                     decoration: const BoxDecoration(
                         shape: BoxShape.rectangle,
-                        color: AppColors.magnolia,
+                        // color: AppColors.magnolia,
+                        gradient: LinearGradient(colors: [Colors.white, AppColors.magnolia], begin: Alignment.topCenter, end: Alignment.bottomCenter),
                         borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(40.0),
                             bottomRight: Radius.circular(40.0))),
