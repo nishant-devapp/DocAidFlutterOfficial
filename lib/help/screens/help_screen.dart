@@ -31,16 +31,16 @@ class _HelpScreenState extends State<HelpScreen> {
     final deviceHeight = mediaQuery.size.height;
     final deviceWidth = mediaQuery.size.width;
 
-    return Scaffold(
-      body: DoctorProfileBase(
-        builder: (HomeGetProvider homeProvider) {
-          final doctorProfile = homeProvider.doctorProfile!;
-          _firstNameController.text = doctorProfile.data!.firstName!;
-          _lastNameController.text = doctorProfile.data!.lastName!;
-          _emailController.text = doctorProfile.data!.email!;
-          _phoneController.text = doctorProfile.data!.contact!;
-          return Scaffold(
-            body: SingleChildScrollView(
+    return  DoctorProfileBase(
+      builder: (HomeGetProvider homeProvider) {
+        final doctorProfile = homeProvider.doctorProfile!;
+        _firstNameController.text = doctorProfile.data!.firstName!;
+        _lastNameController.text = doctorProfile.data!.lastName!;
+        _emailController.text = doctorProfile.data!.email!;
+        _phoneController.text = doctorProfile.data!.contact!;
+        return Scaffold(
+          body: SafeArea(
+            child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: deviceHeight * 0.02,
                   horizontal: deviceWidth * 0.03,),
@@ -246,9 +246,9 @@ class _HelpScreenState extends State<HelpScreen> {
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

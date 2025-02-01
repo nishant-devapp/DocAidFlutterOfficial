@@ -100,13 +100,16 @@ import 'package:code/profile/screens/doctor_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../accounts/screens/account_main_screen.dart';
 import '../../appointments/screens/appointment_screen.dart';
+import '../../auth/screens/LoginScreen.dart';
 import '../../clinics/screens/clinic_screen.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../help/screens/help_screen.dart';
 import '../../utils/constants/colors.dart';
+import '../../utils/helpers/TokenManager.dart';
 import '../provider/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -153,6 +156,29 @@ class _HomeScreenState extends State<HomeScreen> {
     AppColors.vermilion,     // Accounts
     AppColors.helpColor,  // Help
   ];
+
+  void _onMenuSelected(String value) {
+    if (value == 'help') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HelpScreen()),
+      );
+    } else if (value == 'logout') {
+      _logout();
+    }
+  }
+
+  void _logout() async{
+    await TokenManager().deleteToken();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   void initState() {
@@ -205,6 +231,27 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(_titles[_selectedIndex]),
+              actions: [
+                PopupMenuButton<String>(
+                  onSelected: _onMenuSelected,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'help',
+                      child: ListTile(
+                        leading: SvgPicture.asset('assets/svg/help.svg', height: 23.0, width: 23.0,),
+                        title: const Text('Help'),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'logout',
+                      child: ListTile(
+                        leading: SvgPicture.asset('assets/svg/logout.svg', height: 18.0, width: 18.0,),
+                        title: const Text('Logout'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             body: _screens[_selectedIndex],
             bottomNavigationBar: BottomNavigationBar(
