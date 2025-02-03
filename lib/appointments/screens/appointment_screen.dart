@@ -1,5 +1,6 @@
 import 'package:code/appointments/widgets/appointment_loading_shimmer.dart';
 import 'package:code/appointments/widgets/book_appointment_abha_phone_sheet.dart';
+import 'package:code/utils/helpers/docAidLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +88,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               }
 
               if (appointmentProvider.isLoading) {
-                content = const AppointmentShimmer(); // Show shimmer effect when loading
+                content = const Center(child: DocAidLoader()); // Show shimmer effect when loading
                 // content = const CircularProgressIndicator();
               } else if (appointmentProvider.errorMessage != null ||
                   appointmentProvider.appointments?.data == null) {

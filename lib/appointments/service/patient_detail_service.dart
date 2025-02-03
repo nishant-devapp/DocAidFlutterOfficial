@@ -3,43 +3,73 @@ import 'dart:convert';
 import '../../utils/constants/api_endpoints.dart';
 import '../../utils/constants/app_urls.dart';
 import 'package:http/http.dart' as http;
-import '../models/patient_info_by_abha_phone_model.dart';
+import '../models/abha_patient_list_model.dart';
+import '../models/patient_list_by_contact_model.dart';
 
 class PatientDetailService{
 
-  Future<List<Data>> fetchPatientInfoByAbha(String abha) async{
+  // Future<List<Data>> fetchPatientInfoByAbha(String abha) async{
+  //
+  //   try{
+  //
+  //     String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchPatientListByAbhaEndPoint;
+  //
+  //     final queryParameters = {
+  //       'abhaNumber': abha,
+  //     };
+  //
+  //     final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
+  //
+  //     final response = await http.get(url);
+  //
+  //     if (response.statusCode == 200) {
+  //       final jsonResponse = json.decode(response.body);
+  //       final List<dynamic>? dataJson = jsonResponse['data']; // Allow dataJson to be null
+  //       return dataJson?.map((item) => Data.fromJson(item)).toList() ?? [];
+  //     } else if (response.statusCode == 404) {
+  //       return []; // Return an empty list if no data found
+  //     }
+  //     else {
+  //       throw Exception('Failed to load patient info');
+  //     }
+  //
+  //   }catch(error){
+  //     print('Error fetching patient info: $error');
+  //     throw error;
+  //   }
+  //
+  // }
 
-    try{
+  Future<AbhaPatientDetailModel?> fetchPatientInfoByAbha(String abha) async {
+    try {
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.fetchPatientListByAbhaEndPoint;
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.patientInfoByAbhaEndPoint;
-
-      final queryParameters = {
-        'abhaNumber': abha,
-      };
-
+      final queryParameters = {'abhaNumber': abha};
       final url = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final List<dynamic>? dataJson = jsonResponse['data']; // Allow dataJson to be null
-        return dataJson?.map((item) => Data.fromJson(item)).toList() ?? [];
+
+        if (jsonResponse['data'] != null) {
+          return AbhaPatientDetailModel.fromJson(jsonResponse['data']); // Parse a single object
+        } else {
+          return null; // No patient data found
+        }
       } else if (response.statusCode == 404) {
-        return []; // Return an empty list if no data found
+        return null; // No patient data found
+      } else {
+        throw Exception('Failed to load patient info: ${response.statusCode}');
       }
-      else {
-        throw Exception('Failed to load patient info');
-      }
-
-    }catch(error){
+    } catch (error) {
       print('Error fetching patient info: $error');
-      throw error;
+      throw Exception('Error fetching patient info');
     }
-
   }
 
-  Future<List<Data>> fetchPatientInfoByContact(String contact) async{
+
+/*Future<List<Data>> fetchPatientInfoByContact(String contact) async{
 
     try{
 
@@ -68,6 +98,6 @@ class PatientDetailService{
       throw error;
     }
 
-  }
+  }*/
 
 }

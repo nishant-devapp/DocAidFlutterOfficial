@@ -3,6 +3,7 @@ import 'package:code/accounts/service/account_service.dart';
 import 'package:code/accounts/widgets/custom_report_dialog.dart';
 import 'package:code/accounts/widgets/income_card.dart';
 import 'package:code/accounts/widgets/single_visit_card.dart';
+import 'package:code/utils/helpers/docAidLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -50,7 +51,7 @@ class _ViewStatsScreenState extends State<ViewStatsScreen> {
         builder: (context, accountProvider, child) {
       if (accountProvider.isFetchingVisit ||
           accountProvider.isFetchingEarning) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: DocAidLoader());
       }
       // if (accountProvider.errorMessage != null) {
       //   return Center(child: Text('Error: ${accountProvider.errorMessage}'));

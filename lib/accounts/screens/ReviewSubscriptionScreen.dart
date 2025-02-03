@@ -7,6 +7,7 @@ import 'package:code/home/widgets/doctor_profile_base.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:code/utils/constants/razorpay_keys.dart';
 import 'package:code/utils/helpers/Toaster.dart';
+import 'package:code/utils/helpers/docAidLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -144,7 +145,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
               const SizedBox(height: 15.0),
               if (isLoading)
                 const Center(
-                  child: CircularProgressIndicator(),
+                  child: DocAidLoader(),
                 ),
               if (history == null || history.data!.isEmpty)
                 const Center(

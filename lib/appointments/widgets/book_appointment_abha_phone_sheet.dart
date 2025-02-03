@@ -1,6 +1,7 @@
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import '../models/patient_info_by_abha_phone_model.dart';
+import '../models/abha_patient_list_model.dart';
+import '../models/patient_list_by_contact_model.dart';
 import '../service/patient_detail_service.dart';
 import 'book_appointment_form.dart';
 
@@ -8,10 +9,12 @@ class BookAppointmentAbhaPhoneSheet extends StatefulWidget {
   const BookAppointmentAbhaPhoneSheet({super.key});
 
   @override
-  State<BookAppointmentAbhaPhoneSheet> createState() => _BookAppointmentAbhaPhoneSheetState();
+  State<BookAppointmentAbhaPhoneSheet> createState() =>
+      _BookAppointmentAbhaPhoneSheetState();
 }
 
-class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhoneSheet> {
+class _BookAppointmentAbhaPhoneSheetState
+    extends State<BookAppointmentAbhaPhoneSheet> {
   final _abhaController = TextEditingController();
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -24,12 +27,14 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
     final deviceHeight = mediaQuery.size.height;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -44,7 +49,8 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     label: const Text('ABHA Number'),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0)),
                   ),
                   validator: (value) {
                     if (_phoneController.text.isEmpty && value!.isEmpty) {
@@ -60,15 +66,26 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Expanded(child: SizedBox(height: 2.0, child: Container(color: AppColors.jet))),
+                      Expanded(
+                          child: SizedBox(
+                              height: 2.0,
+                              child: Container(color: AppColors.jet))),
                       const SizedBox(width: 12.0),
-                      const Text('OR', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600, color: AppColors.textColor)),
+                      const Text('OR',
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textColor)),
                       const SizedBox(width: 12.0),
-                      Expanded(child: SizedBox(height: 2.0, child: Container(color: AppColors.jet))),
+                      Expanded(
+                          child: SizedBox(
+                              height: 2.0,
+                              child: Container(color: AppColors.jet))),
                     ],
                   ),
                 ),
@@ -79,7 +96,8 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
                   maxLength: 10,
                   decoration: InputDecoration(
                     label: const Text('Mobile Number'),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0)),
                   ),
                   validator: (value) {
                     if (_abhaController.text.isEmpty && value!.isEmpty) {
@@ -98,23 +116,24 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _fetchAndDisplayPatientInfo();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, deviceHeight * 0.06),
-                    backgroundColor: AppColors.textColor,
-                  ),
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            // _fetchAndDisplayPatientInfo();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              Size(double.infinity, deviceHeight * 0.06),
+                          backgroundColor: AppColors.textColor,
+                        ),
+                        child: const Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -123,38 +142,43 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
     );
   }
 
-  void _fetchAndDisplayPatientInfo() async {
+  /*void _fetchAndDisplayPatientInfo() async {
     setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    List<Data> patientData = [];
-    if (_abhaController.text.isNotEmpty) {
-      patientData = await _patientDetailService.fetchPatientInfoByAbha(_abhaController.text);
-    } else if (_phoneController.text.isNotEmpty) {
-      patientData = await _patientDetailService.fetchPatientInfoByContact(_phoneController.text);
-    }
-
-    if (patientData.isNotEmpty) {
-      Navigator.pop(context);
-      _showPatientInfoBottomSheet(patientData[0]);
-    } else {
-      Navigator.pop(context);
-      _showPatientInfoBottomSheet(
-        Data(
-          abhaNumber: _abhaController.text.isNotEmpty ? _abhaController.text : null,
-          contact: _phoneController.text.isNotEmpty ? _phoneController.text : null,
-        ),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-  } finally {
-    setState(() {
-      _isLoading = false;
+      _isLoading = true;
     });
-  }
+
+    try {
+      AbhaPatientDetailModel? patientData;
+      if (_abhaController.text.isNotEmpty) {
+        patientData = await _patientDetailService
+            .fetchPatientInfoByAbha(_abhaController.text);
+      } else if (_phoneController.text.isNotEmpty) {
+        patientData = await _patientDetailService
+            .fetchPatientInfoByContact(_phoneController.text);
+      }
+
+      if (patientData.isNotEmpty) {
+        Navigator.pop(context);
+        _showPatientInfoBottomSheet(patientData[0]);
+      } else {
+        Navigator.pop(context);
+        _showPatientInfoBottomSheet(
+          Data(
+            abhaNumber:
+                _abhaController.text.isNotEmpty ? _abhaController.text : null,
+            contact:
+                _phoneController.text.isNotEmpty ? _phoneController.text : null,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _showPatientInfoBottomSheet(Data patientData) {
@@ -169,14 +193,17 @@ class _BookAppointmentAbhaPhoneSheetState extends State<BookAppointmentAbhaPhone
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child:  BookAppointmentForm(
+            child: BookAppointmentForm(
               patientInfo: patientData,
-              abha: _abhaController.text.isNotEmpty ? _abhaController.text : null,
-              phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+              abha:
+                  _abhaController.text.isNotEmpty ? _abhaController.text : null,
+              phone: _phoneController.text.isNotEmpty
+                  ? _phoneController.text
+                  : null,
             ),
           ),
         ),
       ),
     );
-  }
+  }*/
 }

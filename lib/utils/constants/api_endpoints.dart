@@ -42,6 +42,7 @@ class ApiEndpoints {
   static const String calendarAppointmentCountEndPoint = '/clinic/appointmentsCountByDate';
   static const String clinicWiseAppointmentCountEndPoint = '/clinic/totalAppointOfEachClinicOfDoctor';
 
+  // New APIs v-2.0
   static const String fetchPatientListByAbhaEndPoint = '/patient/getByAbhaNumber';
   static const String fetchPatientsListByContactEndPoint = '/patient/getByContact';
   static const String createPatientEndPoint = '/patient/create';
@@ -64,7 +65,5 @@ class ApiEndpoints {
 
   // Help
   static const String sendHelpMsgEndPoint = '/feedback';
-
-
 
 }
