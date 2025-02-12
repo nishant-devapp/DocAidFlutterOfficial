@@ -8,12 +8,14 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../home/provider/home_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../models/patient_list_by_contact_model.dart' as patient_model;
+import '../models/abha_patient_list_model.dart' as abhaPatientData;
+
 
 class BookAppointmentForm extends StatefulWidget {
   const BookAppointmentForm(
       {super.key, this.patientInfo, this.abha, this.phone});
 
-  final patient_model.Data? patientInfo;
+  final abhaPatientData.Data? patientInfo;
   final String? abha;
   final String? phone;
 

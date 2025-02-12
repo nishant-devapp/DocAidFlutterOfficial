@@ -1,7 +1,7 @@
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import '../models/abha_patient_list_model.dart';
-import '../models/patient_list_by_contact_model.dart';
+import '../models/abha_patient_list_model.dart' as abhaPatientData;
+import '../models/patient_list_by_contact_model.dart' as phonePatientData;
 import '../service/patient_detail_service.dart';
 import 'book_appointment_form.dart';
 
@@ -118,7 +118,7 @@ class _BookAppointmentAbhaPhoneSheetState
                     : ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            // _fetchAndDisplayPatientInfo();
+                            _fetchAndDisplayPatientInfo();
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -142,28 +142,32 @@ class _BookAppointmentAbhaPhoneSheetState
     );
   }
 
-  /*void _fetchAndDisplayPatientInfo() async {
+  void _fetchAndDisplayPatientInfo() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      AbhaPatientDetailModel? patientData;
+      abhaPatientData.AbhaPatientDetailModel? patientData;
+      phonePatientData.ContactPatientDetailModel? patientDataByContact;
+      abhaPatientData.Data? patientInfo;
+
       if (_abhaController.text.isNotEmpty) {
         patientData = await _patientDetailService
             .fetchPatientInfoByAbha(_abhaController.text);
+        patientInfo = patientData?.data;
       } else if (_phoneController.text.isNotEmpty) {
-        patientData = await _patientDetailService
+        patientDataByContact = await _patientDetailService
             .fetchPatientInfoByContact(_phoneController.text);
       }
 
-      if (patientData.isNotEmpty) {
+      if (patientInfo != null) {
         Navigator.pop(context);
-        _showPatientInfoBottomSheet(patientData[0]);
+        _showPatientInfoBottomSheet(patientInfo);
       } else {
         Navigator.pop(context);
         _showPatientInfoBottomSheet(
-          Data(
+          abhaPatientData.Data(
             abhaNumber:
                 _abhaController.text.isNotEmpty ? _abhaController.text : null,
             contact:
@@ -181,7 +185,7 @@ class _BookAppointmentAbhaPhoneSheetState
     }
   }
 
-  void _showPatientInfoBottomSheet(Data patientData) {
+  void _showPatientInfoBottomSheet(abhaPatientData.Data patientData) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // This makes the bottom sheet full screen
@@ -205,5 +209,5 @@ class _BookAppointmentAbhaPhoneSheetState
         ),
       ),
     );
-  }*/
+  }
 }
