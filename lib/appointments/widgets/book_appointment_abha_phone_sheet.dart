@@ -1,3 +1,4 @@
+import 'package:code/appointments/widgets/patient_selection_sheet.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import '../models/abha_patient_list_model.dart' as abhaPatientData;
@@ -154,27 +155,45 @@ class _BookAppointmentAbhaPhoneSheetState
 
       if (_abhaController.text.isNotEmpty) {
         patientData = await _patientDetailService
-            .fetchPatientInfoByAbha(_abhaController.text);
+            .fetchPatientInfoByAbha(_abhaController.text.trim());
         patientInfo = patientData?.data;
-      } else if (_phoneController.text.isNotEmpty) {
-        patientDataByContact = await _patientDetailService
-            .fetchPatientInfoByContact(_phoneController.text);
+        if (patientInfo != null) {
+          Navigator.pop(context);
+          _showPatientInfoBottomSheet(patientInfo);
+        } else {
+          Navigator.pop(context);
+          _showPatientInfoBottomSheet(
+            abhaPatientData.Data(
+              abhaNumber:
+              _abhaController.text.isNotEmpty ? _abhaController.text : null,
+              contact:
+              _phoneController.text.isNotEmpty ? _phoneController.text : null,
+            ),
+          );
+        }
       }
 
-      if (patientInfo != null) {
-        Navigator.pop(context);
-        _showPatientInfoBottomSheet(patientInfo);
-      } else {
-        Navigator.pop(context);
-        _showPatientInfoBottomSheet(
-          abhaPatientData.Data(
-            abhaNumber:
-                _abhaController.text.isNotEmpty ? _abhaController.text : null,
-            contact:
-                _phoneController.text.isNotEmpty ? _phoneController.text : null,
-          ),
-        );
+      if (_phoneController.text.isNotEmpty) {
+        patientDataByContact = await _patientDetailService
+            .fetchPatientInfoByContact(_phoneController.text.trim());
+        if (patientDataByContact?.data != null && patientDataByContact!.data!.isNotEmpty) {
+          Navigator.pop(context);
+          _showPatientListByContactSheet(patientDataByContact.data!, _phoneController.text.trim());  // Pass the list to the bottom sheet
+          return;
+        }else{
+          Navigator.pop(context);
+          _showPatientInfoBottomSheet(
+            abhaPatientData.Data(
+              abhaNumber:
+              _abhaController.text.isNotEmpty ? _abhaController.text : null,
+              contact:
+              _phoneController.text.isNotEmpty ? _phoneController.text : null,
+            ),
+          );
+        }
       }
+
+
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -183,6 +202,22 @@ class _BookAppointmentAbhaPhoneSheetState
         _isLoading = false;
       });
     }
+  }
+
+  void _showPatientListByContactSheet(List<phonePatientData.Data> patientList, String phone){
+    showModalBottomSheet(context: context,
+        isScrollControlled: true, // This makes the bottom sheet full screen
+        builder: (context) => DraggableScrollableSheet(
+          expand: false,
+            builder: (context, scrollController) => SingleChildScrollView(
+              controller: scrollController,
+              child: Padding(padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+                child: PatientSelectionSheet(patientList: patientList, phone: phone,),
+              ),
+            )),
+    );
   }
 
   void _showPatientInfoBottomSheet(abhaPatientData.Data patientData) {
