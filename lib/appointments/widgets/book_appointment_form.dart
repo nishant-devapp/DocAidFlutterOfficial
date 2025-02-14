@@ -473,7 +473,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(width: 20),
-                    Text('Processing..', style: TextStyle(color: AppColors.textColor, fontSize: 18.0),),
+                    Text('Processing..', style: TextStyle(color: AppColors.textColor, fontSize: 15.0),),
                   ],
                 ),
               );
