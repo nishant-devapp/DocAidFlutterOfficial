@@ -133,7 +133,9 @@ class AppointmentProvider with ChangeNotifier {
       String gender,
       String appointmentDate,
       String appointmentTime,
-      String clinicLocation) async{
+      String clinicLocation,
+      int patientId
+      ) async{
 
     _isInProcess = true;
     _errorMessage = null;
@@ -141,7 +143,7 @@ class AppointmentProvider with ChangeNotifier {
 
     try{
 
-      await _service.addNewAppointment(clinicId, name, abha, age, contact, address, guardian, gender, appointmentDate, appointmentTime, "UNPAID", clinicLocation);
+      await _service.addNewAppointment(clinicId, name, abha, age, contact, address, guardian, gender, appointmentDate, appointmentTime, "UNPAID", clinicLocation, patientId);
 
       _appointmentList = await _service.fetchAllAppointments(appointmentDate);
       _appointmentList = _sortAppointmentsByTime(_appointmentList);

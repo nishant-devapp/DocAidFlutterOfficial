@@ -99,10 +99,10 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
         ],
       );
 
-      if (widget.prescriptionImage != null) {
-        print('Image data length: ${widget.prescriptionImage!.length}');
-        print(widget.prescriptionImage);
-      }
+      // if (widget.prescriptionImage != null) {
+      //   print('Image data length: ${widget.prescriptionImage!.length}');
+      //   print(widget.prescriptionImage);
+      // }
 
       if (widget.prescriptionImage != null && widget.prescriptionImage!.isNotEmpty) {
         try {

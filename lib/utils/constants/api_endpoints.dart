@@ -46,7 +46,8 @@ class ApiEndpoints {
   static const String fetchPatientListByAbhaEndPoint = '/patient/getByAbhaNumber';
   static const String fetchPatientsListByContactEndPoint = '/patient/getByContact';
   static const String createPatientEndPoint = '/patient/create';
-  static const String addNewPatientEndPoint = '/patient/update';
+  static const String updatePatientEndPoint = '/patient/update';
+  static const String sendWhatsappMsgEndPoint = '/whatsapp/appointment_confirmation';
 
 
   // Accounts

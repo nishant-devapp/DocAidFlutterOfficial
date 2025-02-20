@@ -113,20 +113,42 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                 ],
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.verdigris,
-              ),
-              onPressed: () {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
-                });
-              },
-              child: const Padding(
-                padding:  EdgeInsets.all(8.0),
-                child: Text('Print', style: TextStyle(fontSize: 18.0, color: Colors.white),),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                // change below buttons to icon button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.verdigris,
+                  ),
+                  onPressed: () {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
+                    });
+                  },
+                  child: const Padding(
+                    padding:  EdgeInsets.all(8.0),
+                    child: Text('Print', style: TextStyle(fontSize: 18.0, color: Colors.white),),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.verdigris,
+                  ),
+                  onPressed: () {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
+                    });
+                  },
+                  child: const Padding(
+                    padding:  EdgeInsets.all(8.0),
+                    child: Text('Print', style: TextStyle(fontSize: 18.0, color: Colors.white),),
+                  ),
+                ),
+              ],
             ),
+
           ],
         ),
       ),

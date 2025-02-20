@@ -194,7 +194,9 @@ class AppointmentService {
       String appointmentDate,
       String appointmentTime,
       String paymentStatus,
-      String clinicLocation) async {
+      String clinicLocation,
+      int patientId
+      ) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
@@ -226,7 +228,8 @@ class AppointmentService {
           "appointmentDate": appointmentDate,
           "appointmentTime": appointmentTime,
           "paymentStatus": paymentStatus,
-          "clinicLocation": clinicLocation
+          "clinicLocation": clinicLocation,
+          "patientId" : patientId.toString()
         }),
       );
 

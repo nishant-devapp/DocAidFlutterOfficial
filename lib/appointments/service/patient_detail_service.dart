@@ -81,14 +81,13 @@ class PatientDetailService {
       String gender,
       String guardianName,
       String address) async {
-    // status 201
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
         throw Exception('Token not found');
       }
 
-      String baseUrl = AppUrls.baseUrl + ApiEndpoints.addNewPatientEndPoint;
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.createPatientEndPoint;
 
       final url = Uri.parse(baseUrl);
 
@@ -128,6 +127,41 @@ class PatientDetailService {
       String gender,
       String guardianName,
       String address) async {
-    // status 200
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.updatePatientEndPoint;
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          "name": name,
+          "abhaNumber": abhaNum,
+          "age": age.toString(),
+          "contact": contact,
+          "gender": gender,
+          "guardianName": guardianName,
+          "address": address
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print(responseData);
+        final addPatientResponse = AddPatientResponseModel.fromJson(responseData);
+        return addPatientResponse;
+      } else {
+        print('Failed to add patient: ${response.body}');
+        throw Exception('Failed to add patient');
+      }
+    } catch (error) {
+      print('Error booking appointment: $error');
+      throw error;
+    }
   }
 }

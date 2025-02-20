@@ -465,6 +465,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
             bookingDate,
             bookingTime,
             _selectedClinicLocation!,
+            widget.patientInfo!.id!
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
