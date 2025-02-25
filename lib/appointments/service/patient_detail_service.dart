@@ -164,4 +164,45 @@ class PatientDetailService {
       throw error;
     }
   }
+
+  Future<bool> sendWhatsappMessage(String patientName, String patientContact, String docName, String date, String time, String clinicAddress, String compounderName, String clinicContact) async {
+
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
+
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.sendWhatsappMsgEndPoint;
+
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          "patientName": patientName,
+          "patientContact": patientContact,
+          "drName": docName,
+          "date": date,
+          "time": time,
+          "clinicAddress": clinicAddress,
+          "compounderName": compounderName,
+          "clinicContact": clinicContact,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print(responseData);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error booking appointment: $error');
+      return false;
+    }
+
+  }
+
 }

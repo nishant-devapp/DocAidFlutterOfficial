@@ -1,6 +1,7 @@
 import 'package:code/appointments/widgets/print_appointment_text.dart';
 import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../home/models/home_get_model.dart';
@@ -113,37 +114,50 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                 ],
               ),
             ),
+            const SizedBox(height: 20.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
                 // change below buttons to icon button
-                ElevatedButton(
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.print_sharp, size: 22.0, color: Colors.white,),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.verdigris,
+                    elevation: 2.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
                   ),
                   onPressed: () {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
                     });
                   },
-                  child: const Padding(
+                  label: const Padding(
                     padding:  EdgeInsets.all(8.0),
-                    child: Text('Print', style: TextStyle(fontSize: 18.0, color: Colors.white),),
+                    child: Text('Print', style: TextStyle(fontSize: 16.0, color: Colors.white),),
                   ),
                 ),
-                ElevatedButton(
+                // const SizedBox(width: 15.0),
+                ElevatedButton.icon(
+                  icon: SvgPicture.asset('assets/svg/whatsapp.svg', height: 25.0, width: 25.0,),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.verdigris,
+                    backgroundColor: Colors.white,
+                    elevation: 2.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      side: const BorderSide(color: AppColors.appointmentColor, width: 1.0),
+                    ),
                   ),
                   onPressed: () {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
-                    });
+                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    //   printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
+                    // });
                   },
-                  child: const Padding(
+                  label: const Padding(
                     padding:  EdgeInsets.all(8.0),
-                    child: Text('Print', style: TextStyle(fontSize: 18.0, color: Colors.white),),
+                    child: Text('Send Message', style: TextStyle(fontSize: 16.0, color: AppColors.appointmentColor),),
                   ),
                 ),
               ],

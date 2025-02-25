@@ -54,7 +54,7 @@ class _AppointmentItemState extends State<AppointmentItem> {
               },
               child: Card(
                 elevation: 4.0,
-                shadowColor: AppColors.verdigris.withOpacity(0.3),
+                shadowColor: AppColors.verdigris.withValues(alpha: 0.3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),

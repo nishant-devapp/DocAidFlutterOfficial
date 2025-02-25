@@ -125,7 +125,7 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
                             "Pay Now",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: AppColors.darkGreenColor.withOpacity(0.6),
+                              color: AppColors.darkGreenColor.withValues(alpha: 0.6),
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
