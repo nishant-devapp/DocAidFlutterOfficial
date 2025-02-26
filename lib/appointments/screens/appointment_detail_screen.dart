@@ -1,4 +1,5 @@
 import 'package:code/appointments/screens/prescription_screen.dart';
+import 'package:code/appointments/widgets/e_prescription_sheet.dart';
 import 'package:code/appointments/widgets/print_patient_info_design.dart';
 import 'package:code/appointments/widgets/print_patient_prescription.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,9 @@ import '../../utils/helpers/time_formatter.dart';
 import '../models/fetch_appointment_model.dart';
 
 class AppointmentDetailScreen extends StatefulWidget {
-  AppointmentDetailScreen({super.key, required this.appointment});
+  const AppointmentDetailScreen({super.key, required this.appointment});
 
-  AppointmentData appointment;
+  final AppointmentData appointment;
 
   @override
   State<AppointmentDetailScreen> createState() =>
@@ -162,23 +163,105 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.white,
-                            builder: (context) => DraggableScrollableSheet(
-                              expand: false,
-                              builder: (context, scrollController) => SingleChildScrollView(
-                                controller: scrollController,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                                  ),
-                                  child: PrintPatientPrescription(appointment: widget.appointment, prescriptionImage: prescriptionImage,),
-                                ),
-                              ),
-                            ),
+                          showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context){
+                                var screenSize = MediaQuery.of(context).size;
+                                return Dialog(
+                                  child: SizedBox(
+                                    width: screenSize.width * 0.8, // 80% of screen width
+                                    // height: screenSize.height * 0.5, // 50% of screen height
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text('Select Prescription Option', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.0, color: AppColors.textColor),),
+                                              IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.disabled_by_default, size: 30.0, color: AppColors.princetonOrange,),),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 12.0,),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppColors.vermilion,
+                                              elevation: 2.0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12.0),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                backgroundColor: Colors.white,
+                                                builder: (context) => DraggableScrollableSheet(
+                                                  expand: false,
+                                                  builder: (context, scrollController) => SingleChildScrollView(
+                                                    controller: scrollController,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                                                      ),
+                                                      child: PrintPatientPrescription(appointment: widget.appointment, prescriptionImage: prescriptionImage,),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Padding(
+                                              padding:  EdgeInsets.all(8.0),
+                                              child: Text('Default Prescription', style: TextStyle(fontSize: 16.0, color: Colors.white),),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10.0,),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppColors.vermilion,
+                                              elevation: 2.0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12.0),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                backgroundColor: Colors.white,
+                                                builder: (context) => DraggableScrollableSheet(
+                                                  expand: false,
+                                                  builder: (context, scrollController) => SingleChildScrollView(
+                                                    controller: scrollController,
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                                                      ),
+                                                      child: const EPrescriptionSheet(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: const Padding(
+                                              padding:  EdgeInsets.all(8.0),
+                                              child: Text('E-Prescription', style: TextStyle(fontSize: 16.0, color: Colors.white),),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                );
+                              }
                           );
+
                         },
                         splashColor: Colors.transparent,
                         child: SvgPicture.asset(
