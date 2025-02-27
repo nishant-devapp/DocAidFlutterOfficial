@@ -94,7 +94,7 @@ class _PrintPatientPrescriptionState extends State<PrintPatientPrescription> {
           Container(
             width: double.infinity,
             height: 1.5,
-            color: AppColors.jet.withOpacity(0.6),
+            color: AppColors.jet.withValues(alpha: 0.6),
           ),
         ],
       );

@@ -243,7 +243,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                                                       padding: EdgeInsets.only(
                                                         bottom: MediaQuery.of(context).viewInsets.bottom,
                                                       ),
-                                                      child: const EPrescriptionSheet(),
+                                                      child: EPrescriptionSheet(appointment: widget.appointment),
                                                     ),
                                                   ),
                                                 ),
