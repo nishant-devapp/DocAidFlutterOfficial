@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:code/appointments/models/add_patient_response_model.dart';
 import 'package:code/appointments/models/payment_info_model.dart';
 import '../../utils/constants/api_endpoints.dart';
 import '../../utils/constants/app_urls.dart';
@@ -539,6 +540,52 @@ class AppointmentService {
     }
   }
 
+  Future<int?> addNewPatient(
+      String name,
+      String abha,
+      int age,
+      String contact,
+      String gender,
+      String guardianName,
+      String address) async {
+    try {
+      final token = await _tokenManager.getToken();
+      if (token == null) {
+        throw Exception('Token not found');
+      }
 
+      String baseUrl = AppUrls.baseUrl + ApiEndpoints.bookAppointmentEndPoint;
+      final url = Uri.parse(baseUrl);
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "name": name,
+          "abhaNumber": abha,
+          "age": age.toString(),
+          "contact": contact,
+          "gender": gender,
+          "guardianName": guardianName,
+          "address": address
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final addPatientResponse = AddPatientResponseModel.fromJson(data);
+        return addPatientResponse.data?.id; // Return the patient ID
+      } else {
+        print('Failed to add patient: ${response.body}');
+        throw Exception('Failed to add patient');
+      }
+    } catch (error) {
+      print('Error adding patient: $error');
+      throw error;
+    }
+  }
 
 }

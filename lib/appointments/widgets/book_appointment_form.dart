@@ -43,6 +43,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   List<String> _timeSlots = [];
   int? _selectedClinicId, doctorId;
   bool _isBooking = false;
+  bool _isAddingPatient = false;
   String? _selectedClinicLocation, _selectedTime;
   Map<String, int>? _clinicAppointmentCounts;
 
@@ -349,7 +350,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                               onChanged: (value) {
                                 setState(() {
                                   _selectedTime = value;
-                                  print(_selectedTime);
+                                  // print(_selectedTime);
                                 });
                               },
                             ),

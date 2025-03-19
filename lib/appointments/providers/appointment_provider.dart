@@ -12,6 +12,7 @@ class AppointmentProvider with ChangeNotifier {
   PaymentInfoModel? _paymentInfoModel;
   Map<String, int>? _appointmentCounts;
   Map<String, int>? _clinicWiseAppointmentCounts;
+  int? _addedPatientId;
   bool _isLoading = false;
   bool _isUpdating = false;
   bool _isUpdatingVisitStatus = false;
@@ -19,6 +20,7 @@ class AppointmentProvider with ChangeNotifier {
   bool _isDeletingAppointment = false;
   bool _isMakingAppointmentPayment = false;
   bool _isInProcess = true;
+  bool _isAddingPatient = true;
   String? _errorMessage;
 
   AppointmentList? get appointments => _appointmentList;
@@ -28,7 +30,11 @@ class AppointmentProvider with ChangeNotifier {
   Map<String, int>? get appointmentCounts => _appointmentCounts;
   Map<String, int>? get clinicWiseAppointmentCounts => _clinicWiseAppointmentCounts;
 
+  int? get addedPatientId => _addedPatientId;
+
   bool get isLoading => _isLoading;
+
+  bool get isAddingPatient => _isAddingPatient;
 
   bool get isUpdating => _isUpdating;
 
@@ -343,6 +349,18 @@ class AppointmentProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> addPatient(String name,
+      String abha,
+      int age,
+      String contact,
+      String gender,
+      String guardianName,
+      String address) async {
+
+
+
   }
 
 
