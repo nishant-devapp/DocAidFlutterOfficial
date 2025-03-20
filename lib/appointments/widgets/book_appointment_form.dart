@@ -56,9 +56,12 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         TextEditingController(text: widget.patientInfo?.name ?? '');
     _abhaController =
         TextEditingController(text: widget.patientInfo?.abhaNumber ?? '');
-    _ageController = TextEditingController(text: widget.patientInfo?.age?.toString() ?? '');
-    _addressController = TextEditingController(text: widget.patientInfo?.address ?? '');
-    _guardianNameController = TextEditingController(text: widget.patientInfo?.guardianName ?? '');
+    _ageController =
+        TextEditingController(text: widget.patientInfo?.age?.toString() ?? '');
+    _addressController =
+        TextEditingController(text: widget.patientInfo?.address ?? '');
+    _guardianNameController =
+        TextEditingController(text: widget.patientInfo?.guardianName ?? '');
     _phoneController = TextEditingController(text: widget.phone ?? '');
     _dateController = TextEditingController();
     _selectedGender = widget.patientInfo?.gender ?? 'Select Gender';
@@ -70,7 +73,7 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
 
   Future<void> _fetchAndInitializeClinics() async {
     final homeProvider =
-        context.read<HomeGetProvider>(); // Ensure correct provider usage
+    context.read<HomeGetProvider>(); // Ensure correct provider usage
     final clinics = homeProvider.getClinics();
 
     // Debug statement
@@ -116,7 +119,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                     children: [
                       const Text(
                         'Book Appointment',
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0),
+                        style: TextStyle(fontWeight: FontWeight.w600,
+                            fontSize: 20.0),
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
@@ -266,7 +270,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                                   onPressed: () {
                                     showDialog(
                                       context: context,
-                                      builder: (BuildContext context) => _buildCalendarDialog(context),
+                                      builder: (BuildContext context) =>
+                                          _buildCalendarDialog(context),
                                     );
                                   },
                                 ),
@@ -291,7 +296,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                               value: _selectedClinic,
                               decoration: InputDecoration(
                                 labelText: 'Select Clinic',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.0)),
                                 contentPadding: const EdgeInsets.all(15.0),
                               ),
                               onChanged: (ClinicDtos? newValue) {
@@ -303,7 +309,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                                   _selectedClinicId = newValue.id;
                                   _selectedClinicLocation = newValue.location;
                                   print('Clinic ID: $_selectedClinicId');
-                                  print('Clinic Name: $_selectedClinicLocation');
+                                  print(
+                                      'Clinic Name: $_selectedClinicLocation');
                                 }
                               },
                               validator: (value) {
@@ -314,7 +321,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                               },
                               hint: const Text('Select Clinic'),
                               items: _filteredClinics.map((clinic) {
-                                final count = _clinicAppointmentCounts?[clinic.id.toString()] ?? 0;
+                                final count = _clinicAppointmentCounts?[clinic
+                                    .id.toString()] ?? 0;
                                 return DropdownMenuItem<ClinicDtos>(
                                   value: clinic,
                                   child: Text("${clinic.location!} - $count"),
@@ -332,7 +340,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                               value: _selectedTime,
                               decoration: InputDecoration(
                                 labelText: 'Select Time',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.0)),
                                 contentPadding: const EdgeInsets.all(15.0),
                               ),
                               items: _timeSlots.map((time) {
@@ -361,7 +370,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                       ElevatedButton(
                         onPressed: _isBooking ? null : _bookAppointment,
                         style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, deviceHeight * 0.06),
+                          minimumSize: Size(
+                              double.infinity, deviceHeight * 0.06),
                           backgroundColor: AppColors.verdigris,
                         ),
                         child: _isBooking
@@ -378,6 +388,171 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
             );
           });
         }
+    );
+  }
+
+  void _bookAppointment() async {
+    if (!_key.currentState!.validate()) {
+      return;
+    }
+
+    String textBoxName = _nameController.text.trim();
+    String textBoxContact = _phoneController.text.trim();
+    int textBoxAge = int.parse(_ageController.text.trim());
+    String textBoxAbha = _abhaController.text.trim();
+    String textBoxAddress = _addressController.text.trim();
+    String textBoxGuardianName = _guardianNameController.text.trim();
+    String textBoxGender = _selectedGender!;
+
+    // For Adding New Patient
+    if (widget.patientInfo?.name == null ||
+        widget.patientInfo?.contact == null ||
+        widget.patientInfo?.address == null ||
+        widget.patientInfo?.abhaNumber == null ||
+        widget.patientInfo?.age == null ||
+        widget.patientInfo?.guardianName == null ||
+        widget.patientInfo?.gender == null) {
+
+      final patientProvider = Provider.of<AppointmentProvider>(context, listen: false);
+
+      patientProvider
+          .addPatient(textBoxName, textBoxAbha, textBoxAge, textBoxContact,
+          textBoxGender, textBoxGuardianName, textBoxAddress)
+          .then((patientID) {
+        if (patientID != null) {
+          showAppointmentBookingDialog(
+              patientID, textBoxName, textBoxAbha, textBoxAge.toString(),
+              textBoxContact, textBoxAddress, textBoxGuardianName, textBoxGender
+          );
+        } else {
+          print("Failed to add patient, appointment booking skipped.");
+        }
+      }).catchError((error) {
+        print("Error adding patient: $error");
+      });
+    }
+
+    // For Updating Patient
+    else if(widget.patientInfo?.name != null ||
+        widget.patientInfo?.contact != textBoxContact ||
+        widget.patientInfo?.address != textBoxAddress ||
+        widget.patientInfo?.abhaNumber != textBoxAbha ||
+        widget.patientInfo?.age != textBoxAge ||
+        widget.patientInfo?.guardianName != textBoxGuardianName ||
+        widget.patientInfo?.gender != textBoxGender){
+      final patientProvider = Provider.of<AppointmentProvider>(context, listen: false);
+
+      patientProvider
+          .updatePatient(textBoxName, textBoxAbha, textBoxAge, textBoxContact,
+          textBoxGender, textBoxGuardianName, textBoxAddress)
+          .then((patientID) {
+        if (patientID != null) {
+          showAppointmentBookingDialog(
+              widget.patientInfo!.id!, textBoxName, textBoxAbha, textBoxAge.toString(),
+              textBoxContact, textBoxAddress, textBoxGuardianName, textBoxGender
+          );
+        } else {
+          print("Failed to update patient, appointment booking skipped.");
+        }
+      }).catchError((error) {
+        print("Error adding patient: $error");
+      });
+    }
+
+    // Just Book Appointment
+    else{
+      showAppointmentBookingDialog(
+          widget.patientInfo!.id!, textBoxName, textBoxAbha, textBoxAge.toString(),
+          textBoxContact, textBoxAddress, textBoxGuardianName, textBoxGender
+      );
+    }
+
+    // print(_selectedClinicId!);
+    // print(_nameController.text.trim());
+    // print(_abhaController.text.trim());
+    // print(_ageController.text.trim());
+    // print(_phoneController.text.trim());
+    // print(_addressController.text.trim());
+    // print(_guardianNameController.text.trim());
+    // print(_selectedGender!);
+    // print(bookingDate);
+    // print(bookingTime);
+    // print(_selectedClinicLocation!);
+
+    // showAppointmentBookingDialog();
+
+
+  }
+
+  void showAppointmentBookingDialog(int patientId, String name, String abha, String age, String phone, String address, String guardianName, String gender) {
+
+    final bookingTime = DateFormat('HH:mm:ss').format(
+        DateFormat('h:mm a').parse(_selectedTime!));
+    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDay);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FutureBuilder(
+          future: Provider.of<AppointmentProvider>(context, listen: false)
+              .bookAppointment(
+              _selectedClinicId!,
+              name,
+              abha,
+              age,
+              phone,
+              address,
+              guardianName,
+              gender,
+              bookingDate,
+              bookingTime,
+              _selectedClinicLocation!,
+              patientId
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const AlertDialog(
+                content: Row(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(width: 20),
+                    Text('Processing..', style: TextStyle(
+                        color: AppColors.textColor, fontSize: 15.0),),
+                  ],
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: Text('Error booking appointment: ${snapshot.error}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            } else {
+              return AlertDialog(
+                title: const Text('Success'),
+                content: const Text('Appointment booked successfully!'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pop(context); // Close the bottom sheet
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
     );
   }
 
@@ -418,7 +593,8 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         0, 1, 1, startTime.hour, startTime.minute, startTime.second
     );
 
-    while (currentTime.isBefore(DateTime(0, 1, 1, endTime.hour, endTime.minute, endTime.second))) {
+    while (currentTime.isBefore(
+        DateTime(0, 1, 1, endTime.hour, endTime.minute, endTime.second))) {
       final formattedTime = DateFormat('h:mm a').format(currentTime);
       timeSlots.add(formattedTime);
       currentTime = currentTime.add(const Duration(minutes: 5));
@@ -430,92 +606,10 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
     });
   }
 
-  void _bookAppointment() async{
-    if (!_key.currentState!.validate()) {
-      return;
-    }
-    final bookingTime = DateFormat('HH:mm:ss').format(DateFormat('h:mm a').parse(_selectedTime!));
-    final bookingDate = DateFormat('yyyy-MM-dd').format(_selectedDay);
-
-        // print(_selectedClinicId!);
-        // print(_nameController.text.trim());
-        // print(_abhaController.text.trim());
-        // print(_ageController.text.trim());
-        // print(_phoneController.text.trim());
-        // print(_addressController.text.trim());
-        // print(_guardianNameController.text.trim());
-        // print(_selectedGender!);
-        // print(bookingDate);
-        // print(bookingTime);
-        // print(_selectedClinicLocation!);
-
-   showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return FutureBuilder(
-          future: Provider.of<AppointmentProvider>(context, listen: false).bookAppointment(
-            _selectedClinicId!,
-            _nameController.text.trim(),
-            _abhaController.text.trim(),
-            _ageController.text.trim(),
-            _phoneController.text.trim(),
-            _addressController.text.trim(),
-            _guardianNameController.text.trim(),
-            _selectedGender!,
-            bookingDate,
-            bookingTime,
-            _selectedClinicLocation!,
-            widget.patientInfo!.id!
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const AlertDialog(
-                content: Row(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(width: 20),
-                    Text('Processing..', style: TextStyle(color: AppColors.textColor, fontSize: 15.0),),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return AlertDialog(
-                title: const Text('Error'),
-                content: Text('Error booking appointment: ${snapshot.error}'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            } else {
-              return AlertDialog(
-                title: const Text('Success'),
-                content: const Text('Appointment booked successfully!'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close the dialog
-                      Navigator.pop(context); // Close the bottom sheet
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              );
-            }
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _fetchClinicAppointmentCount() async{
+  Future<void> _fetchClinicAppointmentCount() async {
     final provider = Provider.of<AppointmentProvider>(context, listen: false);
-    await provider.fetchClinicWiseAppointmentCount(DateFormat('yyyy-MM-dd').format(_selectedDay));
+    await provider.fetchClinicWiseAppointmentCount(
+        DateFormat('yyyy-MM-dd').format(_selectedDay));
 
     setState(() {
       _clinicAppointmentCounts = provider.clinicWiseAppointmentCounts ?? {};
@@ -536,16 +630,25 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
   Widget _buildCalendarDialog(BuildContext context) {
     return Dialog(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width * 0.9,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height * 0.5,
         child: Consumer<AppointmentProvider>(
           builder: (context, provider, _) {
             if (provider.isLoading) {
-              return const Center(child: CircularProgressIndicator()); // Display a loading spinner
+              return const Center(
+                  child: CircularProgressIndicator()); // Display a loading spinner
             }
             return TableCalendar(
-              firstDay: DateTime.now().subtract(const Duration(days: 365 * 50)), // 50 years back
-              lastDay: DateTime.now().add(const Duration(days: 365 * 50)), // 50 years ahead
+              firstDay: DateTime.now().subtract(const Duration(days: 365 * 50)),
+              // 50 years back
+              lastDay: DateTime.now().add(const Duration(days: 365 * 50)),
+              // 50 years ahead
               focusedDay: _focusedDay,
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               availableCalendarFormats: const { // Lock the calendar format
@@ -555,10 +658,11 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
                 setState(() {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
-                  _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDay);
+                  _dateController.text =
+                      DateFormat('yyyy-MM-dd').format(selectedDay);
                   // WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _filterClinicsByDate(_allClinics);
-                    _fetchClinicAppointmentCount();
+                  _filterClinicsByDate(_allClinics);
+                  _fetchClinicAppointmentCount();
                   // });
                 });
 
@@ -597,13 +701,14 @@ class _BookAppointmentFormState extends State<BookAppointmentForm> {
         ),
         if (provider.appointmentCounts != null &&
             provider.appointmentCounts!.containsKey(formattedDay))
-          const SizedBox(height: 4), // Adds some space between the date and the count
+          const SizedBox(height: 4),
+        // Adds some space between the date and the count
         if (provider.appointmentCounts != null &&
             provider.appointmentCounts!.containsKey(formattedDay))
-            Text(
-              provider.appointmentCounts![formattedDay]!.toString(),
-              style: const TextStyle(color: AppColors.verdigris, fontSize: 12),
-            ),
+          Text(
+            provider.appointmentCounts![formattedDay]!.toString(),
+            style: const TextStyle(color: AppColors.verdigris, fontSize: 12),
+          ),
       ],
     );
   }

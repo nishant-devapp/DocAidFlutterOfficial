@@ -71,7 +71,9 @@ class _PatientSelectionSheetItemState extends State<PatientSelectionSheetItem> {
           },
         ),
         const SizedBox(height: 16),
-        ElevatedButton(
+        ElevatedButton.icon(
+          icon: const Icon(Icons.arrow_right_alt_rounded, size: 22.0, color: Colors.white,),
+          iconAlignment: IconAlignment.end,
           onPressed: _selectedPatientIndex != null
               ? () {
             final selectedPatient = patients[_selectedPatientIndex!];
@@ -86,7 +88,7 @@ class _PatientSelectionSheetItemState extends State<PatientSelectionSheetItem> {
               borderRadius: BorderRadius.circular(12.0),
             ),
           ),
-          child: const Text(
+          label: const Text(
             'Continue',
             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.white),
           ),

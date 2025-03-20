@@ -351,16 +351,57 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addPatient(String name,
+  Future<int?> addPatient(
+      String name,
       String abha,
       int age,
       String contact,
       String gender,
       String guardianName,
-      String address) async {
+      String address,
+      ) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
 
+    try {
+      final patientId = await _service.addNewPatient(name, abha, age, contact, gender, guardianName, address);
+      print('Patient ID: $patientId'); // Debugging log
+      _addedPatientId = patientId;
+      return patientId; // Return the patient ID
+    } catch (e) {
+      _errorMessage = 'Failed to add patient: $e';
+      return null; // Return null in case of failure
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
+  Future<int?> updatePatient(
+      String name,
+      String abha,
+      int age,
+      String contact,
+      String gender,
+      String guardianName,
+      String address,
+      ) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
 
+    try {
+      final patientId = await _service.addNewPatient(name, abha, age, contact, gender, guardianName, address);
+      print('Patient ID: $patientId');
+      return patientId;
+    } catch (e) {
+      _errorMessage = 'Failed to add patient: $e';
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
 

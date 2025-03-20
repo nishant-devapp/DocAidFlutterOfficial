@@ -153,8 +153,8 @@ class HomeGetService {
       );
 
       // Log status code and response body for debugging
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      // print('Status Code: ${response.statusCode}');
+      // print('Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);

@@ -390,7 +390,7 @@ class _AddClinicFormState extends State<AddClinicForm> {
           uiSettings: [
             AndroidUiSettings(
               toolbarTitle: 'Crop Image',
-              toolbarColor: AppColors.verdigris.withOpacity(0.8),
+              toolbarColor: AppColors.verdigris.withValues(alpha: 0.8),
               toolbarWidgetColor: Colors.white,
               lockAspectRatio: true,
             ),

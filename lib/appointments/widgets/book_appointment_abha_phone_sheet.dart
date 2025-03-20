@@ -223,6 +223,7 @@ class _BookAppointmentAbhaPhoneSheetState
   void _showPatientInfoBottomSheet(abhaPatientData.Data patientData) {
     showModalBottomSheet(
       context: context,
+      showDragHandle: true,
       isScrollControlled: true, // This makes the bottom sheet full screen
       builder: (context) => DraggableScrollableSheet(
         expand: false,
