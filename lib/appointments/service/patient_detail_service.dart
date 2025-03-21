@@ -107,7 +107,8 @@ class PatientDetailService {
       if (response.statusCode == 201) {
         final responseData = json.decode(response.body);
         print(responseData);
-        final addPatientResponse = AddPatientResponseModel.fromJson(responseData);
+        final addPatientResponse =
+            AddPatientResponseModel.fromJson(responseData);
         return addPatientResponse;
       } else {
         print('Failed to add patient: ${response.body}');
@@ -153,7 +154,8 @@ class PatientDetailService {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         print(responseData);
-        final addPatientResponse = AddPatientResponseModel.fromJson(responseData);
+        final addPatientResponse =
+            AddPatientResponseModel.fromJson(responseData);
         return addPatientResponse;
       } else {
         print('Failed to add patient: ${response.body}');
@@ -165,8 +167,15 @@ class PatientDetailService {
     }
   }
 
-  Future<bool> sendWhatsappMessage(String patientName, String patientContact, String docName, String date, String time, String clinicAddress, String compounderName, String clinicContact) async {
-
+  Future<bool> sendWhatsappMessage(
+      String patientName,
+      String patientContact,
+      String docName,
+      String date,
+      String time,
+      String clinicAddress,
+      String compounderName,
+      String clinicContact) async {
     try {
       final token = await _tokenManager.getToken();
       if (token == null) {
@@ -179,7 +188,8 @@ class PatientDetailService {
 
       final response = await http.post(
         url,
-        body: jsonEncode({
+          headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+          body: jsonEncode({
           "patientName": patientName,
           "patientContact": patientContact,
           "drName": docName,
@@ -191,18 +201,16 @@ class PatientDetailService {
         }),
       );
 
+      print(response.body);
+
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        print(responseData);
         return true;
       } else {
         return false;
       }
     } catch (error) {
-      print('Error booking appointment: $error');
+      print('Error sending message: $error');
       return false;
     }
-
   }
-
 }

@@ -1,3 +1,4 @@
+import 'package:code/appointments/service/patient_detail_service.dart';
 import 'package:code/appointments/widgets/print_appointment_text.dart';
 import 'package:code/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,10 @@ class PrintPatientInfoDesign extends StatefulWidget {
 
 class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
   ClinicDtos? clinic;
+  String? doctorName;
   final GlobalKey _key = GlobalKey();
+  bool _isSendingWhtsMsg = false;
+  final PatientDetailService _patientService = PatientDetailService();
 
   @override
   void initState() {
@@ -29,11 +33,13 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
   }
 
   void fetchClinicDetails() {
-    final clinics = context.read<HomeGetProvider>().getClinics();
+    final homeProvider = Provider.of<HomeGetProvider>(context, listen: false);
+    final clinics = homeProvider.getClinics();
+    doctorName =
+        "${homeProvider.doctorProfile!.data!.firstName!} ${homeProvider.doctorProfile!.data!.lastName!}";
     final clinicLocation = widget.appointment.clinicLocation;
     clinic = clinics.firstWhere((clinic) => clinic.location == clinicLocation);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +55,20 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Align(alignment: Alignment.center,child: Text('Booking Confirmed', style: TextStyle(fontWeight: FontWeight.w700, fontSize:25.0),)),
+                  const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Booking Confirmed',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 25.0),
+                      )),
                   const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Patient Name', text: widget.appointment.name!)),
+                              title: 'Patient Name',
+                              text: widget.appointment.name!)),
                       Expanded(
                           child: PrintAppointmentText(
                               title: 'ABHA Number',
@@ -68,10 +81,12 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                     children: [
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Age', text: widget.appointment.age.toString())),
+                              title: 'Age',
+                              text: widget.appointment.age.toString())),
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Phone', text: widget.appointment.contact!)),
+                              title: 'Phone',
+                              text: widget.appointment.contact!)),
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -80,10 +95,13 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                     children: [
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Gender', text: widget.appointment.gender!)),
+                              title: 'Gender',
+                              text: widget.appointment.gender!)),
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Fees', text: '\u{20B9} ${clinic!.clinicNewFees!.toInt().toString()}')),
+                              title: 'Fees',
+                              text:
+                                  '\u{20B9} ${clinic!.clinicNewFees!.toInt().toString()}')),
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -95,7 +113,8 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                               title: 'Clinic Name', text: clinic!.clinicName!)),
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Clinic Location', text: clinic!.location!)),
+                              title: 'Clinic Location',
+                              text: clinic!.location!)),
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -104,24 +123,32 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                     children: [
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Appointment Date', text: widget.appointment.appointmentDate!)),
+                              title: 'Appointment Date',
+                              text: widget.appointment.appointmentDate!)),
                       Expanded(
                           child: PrintAppointmentText(
-                              title: 'Appointment Time', text: widget.appointment.appointmentTime!)),
+                              title: 'Appointment Time',
+                              text: widget.appointment.appointmentTime!)),
                     ],
                   ),
                   const SizedBox(height: 15),
                 ],
               ),
             ),
-            const SizedBox(height: 20.0,),
+            const SizedBox(
+              height: 20.0,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
                 // change below buttons to icon button
                 ElevatedButton.icon(
-                  icon: const Icon(Icons.print_sharp, size: 22.0, color: Colors.white,),
+                  icon: const Icon(
+                    Icons.print_sharp,
+                    size: 22.0,
+                    color: Colors.white,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.verdigris,
                     elevation: 2.0,
@@ -131,43 +158,93 @@ class _PrintPatientInfoDesignState extends State<PrintPatientInfoDesign> {
                   ),
                   onPressed: () {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
+                      printContent(context, _key,
+                          '${widget.appointment.name!}_booking.pdf');
                     });
                   },
                   label: const Padding(
-                    padding:  EdgeInsets.all(8.0),
-                    child: Text('Print', style: TextStyle(fontSize: 16.0, color: Colors.white),),
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Print',
+                      style: TextStyle(fontSize: 16.0, color: Colors.white),
+                    ),
                   ),
                 ),
                 // const SizedBox(width: 15.0),
                 ElevatedButton.icon(
-                  icon: SvgPicture.asset('assets/svg/whatsapp.svg', height: 25.0, width: 25.0,),
+                  icon: SvgPicture.asset(
+                    'assets/svg/whatsapp.svg',
+                    height: 25.0,
+                    width: 25.0,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     elevation: 2.0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
-                      side: const BorderSide(color: AppColors.appointmentColor, width: 1.0),
+                      side: const BorderSide(
+                          color: AppColors.appointmentColor, width: 1.0),
                     ),
                   ),
-                  onPressed: () {
-                    // WidgetsBinding.instance.addPostFrameCallback((_) {
-                    //   printContent(context, _key, '${widget.appointment.name!}_booking.pdf');
-                    // });
-                  },
-                  label: const Padding(
-                    padding:  EdgeInsets.all(8.0),
-                    child: Text('Send Message', style: TextStyle(fontSize: 16.0, color: AppColors.appointmentColor),),
-                  ),
+                  onPressed: _isSendingWhtsMsg ? null : _sendWhatsappMessage,
+                  label: _isSendingWhtsMsg
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            color: AppColors.appointmentColor,
+                          ),
+                        )
+                      : const Text(
+                          'Send Message',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: AppColors.appointmentColor),
+                        ),
                 ),
               ],
             ),
-
           ],
         ),
       ),
     );
   }
 
+  Future<void> _sendWhatsappMessage() async {
+    setState(() {
+      _isSendingWhtsMsg = true;
+    });
 
+    print(widget.appointment.name);
+    print(widget.appointment.contact);
+    print(doctorName);
+    print(widget.appointment.appointmentDate);
+    print(widget.appointment.appointmentTime);
+    print(widget.appointment.clinicLocation);
+    print(clinic!.incharge!);
+    print(clinic!.clinicContact!);
+
+    bool isSuccess = await _patientService.sendWhatsappMessage(
+      widget.appointment.name!,
+      widget.appointment.contact!,
+      doctorName!,
+      widget.appointment.appointmentDate!,
+      widget.appointment.appointmentTime!,
+      widget.appointment.clinicLocation!,
+      clinic!.incharge!,
+      clinic!.clinicContact!,
+    );
+
+    setState(() {
+      _isSendingWhtsMsg = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(isSuccess
+              ? "WhatsApp message sent successfully!"
+              : "Failed to send WhatsApp message.")),
+    );
+  }
 }
