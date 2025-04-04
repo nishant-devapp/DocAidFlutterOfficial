@@ -2,6 +2,7 @@ import 'package:code/appointments/utils/advice_list.dart';
 import 'package:code/appointments/utils/complaints_list.dart';
 import 'package:code/appointments/utils/diagnosis_list.dart';
 import 'package:code/appointments/utils/test_list.dart';
+import 'package:code/utils/TestScreen.dart';
 import 'package:code/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -796,7 +797,9 @@ class _EPrescriptionSheetState extends State<EPrescriptionSheet> {
                   ),
                 ),
               ),
-
+              IconButton(onPressed: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Testscreen()));
+              }, icon: Icon(Icons.arrow_circle_right_rounded, size: 50.0,)),
             ],
           ),
         ),
