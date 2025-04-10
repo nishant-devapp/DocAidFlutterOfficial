@@ -245,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: AppBar(
+            centerTitle: false,
             title: Text(_titles[_selectedIndex]),
             actions: [
               PopupMenuButton<String>(

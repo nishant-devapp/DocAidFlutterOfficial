@@ -39,7 +39,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     final clinicLocation = widget.appointment.clinicLocation;
     clinic = clinics.firstWhere((clinic) => clinic.location == clinicLocation);
     clinicId = clinic!.id!;
-    print(clinicId);
+    // print(clinicId);
     Provider.of<HomeGetProvider>(context, listen: false).fetchPrescriptionImage(clinicId!);
 
   }
@@ -53,6 +53,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.appointment.name!),
+          centerTitle: false,
         ),
         body: SafeArea(
           child: SingleChildScrollView(
