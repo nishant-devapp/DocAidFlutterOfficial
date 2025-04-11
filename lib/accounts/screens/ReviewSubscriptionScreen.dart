@@ -1,6 +1,5 @@
 import 'package:code/accounts/provider/account_provider.dart';
 import 'package:code/accounts/service/account_service.dart';
-import 'package:code/dashboard/screens/dashboard_screen.dart';
 import 'package:code/home/provider/home_provider.dart';
 import 'package:code/home/screens/home_screen.dart';
 import 'package:code/home/widgets/doctor_profile_base.dart';
@@ -86,8 +85,8 @@ class _ReviewSubscriptionScreenState extends State<ReviewSubscriptionScreen> {
             children: [
               Card(
                 elevation: 6.0,
-                color: AppColors.celeste.withOpacity(0.8),
-                shadowColor: AppColors.princetonOrange.withOpacity(0.3),
+                color: AppColors.celeste.withValues(alpha: 0.8),
+                shadowColor: AppColors.princetonOrange.withValues(alpha: 0.3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),

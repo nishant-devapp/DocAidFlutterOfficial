@@ -189,7 +189,7 @@ class _EPrescriptionSheetState extends State<EPrescriptionSheet> {
                       Text(
                         "${doctorProfile.data!.firstName!} ${doctorProfile.data!.lastName!}",
                         style: const TextStyle(
-                            color: AppColors.verdigris,
+                            color: AppColors.textColor,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w500),
                       ),
@@ -199,14 +199,14 @@ class _EPrescriptionSheetState extends State<EPrescriptionSheet> {
                       Text(
                         doctorProfile.data!.degree!.first,
                         style: const TextStyle(
-                            color: AppColors.verdigris,
+                            color: AppColors.textColor,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w400),
                       ),
                       Text(
                         doctorProfile.data!.specialization!.first,
                         style: const TextStyle(
-                            color: AppColors.verdigris,
+                            color: AppColors.textColor,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w400),
                       ),

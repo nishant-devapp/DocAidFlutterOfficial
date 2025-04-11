@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart'; // Add uuid package
 
-
 class Testscreen extends StatefulWidget {
   const Testscreen({super.key});
 
@@ -20,10 +19,10 @@ class _TestscreenState extends State<Testscreen> {
 
   void removeCard(String id) {
     setState(() {
-      cardList.removeWhere((card) => card.id == id); // Removes only the specific card
+      cardList.removeWhere(
+          (card) => card.id == id); // Removes only the specific card
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +34,16 @@ class _TestscreenState extends State<Testscreen> {
           itemCount: cardList.length,
           itemBuilder: (context, index) {
             return DynamicCard(
-              key: ValueKey(cardList[index].id), // Ensures each card is uniquely identified
+              key: ValueKey(cardList[index].id),
+              // Ensures each card is uniquely identified
               model: cardList[index],
-              onDelete: () => removeCard(cardList[index].id), // Pass the ID of the card
+              onDelete: () => removeCard(cardList[index].id),
+              // Pass the ID of the card
               onAdd: addCard,
-              showDelete: cardList.length > 1, // Always show delete button if more than 1 card
-              showAdd: index == cardList.length - 1, // Show add button only on last card
+              showDelete: cardList.length > 1,
+              // Always show delete button if more than 1 card
+              showAdd: index ==
+                  cardList.length - 1, // Show add button only on last card
             );
           },
         ),
@@ -92,94 +95,197 @@ class DynamicCard extends StatefulWidget {
 class _DynamicCardState extends State<DynamicCard> {
   String? dropdownValue1;
   String? dropdownValue2;
+  String? selectedDose, selectedWhen, selectedFreq;
+  TextEditingController? nameController, durationController;
+
+  final List<String> doses = [
+    '0-0-0',
+    '1-0-1',
+    '1-1-0',
+    '0-1-1',
+    '0-0-1',
+    '0-1-0',
+    '1-0-0',
+    '1-1-1'
+  ];
+
+  final List<String> whens = [
+    'After food',
+    'Before Meal',
+    'After Meal',
+    'Empty Stomach',
+    'Bed Time'
+  ];
+
+  final List<String> frequencies = [
+    'Daily',
+    'After 2 Days',
+    'Weekly',
+    'Fortnightly',
+    'Monthly',
+    'Stat',
+    'SOS'
+  ];
 
   @override
   void initState() {
     super.initState();
-    dropdownValue1 = widget.model.dropdownValue1.isNotEmpty ? widget.model.dropdownValue1 : null;
-    dropdownValue2 = widget.model.dropdownValue2.isNotEmpty ? widget.model.dropdownValue2 : null;
+    dropdownValue1 = widget.model.dropdownValue1.isNotEmpty
+        ? widget.model.dropdownValue1
+        : null;
+    dropdownValue2 = widget.model.dropdownValue2.isNotEmpty
+        ? widget.model.dropdownValue2
+        : null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Dropdown 1
-            DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-            value: null,  // Ensures no option is selected initially
-              isExpanded: true,
-            hint: Text("Select Dose"), // Shows when no option is selected
-            items: [
-              DropdownMenuItem<String>(
-                value: null, // Disable selection of the placeholder
-                child: Text("Select Dose"),
-              ),
-              DropdownMenuItem<String>(
-                value: "0-0-0",
-                child: Text("0-0-0"),
-              ),
-              DropdownMenuItem<String>(
-                value: "Option 2",
-                child: Text("Option 2"),
-              ),
-              DropdownMenuItem<String>(
-                value: "Option 3",
-                child: Text("Option 3"),
-              ),
-            ],
-            onChanged: (val) {
-              setState(() {
-                dropdownValue1 = val ?? '';  // Update with the selected value or keep it empty
-                widget.model.dropdownValue1 = val ?? ''; // Update model
-              });
-            },
-            ),
-          ),
-
-
-          SizedBox(height: 8),
-
-            // Dropdown 2 (Select When)
-            DropdownButtonFormField<String>(
-              value: dropdownValue2,
-              hint: Text("Select When..."), // Show this when value is null
-              items: ['Option A', 'Option B', 'Option C']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (val) {
-                setState(() {
-                  dropdownValue2 = val;
-                  widget.model.dropdownValue2 = val ?? ''; // Store only if selected
-                });
+            TextFormField(
+              controller: nameController,
+              textCapitalization: TextCapitalization.words,
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                  label: const Text('Name'),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  )),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter medicine name';
+                }
+                return null;
               },
-              decoration: InputDecoration(labelText: "When"),
             ),
-
-            SizedBox(height: 8),
-
-            // Text Field 1
-            TextField(
-              controller: widget.model.textController1,
-              decoration: InputDecoration(labelText: "Enter Text 1"),
+            const SizedBox(
+              height: 16.0,
             ),
-
-            SizedBox(height: 8),
-
-            // Text Field 2
-            TextField(
-              controller: widget.model.textController2,
-              decoration: InputDecoration(labelText: "Enter Text 2"),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                    child: DropdownButtonFormField<String>(
+                  value: selectedDose,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    labelText: 'Dose',
+                  ),
+                  hint: const Text('Select Dose'),
+                  // This shows when value is null
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text("Select Dose"),
+                    ),
+                    ...doses.map((dose) => DropdownMenuItem<String>(
+                          value: dose,
+                          child: Text(dose),
+                        )),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDose = value;
+                    });
+                  },
+                )),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedWhen,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'When',
+                    ),
+                    hint: const Text('Select When'),
+                    // This shows when value is null
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text("Select When"),
+                      ),
+                      ...whens.map((when) => DropdownMenuItem<String>(
+                            value: when,
+                            child: Text(when),
+                          )),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedWhen = value;
+                      });
+                    },
+                  ),
+                )
+              ],
             ),
-
-            SizedBox(height: 12),
-
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: selectedFreq,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'Frequency',
+                    ),
+                    hint: const Text('Select Frequency'),
+                    // This shows when value is null
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text("Select Frequency"),
+                      ),
+                      ...frequencies.map((freq) => DropdownMenuItem<String>(
+                            value: freq,
+                            child: Text(freq),
+                          )),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedFreq = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 8.0,
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: durationController,
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        label: const Text('Duration'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter duration';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -196,6 +302,14 @@ class _DynamicCardState extends State<DynamicCard> {
                     icon: Icon(Icons.add),
                     label: Text("Add"),
                     onPressed: widget.onAdd,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 2.0,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
                   ),
               ],
             ),
